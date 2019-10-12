@@ -24,6 +24,7 @@ defmodule AgregatWeb do
       import Plug.Conn
       import AgregatWeb.Gettext
       alias AgregatWeb.Router.Helpers, as: Routes
+      import Phoenix.LiveView.Controller
     end
   end
 
@@ -32,6 +33,9 @@ defmodule AgregatWeb do
       use Phoenix.View,
         root: "lib/agregat_web/templates",
         namespace: AgregatWeb
+
+      import Phoenix.LiveView,
+        only: [live_render: 2, live_render: 3, live_link: 1, live_link: 2]
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
@@ -50,6 +54,7 @@ defmodule AgregatWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 

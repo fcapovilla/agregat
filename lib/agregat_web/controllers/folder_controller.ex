@@ -5,8 +5,7 @@ defmodule AgregatWeb.FolderController do
   alias Agregat.Feeds.Folder
 
   def index(conn, _params) do
-    folders = Feeds.list_folders()
-    render(conn, "index.html", folders: folders)
+    Phoenix.LiveView.Controller.live_render(conn, AgregatWeb.FolderLive, session: %{})
   end
 
   def new(conn, _params) do
