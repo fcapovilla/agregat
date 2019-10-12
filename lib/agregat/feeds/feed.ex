@@ -1,0 +1,27 @@
+defmodule Agregat.Feeds.Feed do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "feeds" do
+    field :auto_frequency, :boolean, default: false
+    field :last_sync, :utc_datetime
+    field :position, :integer
+    field :sync_status, :string
+    field :title, :string
+    field :unread_count, :integer
+    field :update_frequency, :integer
+    field :url, :string
+    field :user_id, :id
+    field :folder_id, :id
+    field :favicon_id, :id
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(feed, attrs) do
+    feed
+    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency])
+    |> validate_required([:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency])
+  end
+end
