@@ -114,7 +114,10 @@ defmodule Agregat.Feeds do
 
   """
   def list_folders do
-    Repo.all(Folder)
+    Folder
+    |> order_by(asc: :position)
+    |> Repo.all()
+    |> Repo.preload(:feeds)
   end
 
   @doc """

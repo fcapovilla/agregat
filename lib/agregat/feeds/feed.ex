@@ -11,9 +11,10 @@ defmodule Agregat.Feeds.Feed do
     field :unread_count, :integer
     field :update_frequency, :integer
     field :url, :string
-    field :user_id, :id
-    field :folder_id, :id
-    field :favicon_id, :id
+    belongs_to :user, Agregat.Accounts.User
+    belongs_to :folder, Agregat.Feeds.Folder
+    belongs_to :favicon, Agregat.Feeds.Favicon
+    has_many :items, Agregat.Feeds.Item
 
     timestamps()
   end

@@ -5,7 +5,7 @@ defmodule Agregat.Feeds.Media do
   schema "medias" do
     field :type, :string
     field :url, :string
-    field :item_id, :id
+    belongs_to :item, Agregat.Feeds.Item
 
     timestamps()
   end

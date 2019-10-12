@@ -1,0 +1,41 @@
+<h1>Listing Folders</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for folder <- @folders do %>
+    <tr>
+      <td><%= folder.title %></td>
+
+      <td>
+        <span><%= link "Toggle", to: Routes.folder_path(@conn, :toggle, folder) %></span>
+        <span><%= link "Edit", to: Routes.folder_path(@conn, :edit, folder) %></span>
+        <span><%= link "Delete", to: Routes.folder_path(@conn, :delete, folder), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+    <%= if folder.open do %>
+      <tr>
+        <td></td>
+        <td>
+          <table>
+            <%= for feed <- folder.feeds do %>
+                <tr>
+                    <td>
+                        <%= feed.title %>
+                    </td>
+                </tr>
+            <% end %>
+          </table>
+        </td>
+      </tr>
+    <% end %>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Folder", to: Routes.folder_path(@conn, :new) %></span>

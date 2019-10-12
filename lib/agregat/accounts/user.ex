@@ -6,6 +6,7 @@ defmodule Agregat.Accounts.User do
     field :admin, :boolean, default: false
     field :hashed_password, :string
     field :username, :string
+    field :password, :string, virtual: true, default: "********"
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule Agregat.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :hashed_password, :admin])
-    |> validate_required([:username, :hashed_password, :admin])
+    |> cast(attrs, [:username, :password, :admin])
+    |> validate_required([:username, :password, :admin])
   end
 end

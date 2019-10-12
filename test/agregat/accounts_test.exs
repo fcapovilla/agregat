@@ -6,9 +6,9 @@ defmodule Agregat.AccountsTest do
   describe "users" do
     alias Agregat.Accounts.User
 
-    @valid_attrs %{admin: true, hashed_password: "some hashed_password", username: "some username"}
-    @update_attrs %{admin: false, hashed_password: "some updated hashed_password", username: "some updated username"}
-    @invalid_attrs %{admin: nil, hashed_password: nil, username: nil}
+    @valid_attrs %{admin: true, password: "some password", username: "some username"}
+    @update_attrs %{admin: false, password: "some updated password", username: "some updated username"}
+    @invalid_attrs %{admin: nil, password: nil, username: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -32,7 +32,7 @@ defmodule Agregat.AccountsTest do
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
       assert user.admin == true
-      assert user.hashed_password == "some hashed_password"
+      assert user.password == "some password"
       assert user.username == "some username"
     end
 
@@ -44,7 +44,7 @@ defmodule Agregat.AccountsTest do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
       assert user.admin == false
-      assert user.hashed_password == "some updated hashed_password"
+      assert user.password == "some updated password"
       assert user.username == "some updated username"
     end
 

@@ -5,6 +5,7 @@ defmodule Agregat.Feeds.Favicon do
   schema "favicons" do
     field :data, :string
     field :host, :string
+    has_many :feeds, Agregat.Feeds.Feed
 
     timestamps()
   end

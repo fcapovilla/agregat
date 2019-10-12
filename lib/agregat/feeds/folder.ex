@@ -3,10 +3,11 @@ defmodule Agregat.Feeds.Folder do
   import Ecto.Changeset
 
   schema "folders" do
-    field :open, :boolean, default: false
+    field :open, :boolean, default: true
     field :position, :integer
     field :title, :string
-    field :user_id, :id
+    belongs_to :user, Agregat.Accounts.User
+    has_many :feeds, Agregat.Feeds.Feed
 
     timestamps()
   end

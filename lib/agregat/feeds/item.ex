@@ -11,8 +11,9 @@ defmodule Agregat.Feeds.Item do
     field :read, :boolean, default: false
     field :title, :string
     field :url, :string
-    field :user_id, :id
-    field :feed_id, :id
+    belongs_to :user, Agregat.Accounts.User
+    belongs_to :feed, Agregat.Feeds.Feed
+    has_many :medias, Agregat.Feeds.Media, on_replace: :delete
 
     timestamps()
   end
