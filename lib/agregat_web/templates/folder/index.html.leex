@@ -1,41 +1,91 @@
 <h1>Listing Folders</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for folder <- @folders do %>
-    <tr>
-      <td><%= folder.title %></td>
+<div class="feed-list">
+  <ul class="list-unstyled" id="feed-list">
+    <li>
+      <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>}}">
+        <div  class="folder-badge">
+          <span class="badge badge-primary"><%= @total_unread %></span>
+        </div>
 
-      <td>
-        <span><a href="#" phx-click="toggle<%= folder.id %>">Toggle</a></span>
-        <span><%= link "Edit", to: Routes.folder_path(@socket, :edit, folder) %></span>
-        <span><%= link "Delete", to: Routes.folder_path(@socket, :delete, folder), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-    <%= if folder.open do %>
-      <tr>
-        <td></td>
-        <td>
-          <table>
-            <%= for feed <- folder.feeds do %>
-                <tr>
-                    <td>
-                        <%= feed.title %>
-                    </td>
-                </tr>
+        <div  class="folder-text">
+          <i class="folder-icon fa fa-asterisk"></i>
+          All items
+        </div>
+      </div>
+    </li>
+    <li>
+      <div phx-click="select-favorites" class="folder-title <%= if @selected == "favorites", do: "active" %>">
+        <div class="folder-text">
+          <i class="folder-icon fa fa-star"></i>
+          Favorites
+        </div>
+      </div>
+    </li>
+    <%= for folder <- @folders do %>
+      <div phx-click="select-folder-<%= folder.id %>" class="folder-title <%= if @selected == "folder-#{folder.id}", do: "active" %>">
+        <%= if false do #folder.unread > 0 do %>
+          <div class="folder-badge">
+            <span class="badge badge-primary"><%= folder.unread %></span>
+          </div>
+        <% end %>
+        <div class="folder-text">
+          <div phx-click="toggle-folder-<%= folder.id %>" class="folder-toggle">
+            <i class="fa fa-plus-square-o"></i>
+          </div>
+          <div phx-click="open-menu-folder-<%= folder.id %>" class="folder-icon">
+            <i class="fa fa-folder"></i>
+          </div>
+          <%= if false do #folder.unread > 0 do %>
+            <b><%= folder.title %></b>
+          <% else %>
+            <%= folder.title %>
+          <% end %>
+        </div>
+      </div>
+      <%= if @menu_open == "folder-#{folder.id}" do %>
+        <div class="btn-group folderMenu">
+          <a phx-click="mark-folder-read-<%= folder.id %>" class="btn btn-default" title="Mark as read"><i class="fa fa-eye"></i></a>
+          <a phx-click="mark-folder-unread-<%= folder.id %>" class="btn btn-default" title="Mark as unread"><i class="fa fa-eye-slash"></i></a>
+          <a phx-click="edit-folder-<%= folder.id %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
+          <a phx-click="delete-folder-<%= folder.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash-o"></i></a>
+        </div>
+      <% end %>
+
+      <%= if folder.open do %>
+        <%= for feed <- folder.feeds do %>
+          <div phx-click="select-feed-<%= feed.id %>" class="feed-title <%= if @selected == "feed-#{feed.id}", do: "active" %>">
+            <%= if feed.unread_count > 0 do %>
+              <div class="feed-badge">
+                <span class="badge badge-primary"><%= feed.unread_count %></span>
+              </div>
             <% end %>
-          </table>
-        </td>
-      </tr>
+            <div class="feed-text">
+              <div phx-click="open-menu-feed-<%= feed.id %>" class="feed-icon">
+                <%= if feed.favicon do %>
+                  <img class="favicon" src="/favicons/<%= feed.favicon_id %>">
+                <% else %>
+                  <i class="fa fa-rss-square"></i>
+                <% end %>
+              </div>
+              <%= if feed.unread_count > 0 do %>
+                <b><%= feed.title %></b>
+              <% else %>
+                <%= feed.title %>
+              <% end %>
+            </div>
+          </div>
+          <%= if @menu_open == "feed-#{feed.id}" do %>
+            <div class="btn-group feedMenu">
+              <a phx-click="mark-feed-read-<%= folder.id %>" class="btn btn-default" title="Mark as read"><i class="fa fa-eye"></i></a>
+              <a phx-click="mark-feed-unread-<%= folder.id %>" class="btn btn-default" title="Mark as unread"><i class="fa fa-eye-slash"></i></a>
+              <a phx-click="edit-feed-<%= folder.id %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
+              <a phx-click="delete-feed-<%= folder.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash-o"></i></a>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
     <% end %>
-<% end %>
-  </tbody>
-</table>
+  </ul>
+</div>
 
-<span><%= link "New Folder", to: Routes.folder_path(@socket, :new) %></span>

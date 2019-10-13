@@ -8,23 +8,49 @@
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
-          </ul>
-        </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
-    </header>
-    <main role="main" class="container">
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+    <div class="side-bar">
+      <div class="navbar navbar-default">
+        <div class="navbar-form" id="mainmenu">
+          <div class="btn-group">
+            <button class="btn btn-primary hidden-tiny-phone">
+              <img id="spinner" class="invisible" src="assets/img/ajax-loader.gif">
+            </button>
+            <button {{action "addFeed"}} class="btn btn-default" title="{{t "addFeed"}}">
+              <i class="fa fa-plus"></i>
+            </button>
+            <button {{action "toggleReadVisibility"}} class="btn btn-default" title="{{t "toggleReadVisibility"}}">
+              {{#if filters.showRead}}
+                <i class="fa fa-eye"></i>
+              {{else}}
+                <i class="fa fa-eye-slash"></i>
+              {{/if}}
+            </button>
+            <button {{action "openSettings"}} class="btn btn-default" title="{{t "settings"}}">
+              <i class="fa fa-cog"></i>
+            </button>
+            <button {{action "logout"}} class="btn btn-default" title="{{t "logOut"}}">
+              <i class="fa fa-sign-out"></i>
+            </button>
+          </div>
+          <div class="btn-group mobile-item-buttons visible-xs {{unless onItemList "invisible"}}">
+            <button {{action "previousItem"}} class="btn btn-default mobile-item-button" title="{{t "previous"}}">
+              <i class="fa fa-arrow-circle-o-up"></i>
+            </button>
+            <button {{action "nextItem"}} class="btn btn-default mobile-item-button" title="{{t "next"}}">
+              <i class="fa fa-arrow-circle-o-down"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="dragbar hidden-xs"></div>
+      <div class="{{unless onIndex "hidden-xs"}}">
+        <%= Phoenix.LiveView.live_render(@conn, AgregatWeb.FolderLive, session: %{}) %>
+      </div>
+    </div>
+    <div class="content {{if onIndex "hidden-xs"}}">
       <%= render @view_module, @view_template, assigns %>
-    </main>
+    </div>
+
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

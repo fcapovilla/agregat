@@ -1,0 +1,114 @@
+.feed-list {
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #f8f8f8;
+
+	-webkit-overflow-scrolling: touch;
+
+	#feed-list {
+		white-space: nowrap;
+		padding-top: 5px;
+		padding-bottom: 30px;
+	}
+
+	.folder-icon,
+	.dropdown,
+	.feed-title,
+	.folder-title {
+		cursor: pointer;
+	}
+
+	.feed-icon {
+		height: 16px;
+		display: inline-block;
+
+		&>i:before {
+			font-size: 17px;
+		}
+
+		&>img {
+			width: 16px;
+			height: 16px;
+			vertical-align: top;
+			display: inline-block;
+		}
+	}
+
+	.folder-toggle,
+	.folder-icon {
+		display: inline-block;
+	}
+
+	.drag-hovered {
+		border-bottom: 2px solid black;
+	}
+
+	.feed-badge,
+	.folder-badge {
+		float: right;
+		margin: 0 3px;
+		max-height: 18px;
+	}
+
+	.feed-text,
+	.folder-text {
+		overflow: hidden;
+	}
+}
+
+// Desktop view
+@media screen and (min-width:768px) {
+	.feed-list {
+		width: 300px - 5px;
+
+		.folder-toggle,
+		.folder-icon,
+		.feed-icon {
+			padding: 0px 2px;
+		}
+
+		.feed-title,
+		.folder-title {
+			height: 19px;
+		}
+
+		.feed-title {
+			padding-left: 38px;
+		}
+
+		#feed-list {
+			padding-left: 5px;
+		}
+	}
+}
+
+// Mobile view
+@media screen and (max-width:767px) {
+	.feed-list {
+		width: 100% !important;
+
+		.folder-toggle,
+		.folder-icon,
+		.feed-icon {
+			padding: 7px 4px;
+		}
+
+		.feed-title,
+		.folder-title {
+			height: 28px;
+		}
+
+		.feed-title {
+			padding-left: 48px;
+		}
+
+		#feed-list {
+			padding-left: 6px;
+		}
+
+		.feed-badge,
+		.folder-badge {
+			margin-top: 4px;
+		}
+	}
+}

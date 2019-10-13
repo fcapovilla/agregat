@@ -1,0 +1,156 @@
+@import "feedlist.scss";
+@import "itemlist.scss";
+
+@import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+@import "~bootstrap/dist/css/bootstrap.css";
+
+// Default font sizes
+body {
+	font-size: 13px;
+}
+.badge,
+.label{
+	font-size: 11px;
+}
+
+// Hover on list elements
+.feed-title,
+.folder-title,
+.item-container {
+	&:hover {
+		background-color: rgb(230, 230, 230);
+	}
+	&.active {
+		color: #ffffff;
+		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+		background-color: rgb(91, 165, 202);
+	}
+}
+
+// Subscription list
+.togglePSHBAction,
+.sortable {
+	cursor: pointer;
+}
+
+// Fix navbar
+.navbar {
+	margin-bottom: 0;
+	min-height: 0;
+}
+.navbar-form {
+	margin: 0;
+	padding: 0;
+}
+
+//Badge coloring
+.badge-primary {
+	background-color: #428BCA;
+}
+
+// Wide modal dialogs
+.modal-wide {
+	width: 90%;
+}
+
+.mobile-item-buttons {
+	float: right;
+}
+
+// Fix for forms in modal dialogs
+form {
+	margin: 0;
+}
+
+// Feed Edit Dialog PSHB section
+.feedPSHBInfos {
+	max-width: 550px;
+	overflow: auto;
+}
+
+// Table style with minimal padding
+td.no-padding {
+	padding: 2px !important;
+}
+
+#searchForm {
+	.form-group,
+	.checkbox {
+		width: 200px;
+	}
+}
+
+#spinner {
+	vertical-align: text-top;
+}
+
+// Desktop view
+@media screen and (min-width:768px) {
+	.content {
+		margin-left: 300px;
+	}
+
+	.side-bar {
+		width:300px;
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		height: 100%;
+		.dragbar {
+			background-color: rgb(230, 230, 230);
+			height:100%;
+			float: right;
+			width: 5px;
+			cursor: col-resize;
+		}
+	}
+}
+
+// Mobile view
+@media screen and (max-width:767px) {
+	body {
+		padding: 0px;
+		font-size: 13px;
+		.fa {
+			font-size: 15px;
+		}
+	}
+
+	.btn .fa{
+		font-size: 20px;
+	}
+
+	.btn img{
+		height: 20px;
+	}
+
+	.mobile-item-button {
+		display: inline !important;
+	}
+
+	.content {
+		margin-left: 0px !important;
+	}
+
+	.side-bar {
+		width: 100% !important;
+	}
+
+	.hidden-phone {
+		display: none !important;
+	}
+}
+
+// Additional mobile hidden classes
+@media screen and (max-width:365px) {
+	.hidden-tiny-phone {
+		display: none !important;
+	}
+}
+
+@media screen and (max-width:500px) {
+	.hidden-small-phone {
+		display: none !important;
+	}
+}
