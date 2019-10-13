@@ -1,7 +1,7 @@
 <div class="feed-list">
   <ul class="list-unstyled" id="feed-list">
     <li>
-      <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>}}">
+      <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>">
         <div  class="folder-badge">
           <span class="badge badge-primary"><%= @total_unread %></span>
         </div>

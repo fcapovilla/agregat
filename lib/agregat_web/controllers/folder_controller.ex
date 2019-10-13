@@ -4,10 +4,6 @@ defmodule AgregatWeb.FolderController do
   alias Agregat.Feeds
   alias Agregat.Feeds.Folder
 
-  def index(conn, _params) do
-    Phoenix.LiveView.Controller.live_render(conn, AgregatWeb.FolderLive, session: %{})
-  end
-
   def new(conn, _params) do
     changeset = Feeds.change_folder(%Folder{})
     render(conn, "new.html", changeset: changeset)
@@ -26,7 +22,9 @@ defmodule AgregatWeb.FolderController do
   end
 
   def show(conn, %{"id" => id}) do
-    Phoenix.LiveView.Controller.live_render(conn, AgregatWeb.ItemLive, session: %{folder_id: id})
+    conn
+    |> assign(:selected, "folder-#{id}")
+    |> Phoenix.LiveView.Controller.live_render(AgregatWeb.ItemsLive, session: %{folder_id: id})
   end
 
   def edit(conn, %{"id" => id}) do
@@ -43,24 +41,6 @@ defmodule AgregatWeb.FolderController do
         conn
         |> put_flash(:info, "Folder updated successfully.")
         |> redirect(to: Routes.folder_path(conn, :show, folder))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", folder: folder, changeset: changeset)
-    end
-  end
-
-  def toggle(conn, %{"id" => id}) do
-    folder = Feeds.get_folder!(id)
-    folder_params = if folder.open do
-      %{open: false}
-    else
-      %{open: true}
-    end
-
-    case Feeds.update_folder(folder, folder_params) do
-      {:ok, folder} ->
-        conn
-        |> redirect(to: Routes.folder_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", folder: folder, changeset: changeset)

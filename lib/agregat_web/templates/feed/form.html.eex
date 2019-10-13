@@ -1,0 +1,47 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <%= label f, :title %>
+  <%= textarea f, :title %>
+  <%= error_tag f, :title %>
+
+  <%= label f, :url %>
+  <%= text_input f, :url %>
+  <%= error_tag f, :url %>
+
+  <%= label f, :last_sync %>
+  <%= datetime_select f, :last_sync %>
+  <%= error_tag f, :last_sync %>
+
+  <%= label f, :unread_count %>
+  <%= number_input f, :unread_count %>
+  <%= error_tag f, :unread_count %>
+
+  <%= label f, :sync_status %>
+  <%= textarea f, :sync_status %>
+  <%= error_tag f, :sync_status %>
+
+  <%= label f, :position %>
+  <%= number_input f, :position %>
+  <%= error_tag f, :position %>
+
+  <%= label f, :update_frequency %>
+  <%= number_input f, :update_frequency %>
+  <%= error_tag f, :update_frequency %>
+
+  <%= label f, :auto_frequency %>
+  <%= checkbox f, :auto_frequency %>
+  <%= error_tag f, :auto_frequency %>
+
+  <%= label f, :last_sync %>
+  <%= datetime_select f, :last_sync %>
+  <%= error_tag f, :last_sync %>
+
+  <div>
+    <%= submit "Save" %>
+  </div>
+<% end %>

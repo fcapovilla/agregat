@@ -18,8 +18,9 @@ defmodule AgregatWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/folder/:id/toggle", FolderController, :toggle
-    resources "/folders", FolderController
+    resources "/folder", FolderController
+    resources "/feed", FeedController
+    resources "/item", ItemController
   end
 
   # Other scopes may use custom stacks.

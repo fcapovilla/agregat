@@ -12,13 +12,6 @@ defmodule AgregatWeb.FolderControllerTest do
     folder
   end
 
-  describe "index" do
-    test "lists all folders", %{conn: conn} do
-      conn = get(conn, Routes.folder_path(conn, :index))
-      assert html_response(conn, 200) =~ "Listing Folders"
-    end
-  end
-
   describe "new folder" do
     test "renders form", %{conn: conn} do
       conn = get(conn, Routes.folder_path(conn, :new))

@@ -1,4 +1,4 @@
-defmodule AgregatWeb.ItemLive do
+defmodule AgregatWeb.ItemsLive do
   use Phoenix.LiveView
 
   import Ecto.Query, only: [from: 2]
@@ -6,7 +6,7 @@ defmodule AgregatWeb.ItemLive do
   alias Agregat.Feeds
 
   def render(assigns) do
-    AgregatWeb.FolderView.render("show.html", assigns)
+    AgregatWeb.LiveView.render("items.html", assigns)
   end
 
   def mount(%{folder_id: folder_id}, socket) do
@@ -14,6 +14,25 @@ defmodule AgregatWeb.ItemLive do
       (from i in Agregat.Feeds.Item,
             join: f in assoc(i, :feed),
             where: f.folder_id == ^folder_id,
+            limit: 100,
+            preload: [:medias, :feed])
+      |> Agregat.Repo.all()
+    {:ok, assign(socket, items: items, selected: nil)}
+  end
+
+  def mount(%{feed_id: feed_id}, socket) do
+    items =
+      (from i in Agregat.Feeds.Item,
+            where: i.feed_id == ^feed_id,
+            limit: 100,
+            preload: [:medias, :feed])
+      |> Agregat.Repo.all()
+    {:ok, assign(socket, items: items, selected: nil)}
+  end
+
+  def mount(%{}, socket) do
+    items =
+      (from i in Agregat.Feeds.Item,
             limit: 100,
             preload: [:medias, :feed])
       |> Agregat.Repo.all()

@@ -1,16 +1,16 @@
-defmodule AgregatWeb.FolderLive do
+defmodule AgregatWeb.FoldersLive do
   use Phoenix.LiveView
 
   alias Agregat.Feeds
   alias AgregatWeb.Router.Helpers, as: Routes
 
   def render(assigns) do
-    AgregatWeb.FolderView.render("index.html", assigns)
+    AgregatWeb.LiveView.render("folders.html", assigns)
   end
 
-  def mount(_session, socket) do
+  def mount(%{selected: selected}, socket) do
     folders = Feeds.list_folders()
-    {:ok, assign(socket, folders: folders, selected: nil, total_unread: 0, menu_open: nil)}
+    {:ok, assign(socket, folders: folders, selected: selected, total_unread: 0, menu_open: nil)}
   end
 
   def handle_event("toggle-folder-" <> folder_id, _, socket) do
@@ -34,5 +34,14 @@ defmodule AgregatWeb.FolderLive do
   def handle_event("select-folder-" <> folder_id, _, socket) do
     folder_id = String.to_integer(folder_id)
     {:stop, redirect(socket, to: Routes.folder_path(socket, :show, folder_id))}
+  end
+
+  def handle_event("select-feed-" <> feed_id, _, socket) do
+    feed_id = String.to_integer(feed_id)
+    {:stop, redirect(socket, to: Routes.feed_path(socket, :show, feed_id))}
+  end
+
+  def handle_event("select-all", _, socket) do
+    {:stop, redirect(socket, to: Routes.item_path(socket, :index))}
   end
 end
