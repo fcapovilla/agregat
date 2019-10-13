@@ -9,7 +9,7 @@ defmodule AgregatWeb.ItemsLive do
     AgregatWeb.LiveView.render("items.html", assigns)
   end
 
-  def mount(%{folder_id: folder_id}, socket) do
+  def mount(%{selected: "folder-" <> folder_id}, socket) do
     items =
       (from i in Agregat.Feeds.Item,
             join: f in assoc(i, :feed),
@@ -20,7 +20,7 @@ defmodule AgregatWeb.ItemsLive do
     {:ok, assign(socket, items: items, selected: nil)}
   end
 
-  def mount(%{feed_id: feed_id}, socket) do
+  def mount(%{selected: "feed-" <> feed_id}, socket) do
     items =
       (from i in Agregat.Feeds.Item,
             where: i.feed_id == ^feed_id,
@@ -30,7 +30,7 @@ defmodule AgregatWeb.ItemsLive do
     {:ok, assign(socket, items: items, selected: nil)}
   end
 
-  def mount(%{}, socket) do
+  def mount(%{selected: "all"}, socket) do
     items =
       (from i in Agregat.Feeds.Item,
             limit: 100,
@@ -64,5 +64,9 @@ defmodule AgregatWeb.ItemsLive do
       position < 1 -> {:noreply, socket}
       true -> {:noreply, assign(socket, selected: Enum.at(items, position - 1).id)}
     end
+  end
+
+  def handle_event("keydown", _, socket) do
+    {:noreply, socket}
   end
 end

@@ -17,10 +17,11 @@ defmodule AgregatWeb.Router do
   scope "/", AgregatWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", AppLive
+    live "/folder/:folder_id", AppLive
+    live "/feed/:feed_id", AppLive
     resources "/folder", FolderController
     resources "/feed", FeedController
-    resources "/item", ItemController
   end
 
   # Other scopes may use custom stacks.

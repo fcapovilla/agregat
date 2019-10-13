@@ -8,45 +8,7 @@
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
-    <div class="side-bar">
-      <div class="navbar navbar-default">
-        <div class="navbar-form" id="mainmenu">
-          <div class="btn-group">
-            <a href="<%= Routes.feed_path(@conn, :new) %>" class="btn btn-default" title="Add feed">
-              <i class="fa fa-plus"></i>
-            </a>
-            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Toggle read visibility">
-              <%= if true do %>
-                <i class="fa fa-eye"></i>
-              <% else %>
-                <i class="fa fa-eye-slash"></i>
-              <% end %>
-            </a>
-            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Settings">
-              <i class="fa fa-cog"></i>
-            </a>
-            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Log out">
-              <i class="fa fa-sign-out-alt"></i>
-            </a>
-          </div>
-          <div class="btn-group mobile-item-buttons visible-xs {{unless onItemList "invisible"}}">
-            <button {{action "previousItem"}} class="btn btn-default mobile-item-button" title="{{t "previous"}}">
-              <i class="fa fa-arrow-circle-o-up"></i>
-            </button>
-            <button {{action "nextItem"}} class="btn btn-default mobile-item-button" title="{{t "next"}}">
-              <i class="fa fa-arrow-circle-o-down"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="dragbar hidden-xs"></div>
-      <div class="{{unless onIndex "hidden-xs"}}">
-        <%= Phoenix.LiveView.live_render(@conn, AgregatWeb.FoldersLive, session: %{selected: @conn.assigns.selected}) %>
-      </div>
-    </div>
-    <div class="content {{if onIndex "hidden-xs"}}">
-      <%= render @view_module, @view_template, assigns %>
-    </div>
+    <%= render @view_module, @view_template, assigns %>
 
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
