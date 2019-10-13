@@ -1,6 +1,6 @@
 <div id="item-list">
   <div>
-    <ul class="item-list list-unstyled">
+    <ul class="item-list list-unstyled" phx-keydown="keydown" phx-target="window">
       <%= for item <- @items do %>
         <div phx-click="open-item-<%= item.id %>" class="item-container <%= if @selected == item.id, do: "active"%>">
           <div class="item-labels">

@@ -43,4 +43,26 @@ defmodule AgregatWeb.ItemsLive do
     item_id = String.to_integer(item_id)
     {:noreply, assign(socket, selected: item_id)}
   end
+
+  def handle_event("keydown", %{"key" => "j"}, socket) do
+    selected = socket.assigns.selected
+    position = Enum.find_index(socket.assigns.items, &(&1.id == selected))
+    if position + 1 > Enum.count(socket.assigns.items) do
+      {:noreply, socket}
+    else
+      item = Enum.at(socket.assigns.items, position + 1)
+      {:noreply, assign(socket, selected: item.id)}
+    end
+  end
+
+  def handle_event("keydown", %{"key" => "k"}, socket) do
+    selected = socket.assigns.selected
+    position = Enum.find_index(socket.assigns.items, &(&1.id == selected))
+    if position < 1 do
+      {:noreply, socket}
+    else
+      item = Enum.at(socket.assigns.items, position - 1)
+      {:noreply, assign(socket, selected: item.id)}
+    end
+  end
 end
