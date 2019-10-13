@@ -1,5 +1,3 @@
-<h1>Listing Folders</h1>
-
 <div class="feed-list">
   <ul class="list-unstyled" id="feed-list">
     <li>
@@ -24,19 +22,19 @@
     </li>
     <%= for folder <- @folders do %>
       <div phx-click="select-folder-<%= folder.id %>" class="folder-title <%= if @selected == "folder-#{folder.id}", do: "active" %>">
-        <%= if false do #folder.unread > 0 do %>
+        <%= if false do %>
           <div class="folder-badge">
             <span class="badge badge-primary"><%= folder.unread %></span>
           </div>
         <% end %>
         <div class="folder-text">
           <div phx-click="toggle-folder-<%= folder.id %>" class="folder-toggle">
-            <i class="fa fa-plus-square-o"></i>
+            <i class="fa <%= if folder.open, do: "fa-minus-square", else: "fa-plus-square" %>"></i>
           </div>
           <div phx-click="open-menu-folder-<%= folder.id %>" class="folder-icon">
             <i class="fa fa-folder"></i>
           </div>
-          <%= if false do #folder.unread > 0 do %>
+          <%= if false do %>
             <b><%= folder.title %></b>
           <% else %>
             <%= folder.title %>

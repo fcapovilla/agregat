@@ -26,8 +26,7 @@ defmodule AgregatWeb.FolderController do
   end
 
   def show(conn, %{"id" => id}) do
-    folder = Feeds.get_folder!(id)
-    render(conn, "show.html", folder: folder)
+    Phoenix.LiveView.Controller.live_render(conn, AgregatWeb.ItemLive, session: %{folder_id: id})
   end
 
   def edit(conn, %{"id" => id}) do

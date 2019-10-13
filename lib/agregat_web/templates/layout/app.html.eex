@@ -12,25 +12,22 @@
       <div class="navbar navbar-default">
         <div class="navbar-form" id="mainmenu">
           <div class="btn-group">
-            <button class="btn btn-primary hidden-tiny-phone">
-              <img id="spinner" class="invisible" src="assets/img/ajax-loader.gif">
-            </button>
-            <button {{action "addFeed"}} class="btn btn-default" title="{{t "addFeed"}}">
+            <a href="<%= Routes.folder_path(@conn, :index) %>" class="btn btn-default" title="Add feed">
               <i class="fa fa-plus"></i>
-            </button>
-            <button {{action "toggleReadVisibility"}} class="btn btn-default" title="{{t "toggleReadVisibility"}}">
-              {{#if filters.showRead}}
+            </a>
+            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Toggle read visibility">
+              <%= if true do %>
                 <i class="fa fa-eye"></i>
-              {{else}}
+              <% else %>
                 <i class="fa fa-eye-slash"></i>
-              {{/if}}
-            </button>
-            <button {{action "openSettings"}} class="btn btn-default" title="{{t "settings"}}">
+              <% end %>
+            </a>
+            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Settings">
               <i class="fa fa-cog"></i>
-            </button>
-            <button {{action "logout"}} class="btn btn-default" title="{{t "logOut"}}">
-              <i class="fa fa-sign-out"></i>
-            </button>
+            </a>
+            <a <%= Routes.folder_path(@conn, :index) %> class="btn btn-default" title="Log out">
+              <i class="fa fa-sign-out-alt"></i>
+            </a>
           </div>
           <div class="btn-group mobile-item-buttons visible-xs {{unless onItemList "invisible"}}">
             <button {{action "previousItem"}} class="btn btn-default mobile-item-button" title="{{t "previous"}}">

@@ -30,4 +30,9 @@ defmodule AgregatWeb.FolderLive do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+  def handle_event("select-folder-" <> folder_id, _, socket) do
+    folder_id = String.to_integer(folder_id)
+    {:stop, redirect(socket, to: Routes.folder_path(socket, :show, folder_id))}
+  end
 end
