@@ -44,25 +44,21 @@ defmodule AgregatWeb.ItemsLive do
     {:noreply, assign(socket, selected: item_id)}
   end
 
-  def handle_event("keydown", %{"key" => "j"}, socket) do
-    selected = socket.assigns.selected
-    position = Enum.find_index(socket.assigns.items, &(&1.id == selected))
-    if position + 1 > Enum.count(socket.assigns.items) do
-      {:noreply, socket}
-    else
-      item = Enum.at(socket.assigns.items, position + 1)
-      {:noreply, assign(socket, selected: item.id)}
+  def handle_event("keydown", %{"key" => "j"}, %{assigns: %{selected: selected, items: items}} = socket) do
+    position = Enum.find_index(items, &(&1.id == selected))
+    cond do
+      position == nil -> {:noreply, assign(socket, selected: Enum.at(items, 0).id)}
+      position + 1 > Enum.count(items) -> {:noreply, socket}
+      true -> {:noreply, assign(socket, selected: Enum.at(items, position + 1).id)}
     end
   end
 
-  def handle_event("keydown", %{"key" => "k"}, socket) do
-    selected = socket.assigns.selected
-    position = Enum.find_index(socket.assigns.items, &(&1.id == selected))
-    if position < 1 do
-      {:noreply, socket}
-    else
-      item = Enum.at(socket.assigns.items, position - 1)
-      {:noreply, assign(socket, selected: item.id)}
+  def handle_event("keydown", %{"key" => "k"}, %{assigns: %{selected: selected, items: items}} = socket) do
+    position = Enum.find_index(items, &(&1.id == selected))
+    cond do
+      position == nil -> {:noreply, assign(socket, selected: Enum.at(items, 0).id)}
+      position < 1 -> {:noreply, socket}
+      true -> {:noreply, assign(socket, selected: Enum.at(items, position - 1).id)}
     end
   end
 end
