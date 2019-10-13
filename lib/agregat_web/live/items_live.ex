@@ -41,7 +41,11 @@ defmodule AgregatWeb.ItemsLive do
 
   def handle_event("open-item-" <> item_id, _, socket) do
     item_id = String.to_integer(item_id)
-    {:noreply, assign(socket, selected: item_id)}
+    if socket.assigns.selected == item_id do
+      {:noreply, assign(socket, selected: nil)}
+    else
+      {:noreply, assign(socket, selected: item_id)}
+    end
   end
 
   def handle_event("keydown", %{"key" => "j"}, %{assigns: %{selected: selected, items: items}} = socket) do
