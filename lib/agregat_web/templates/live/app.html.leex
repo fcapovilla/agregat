@@ -93,7 +93,7 @@
                 <% end %>
                 <div class="feed-text">
                   <div phx-click="open-menu-feed-<%= feed.id %>" class="feed-icon">
-                    <%= if feed.favicon do %>
+                    <%= if feed.favicon_id do %>
                       <img class="favicon" src="/favicons/<%= feed.favicon_id %>">
                     <% else %>
                       <i class="fa fa-rss-square"></i>

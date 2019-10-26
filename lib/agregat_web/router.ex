@@ -20,6 +20,7 @@ defmodule AgregatWeb.Router do
     live "/", AppLive
     resources "/folder", FolderController
     resources "/feed", FeedController
+    get "/favicons/:id", FaviconController, :show
   end
 
   # Other scopes may use custom stacks.
