@@ -17,7 +17,7 @@ defmodule AgregatWeb.ItemsLive do
             limit: 100,
             preload: [:medias, :feed])
       |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil)}
+    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
   end
 
   def mount(%{selected: "feed-" <> feed_id}, socket) do
@@ -27,7 +27,7 @@ defmodule AgregatWeb.ItemsLive do
             limit: 100,
             preload: [:medias, :feed])
       |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil)}
+    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
   end
 
   def mount(%{selected: "all"}, socket) do
@@ -36,33 +36,48 @@ defmodule AgregatWeb.ItemsLive do
             limit: 100,
             preload: [:medias, :feed])
       |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil)}
+    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
   end
 
-  def handle_event("open-item-" <> item_id, _, socket) do
+  def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
     item_id = String.to_integer(item_id)
-    if socket.assigns.selected == item_id do
-      {:noreply, assign(socket, selected: nil)}
+    if selected != nil and selected.id == item_id do
+      {:noreply, assign(socket, items: [selected], selected: nil)}
     else
-      {:noreply, assign(socket, selected: item_id)}
+      item = Agregat.Feeds.get_item!(item_id)
+      if selected != nil do
+        {:noreply, assign(socket, items: [selected, item], selected: item)}
+      else
+        {:noreply, assign(socket, items: [item], selected: item)}
+      end
     end
   end
 
-  def handle_event("keydown", %{"key" => "j"}, %{assigns: %{selected: selected, items: items}} = socket) do
-    position = Enum.find_index(items, &(&1.id == selected))
+  def handle_event("keydown", %{"key" => "j"}, %{assigns: %{ids: ids, selected: selected}} = socket) do
+    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
     cond do
-      position == nil -> {:noreply, assign(socket, selected: Enum.at(items, 0).id)}
-      position + 1 > Enum.count(items) -> {:noreply, socket}
-      true -> {:noreply, assign(socket, selected: Enum.at(items, position + 1).id)}
+      position == nil ->
+        item = Agregat.Feeds.get_item!(Enum.at(ids, 0))
+        {:noreply, assign(socket, items: [item], selected: item)}
+      position + 1 >= Enum.count(ids) ->
+        {:noreply, socket}
+      true ->
+        item = Agregat.Feeds.get_item!(Enum.at(ids, position + 1))
+        {:noreply, assign(socket, items: [selected, item], selected: item)}
     end
   end
 
-  def handle_event("keydown", %{"key" => "k"}, %{assigns: %{selected: selected, items: items}} = socket) do
-    position = Enum.find_index(items, &(&1.id == selected))
+  def handle_event("keydown", %{"key" => "k"}, %{assigns: %{ids: ids, selected: selected}} = socket) do
+    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
     cond do
-      position == nil -> {:noreply, assign(socket, selected: Enum.at(items, 0).id)}
-      position < 1 -> {:noreply, socket}
-      true -> {:noreply, assign(socket, selected: Enum.at(items, position - 1).id)}
+      position == nil ->
+        item = Agregat.Feeds.get_item!(Enum.at(ids, 0))
+        {:noreply, assign(socket, items: [item], selected: item)}
+      position < 1 ->
+        {:noreply, socket}
+      true ->
+        item = Agregat.Feeds.get_item!(Enum.at(ids, position - 1))
+        {:noreply, assign(socket, items: [selected, item], selected: item)}
     end
   end
 

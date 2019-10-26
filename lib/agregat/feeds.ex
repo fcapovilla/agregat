@@ -326,7 +326,7 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_item!(id), do: Repo.get!(Item, id)
+  def get_item!(id), do: Repo.get!(Item |> preload([:feed, :medias]), id)
 
   @doc """
   Creates a item.
