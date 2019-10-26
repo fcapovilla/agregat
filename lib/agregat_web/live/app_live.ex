@@ -76,6 +76,10 @@ defmodule AgregatWeb.AppLive do
     {:noreply, socket}
   end
 
+  def handle_event("keydown", %{"key" => "i"} = value, socket) do
+    handle_event("toggle-read-filter", value, socket)
+  end
+
   def handle_event("keydown", _, socket) do
     {:noreply, socket}
   end

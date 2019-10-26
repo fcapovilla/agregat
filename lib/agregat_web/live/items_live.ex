@@ -10,13 +10,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def mount(%{params: params}, socket) do
-    items =
-      (from i in Feeds.Item, preload: [:medias, :feed])
-      |> filter(params)
-      |> sort(params)
-      |> paginate(params)
-      |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
+    {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: []) |> fetch_items(), temporary_assigns: [:items]}
   end
 
   def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
@@ -48,6 +42,10 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
+  def handle_event("load-more", _, %{assigns: %{page: page}} = socket) do
+    {:noreply, assign(socket, page: page + 1) |> fetch_items()}
+  end
+
   def handle_event("keydown", %{"key" => "j"}, %{assigns: %{ids: ids, selected: selected}} = socket) do
     position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
     cond do
@@ -74,6 +72,16 @@ defmodule AgregatWeb.ItemsLive do
 
   def handle_event("keydown", _, socket) do
     {:noreply, socket}
+  end
+
+  defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
+    items =
+      (from i in Feeds.Item, preload: [:medias, :feed])
+      |> filter(params)
+      |> sort(params)
+      |> paginate(page)
+      |> Agregat.Repo.all()
+    assign(socket, items: items, ids: ids ++ Enum.map(items, &(&1.id)))
   end
 
   defp select_item(%{assigns: %{selected: selected}} = socket, item_id) do
@@ -106,7 +114,7 @@ defmodule AgregatWeb.ItemsLive do
     from i in query, order_by: [desc: :date]
   end
 
-  defp paginate(query, params) do
-    from i in query, limit: 100
+  defp paginate(query, page) do
+    from i in query, limit: 50, offset: ^(page * 50)
   end
 end

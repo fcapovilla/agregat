@@ -1,6 +1,6 @@
-<div id="item-list" phx-keydown="keydown" phx-target="window">
+<div id="item-list" phx-keydown="keydown" phx-target="window" phx-hook="InfiniteScroll">
   <div>
-    <ul id="items" class="item-list list-unstyled" phx-update="prepend">
+    <ul id="items" class="item-list list-unstyled" phx-update="append">
       <%= for item <- @items do %>
         <li id="item-<%= item.id %>" class="item-container <%= if item == @selected, do: "active"%>">
           <div class="item-labels">
@@ -26,7 +26,7 @@
             <div class="well item-content">
               <a class="item-content-title" href="<%= item.url %>" target="_blank"><%= item.title %></a>
               <br>
-              <%= item.content %>
+              <%= raw item.content %>
               <%= if item.medias do %>
                 <br>
                 <%= for media <- item.medias do %>
