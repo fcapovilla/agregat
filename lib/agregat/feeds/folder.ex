@@ -6,6 +6,7 @@ defmodule Agregat.Feeds.Folder do
     field :open, :boolean, default: true
     field :position, :integer
     field :title, :string
+    field :unread_count, :integer, virtual: true, default: 0
     belongs_to :user, Agregat.Accounts.User
     has_many :feeds, Agregat.Feeds.Feed
 

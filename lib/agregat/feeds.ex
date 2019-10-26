@@ -115,9 +115,10 @@ defmodule Agregat.Feeds do
   """
   def list_folders do
     Folder
+    |> preload(:feeds)
     |> order_by(asc: :position)
     |> Repo.all()
-    |> Repo.preload(:feeds)
+    |> count_unread()
   end
 
   @doc """
@@ -134,7 +135,20 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_folder!(id), do: Repo.get!(Folder, id)
+  def get_folder!(id) do
+    Folder
+    |> preload(:feeds)
+    |> Repo.get!(id)
+    |> count_unread()
+  end
+
+  defp count_unread(folders) when is_list(folders) do
+    Enum.map(folders, &count_unread/1)
+  end
+
+  defp count_unread(folder) do
+    %{folder | unread_count: Enum.reduce(folder.feeds, 0, &(&1.unread_count + &2))}
+  end
 
   @doc """
   Creates a folder.

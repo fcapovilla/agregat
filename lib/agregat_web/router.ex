@@ -18,8 +18,6 @@ defmodule AgregatWeb.Router do
     pipe_through :browser
 
     live "/", AppLive
-    live "/folder/:folder_id", AppLive
-    live "/feed/:feed_id", AppLive
     resources "/folder", FolderController
     resources "/feed", FeedController
   end

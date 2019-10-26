@@ -15,16 +15,15 @@ defmodule AgregatWeb.AppLive do
     {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil)}
   end
 
-  def handle_params(%{"folder_id" => folder_id}, _, socket) do
-    {:noreply, assign(socket, selected: "folder-#{folder_id}")}
-  end
-
-  def handle_params(%{"feed_id" => feed_id}, _, socket) do
-    {:noreply, assign(socket, selected: "feed-#{feed_id}")}
-  end
-
-  def handle_params(%{}, _, socket) do
-    {:noreply, assign(socket, selected: "all")}
+  def handle_params(params, _, socket) do
+    selected =
+      case params do
+        %{"folder_id" => folder_id} -> "folder-#{folder_id}"
+        %{"feed_id" => feed_id} -> "feed-#{feed_id}"
+        %{"favorite" => _} -> "favorites"
+        %{} -> "all"
+      end
+    {:noreply, assign(socket, params: params, selected: selected)}
   end
 
   def handle_event("toggle-folder-" <> folder_id, _, socket) do
@@ -39,18 +38,34 @@ defmodule AgregatWeb.AppLive do
     end
   end
 
-  def handle_event("select-folder-" <> folder_id, _, socket) do
-    folder_id = String.to_integer(folder_id)
-    {:noreply, live_redirect(socket, to: "/folder/#{folder_id}")}
+  def handle_event("select-folder-" <> folder_id, _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["feed_id", "favorite"]) |> Map.put("folder_id", folder_id)
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
-  def handle_event("select-feed-" <> feed_id, _, socket) do
-    feed_id = String.to_integer(feed_id)
-    {:noreply, live_redirect(socket, to: "/feed/#{feed_id}")}
+  def handle_event("select-feed-" <> feed_id, _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["folder_id", "favorite"]) |> Map.put("feed_id", feed_id)
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
-  def handle_event("select-all", _, socket) do
-    {:noreply, live_redirect(socket, to: "/")}
+  def handle_event("select-favorites", _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["feed_id", "folder_id"]) |> Map.put("favorite", true)
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+  end
+
+  def handle_event("select-all", _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["feed_id", "folder_id", "favorite"])
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+  end
+
+  def handle_event("toggle-read-filter", _, %{assigns: %{params: params}} = socket) do
+    params =
+      if params["read"] == "false" do
+        Map.delete(params, "read")
+      else
+        Map.put(params, "read", "false")
+      end
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("keydown", %{"key" => "h"}, socket) do

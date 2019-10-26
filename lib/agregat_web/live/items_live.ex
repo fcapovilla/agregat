@@ -9,32 +9,12 @@ defmodule AgregatWeb.ItemsLive do
     AgregatWeb.LiveView.render("items.html", assigns)
   end
 
-  def mount(%{selected: "folder-" <> folder_id}, socket) do
+  def mount(%{params: params}, socket) do
     items =
-      (from i in Feeds.Item,
-            join: f in assoc(i, :feed),
-            where: f.folder_id == ^folder_id,
-            limit: 100,
-            preload: [:medias, :feed])
-      |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
-  end
-
-  def mount(%{selected: "feed-" <> feed_id}, socket) do
-    items =
-      (from i in Feeds.Item,
-            where: i.feed_id == ^feed_id,
-            limit: 100,
-            preload: [:medias, :feed])
-      |> Agregat.Repo.all()
-    {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
-  end
-
-  def mount(%{selected: "all"}, socket) do
-    items =
-      (from i in Feeds.Item,
-            limit: 100,
-            preload: [:medias, :feed])
+      (from i in Feeds.Item, preload: [:medias, :feed])
+      |> filter(params)
+      |> sort(params)
+      |> paginate(params)
       |> Agregat.Repo.all()
     {:ok, assign(socket, items: items, selected: nil, ids: Enum.map(items, &(&1.id))), temporary_assigns: [:items]}
   end
@@ -108,5 +88,25 @@ defmodule AgregatWeb.ItemsLive do
       {:error, %Ecto.Changeset{} = changeset} ->
         assign(socket, changeset: changeset)
     end
+  end
+
+  defp filter(query, params) do
+    Enum.reduce(params, query, fn {key, value}, query ->
+      case key do
+        "favorite" -> from i in query, where: i.favorite == ^(if value == "true", do: true, else: false)
+        "read" -> from i in query, where: i.read == ^(if value == "true", do: true, else: false)
+        "folder_id" -> from i in query, left_join: f in assoc(i, :feed), where: f.folder_id == ^value
+        "feed_id" -> from i in query, where: i.feed_id == ^value
+        _ -> query
+      end
+    end)
+  end
+
+  defp sort(query, params) do
+    from i in query, order_by: [desc: :date]
+  end
+
+  defp paginate(query, params) do
+    from i in query, limit: 100
   end
 end

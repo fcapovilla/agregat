@@ -5,8 +5,8 @@
         <a href="<%= Routes.feed_path(@socket, :new) %>" class="btn btn-default" title="Add feed">
           <i class="fa fa-plus"></i>
         </a>
-        <a <%= Routes.folder_path(@socket, :index) %> class="btn btn-default" title="Toggle read visibility">
-          <%= if true do %>
+        <a phx-click="toggle-read-filter" class="btn btn-default" title="Toggle read visibility">
+          <%= if @params["read"] != "false" do %>
             <i class="fa fa-eye"></i>
           <% else %>
             <i class="fa fa-eye-slash"></i>
@@ -19,24 +19,24 @@
           <i class="fa fa-sign-out-alt"></i>
         </a>
       </div>
-      <div class="btn-group mobile-item-buttons visible-xs {{unless onItemList "invisible"}}">
-        <button {{action "previousItem"}} class="btn btn-default mobile-item-button" title="{{t "previous"}}">
+      <div class="btn-group mobile-item-buttons visible-xs <%= if @selected == nil, do: "invisible", else: "" %>">
+        <button phx-click="previous-item" class="btn btn-default mobile-item-button" title="previous">
           <i class="fa fa-arrow-circle-o-up"></i>
         </button>
-        <button {{action "nextItem"}} class="btn btn-default mobile-item-button" title="{{t "next"}}">
+        <button phx-click="next-item" class="btn btn-default mobile-item-button" title="next">
           <i class="fa fa-arrow-circle-o-down"></i>
         </button>
       </div>
     </div>
   </div>
   <div class="dragbar hidden-xs"></div>
-  <div class="{{unless onIndex "hidden-xs"}}">
+  <div class="<%= if @selected != nil, do: "hidden-xs", else: "" %>">
     <div class="feed-list" phx-keydown="keydown" phx-target="window">
       <ul class="list-unstyled" id="feed-list">
         <li>
           <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>">
             <div  class="folder-badge">
-              <span class="badge badge-primary"><%= @total_unread %></span>
+              <span class="badge badge-primary"><%= Enum.reduce(@folders, 0, &(&1.unread_count + &2)) %></span>
             </div>
 
             <div  class="folder-text">
@@ -55,9 +55,9 @@
         </li>
         <%= for folder <- @folders do %>
           <div phx-click="select-folder-<%= folder.id %>" class="folder-title <%= if @selected == "folder-#{folder.id}", do: "active" %>">
-            <%= if false do %>
+            <%= if folder.unread_count do %>
               <div class="folder-badge">
-                <span class="badge badge-primary"><%= folder.unread %></span>
+                <span class="badge badge-primary"><%= folder.unread_count %></span>
               </div>
             <% end %>
             <div class="folder-text">
@@ -121,6 +121,6 @@
     </div>
   </div>
 </div>
-<div class="content {{if onIndex "hidden-xs"}}">
-  <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{selected: @selected}, id: "items-#{@selected}") %>
+<div class="content <%= if @selected == nil, do: "hidden-xs", else: "" %>">
+  <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params}, id: "items?#{URI.encode_query(@params)}") %>
 </div>

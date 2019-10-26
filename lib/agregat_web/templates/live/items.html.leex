@@ -4,7 +4,7 @@
       <%= for item <- @items do %>
         <li id="item-<%= item.id %>" class="item-container <%= if item == @selected, do: "active"%>">
           <div class="item-labels">
-            <%= if item.feed.title do %>
+            <%= if item.feed != nil and item.feed.title do %>
               <span class="item-feed-title label <%= if item.read, do: "label-default", else: "label-primary" %> hidden-small-phone">
               <%= item.feed.title %>
               </span>
