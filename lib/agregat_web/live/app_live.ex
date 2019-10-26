@@ -30,13 +30,7 @@ defmodule AgregatWeb.AppLive do
   def handle_event("toggle-folder-" <> folder_id, _, socket) do
     folder_id = String.to_integer(folder_id)
     folder = Enum.find(socket.assigns.folders, &(&1.id == folder_id))
-    folder_params = if folder.open do
-      %{open: false}
-    else
-      %{open: true}
-    end
-
-    case Feeds.update_folder(folder, folder_params) do
+    case Feeds.update_folder(folder, %{open: !folder.open}) do
       {:ok, folder} ->
         folders = Feeds.list_folders()
         {:noreply, assign(socket, folders: folders)}

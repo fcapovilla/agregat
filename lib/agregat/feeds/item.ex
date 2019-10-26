@@ -22,6 +22,6 @@ defmodule Agregat.Feeds.Item do
   def changeset(item, attrs) do
     item
     |> cast(attrs, [:title, :url, :guid, :content, :read, :favorite, :date, :orig_feed_title])
-    |> validate_required([:title, :url, :guid, :content, :read, :favorite, :date, :orig_feed_title])
+    |> validate_required([:guid, :read, :favorite])
   end
 end

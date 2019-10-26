@@ -16,6 +16,6 @@ defmodule Agregat.Feeds.Folder do
   def changeset(folder, attrs) do
     folder
     |> cast(attrs, [:title, :open, :position])
-    |> validate_required([:title, :open, :position])
+    |> validate_required([:title, :open])
   end
 end
