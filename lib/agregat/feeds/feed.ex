@@ -22,7 +22,7 @@ defmodule Agregat.Feeds.Feed do
   @doc false
   def changeset(feed, attrs) do
     feed
-    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency])
+    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency, :user_id, :folder_id, :favicon_id])
     |> validate_required([:url])
   end
 end

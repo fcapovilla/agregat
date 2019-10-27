@@ -66,7 +66,7 @@ defmodule Agregat.Syncer do
         title: entry.title || entry.link || entry.id,
         url: entry.link || entry.id,
         content: entry.summary,
-        date: Agregat.DateParser.parse(entry.updated),
+        date: Agregat.DateParser.parse(entry.updated) || DateTime.utc_now,
         guid: entry.id || entry.link,
         medias: (if entry.enclosure, do: [%{url: entry.enclosure.url, type: entry.enclosure.type}], else: [])
       }

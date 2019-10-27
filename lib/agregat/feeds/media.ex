@@ -13,7 +13,7 @@ defmodule Agregat.Feeds.Media do
   @doc false
   def changeset(media, attrs) do
     media
-    |> cast(attrs, [:type, :url])
+    |> cast(attrs, [:type, :url, :item_id])
     |> validate_required([:type, :url])
   end
 end

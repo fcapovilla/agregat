@@ -21,7 +21,7 @@ defmodule Agregat.Feeds.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:title, :url, :guid, :content, :read, :favorite, :date, :orig_feed_title])
+    |> cast(attrs, [:title, :url, :guid, :content, :read, :favorite, :date, :orig_feed_title, :feed_id, :user_id])
     |> validate_required([:guid, :read, :favorite])
   end
 end
