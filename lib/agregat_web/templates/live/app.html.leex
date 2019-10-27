@@ -55,7 +55,7 @@
         </li>
         <%= for folder <- @folders do %>
           <div phx-click="select-folder-<%= folder.id %>" class="folder-title <%= if @selected == "folder-#{folder.id}", do: "active" %>">
-            <%= if folder.unread_count do %>
+            <%= if folder.unread_count > 0 do %>
               <div class="folder-badge">
                 <span class="badge badge-primary"><%= folder.unread_count %></span>
               </div>

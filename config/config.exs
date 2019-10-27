@@ -29,3 +29,17 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+# Quantum scheduled tasks
+config :agregat, Agregat.Scheduler, jobs: [
+  sync: [
+    schedule: "*/10 * * * *",
+    task: {Agregat.Syncer, :sync_all, []},
+    overlap: false
+  ],
+  recalculate_sync_frequency: [
+    schedule: "0 1 * * *",
+    task: {Agregat.Syncer, :recalculate_sync_frequencies, []},
+    overlap: false
+  ],
+]

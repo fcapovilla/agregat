@@ -11,9 +11,10 @@ defmodule Agregat.Application do
       # Start the Ecto repository
       Agregat.Repo,
       # Start the endpoint when the application starts
-      AgregatWeb.Endpoint
+      AgregatWeb.Endpoint,
       # Starts a worker by calling: Agregat.Worker.start_link(arg)
       # {Agregat.Worker, arg},
+      Agregat.Scheduler
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
