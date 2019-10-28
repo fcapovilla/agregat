@@ -186,10 +186,7 @@ defmodule Agregat.Feeds do
   def update_folder(%Folder{} = folder, attrs) do
     folder
     |> Folder.changeset(attrs)
-    |> update_folder()
-  end
-  def update_folder(%Ecto.Changeset{} = changeset) do
-    Repo.update(changeset)
+    |> Repo.update()
     |> broadcast_folder()
   end
 
@@ -292,10 +289,7 @@ defmodule Agregat.Feeds do
   def update_feed(%Feed{} = feed, attrs) do
     feed
     |> Feed.changeset(attrs)
-    |> update_feed()
-  end
-  def update_feed(%Ecto.Changeset{} = changeset) do
-    Repo.update(changeset)
+    |> Repo.update()
     |> broadcast_feed()
   end
 
@@ -426,6 +420,7 @@ defmodule Agregat.Feeds do
       update_feed(feed, %{unread_count: count})
     end
   end
+  def update_unread_count(any), do: any
 
   @doc """
   Deletes a Item.
