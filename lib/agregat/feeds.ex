@@ -502,4 +502,11 @@ defmodule Agregat.Feeds do
   def change_media(%Media{} = media) do
     Media.changeset(media, %{})
   end
+
+  def update_unread_count(%Feed{} = feed) do
+    Repo.transaction fn ->
+      count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
+      Feed.changeset(feed, %{unread_count: count}) |> Repo.update!()
+    end
+  end
 end

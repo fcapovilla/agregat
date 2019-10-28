@@ -11,6 +11,10 @@ defmodule Agregat.Syncer do
     Repo.all(from f in Feed, where: datetime_add(f.last_sync, f.update_frequency, "minute") < ^DateTime.utc_now)
     |> Task.async_stream(&sync_feed/1, max_concurrency: 5, timeout: 30_000)
     |> Enum.to_list()
+
+    # Broadcast updated folder list
+    folders = Agregat.Feeds.list_folders()
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
   end
 
   # Update items for the feed in parameter.
@@ -92,32 +96,32 @@ defmodule Agregat.Syncer do
             false
           end
         else
-          Agregat.Feeds.create_item(item)
+          {:ok, item} = Agregat.Feeds.create_item(item)
+          item
         end
       end)
       |> Enum.filter(&(&1))
 
-      feed_changes = %{
+      updated_feed = Agregat.Feeds.update_feed(feed, %{
         title: (if parsed_feed.title == "", do: feed.title, else: parsed_feed.title),
         last_sync: DateTime.utc_now,
         sync_status: ""
-      }
+      })
 
       if updated_items != [] do
         # Update feed data
-        #{:ok, updated_feed} = Repo.update_unread_count(feed, feed_changes)
+        {:ok, updated_feed} = Agregat.Feeds.update_unread_count(feed)
 
         # Broadcast changes
-        #Exagg.FeedView.render("show.json", %{
-        #  feed: updated_feed,
-        #  sideload: [{updated_items, Exagg.ItemView, "item.json"}],
-        #  broadcast: {"jsonapi:stream:" <> to_string(updated_feed.user_id), "new"}
-        #})
+        updated_items = Repo.preload(updated_items, [:feed, :medias])
+        data = %{feed: updated_feed, items: updated_items}
+        Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{updated_feed.id}", data)
+        Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{updated_feed.folder_id}", data)
+        Phoenix.PubSub.broadcast(Agregat.PubSub, "items", data)
 
-        feed #updated_feed
-
+        updated_feed
       else
-        Agregat.Feeds.update_feed(feed, feed_changes)
+        updated_feed
       end
     end
   end

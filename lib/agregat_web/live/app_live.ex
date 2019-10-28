@@ -11,6 +11,7 @@ defmodule AgregatWeb.AppLive do
   end
 
   def mount(session, socket) do
+    Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
     folders = Feeds.list_folders()
     {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil)}
   end
@@ -82,5 +83,9 @@ defmodule AgregatWeb.AppLive do
 
   def handle_event("keydown", _, socket) do
     {:noreply, socket}
+  end
+
+  def handle_info(%{folders: folders}, socket) do
+    {:noreply, assign(socket, folders: folders)}
   end
 end

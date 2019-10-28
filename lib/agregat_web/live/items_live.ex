@@ -10,6 +10,11 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def mount(%{params: params}, socket) do
+    case params do
+      %{"folder_id" => folder_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "folder-#{folder_id}")
+      %{"feed_id" => feed_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "feed-#{feed_id}")
+      _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
+    end
     {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: []) |> fetch_items(), temporary_assigns: [:items]}
   end
 
@@ -115,6 +120,10 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   defp paginate(query, page) do
-    from i in query, limit: 50, offset: ^(page * 50)
+    from i in query, limit: 50, offset: ^((page - 1) * 50)
+  end
+
+  def handle_info(%{items: items}, socket) do
+    {:noreply, assign(socket, items: items)}
   end
 end
