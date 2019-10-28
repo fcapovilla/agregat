@@ -91,13 +91,12 @@ defmodule Agregat.Syncer do
         if existing do
           changeset = Item.changeset(existing, item)
           if changeset.changes != %{} do
-            Repo.update!(changeset)
+            Agregat.Feeds.update_item(changeset)
           else
             false
           end
         else
-          {:ok, item} = Agregat.Feeds.create_item(item)
-          item
+          Agregat.Feeds.create_item(item)
         end
       end)
       |> Enum.filter(&(&1))
@@ -107,22 +106,6 @@ defmodule Agregat.Syncer do
         last_sync: DateTime.utc_now,
         sync_status: ""
       })
-
-      if updated_items != [] do
-        # Update feed data
-        {:ok, updated_feed} = Agregat.Feeds.update_unread_count(feed)
-
-        # Broadcast changes
-        updated_items = Repo.preload(updated_items, [:feed, :medias])
-        data = %{feed: updated_feed, items: updated_items}
-        Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{updated_feed.id}", data)
-        Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{updated_feed.folder_id}", data)
-        Phoenix.PubSub.broadcast(Agregat.PubSub, "items", data)
-
-        updated_feed
-      else
-        updated_feed
-      end
     end
   end
 end

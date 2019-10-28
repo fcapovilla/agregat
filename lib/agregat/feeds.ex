@@ -7,6 +7,10 @@ defmodule Agregat.Feeds do
   alias Agregat.Repo
 
   alias Agregat.Feeds.Favicon
+  alias Agregat.Feeds.Feed
+  alias Agregat.Feeds.Folder
+  alias Agregat.Feeds.Item
+  alias Agregat.Feeds.Media
 
   @doc """
   Returns the list of favicons.
@@ -102,8 +106,6 @@ defmodule Agregat.Feeds do
     Favicon.changeset(favicon, %{})
   end
 
-  alias Agregat.Feeds.Folder
-
   @doc """
   Returns the list of folders.
 
@@ -115,8 +117,8 @@ defmodule Agregat.Feeds do
   """
   def list_folders do
     Folder
-    |> preload(:feeds)
-    |> order_by(asc: :position)
+    |> order_by(:position)
+    |> preload(feeds: ^(from f in Feed, order_by: f.position))
     |> Repo.all()
     |> count_unread()
   end
@@ -166,6 +168,7 @@ defmodule Agregat.Feeds do
     %Folder{}
     |> Folder.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_folder()
   end
 
   @doc """
@@ -183,8 +186,19 @@ defmodule Agregat.Feeds do
   def update_folder(%Folder{} = folder, attrs) do
     folder
     |> Folder.changeset(attrs)
-    |> Repo.update()
+    |> update_folder()
   end
+  def update_folder(%Ecto.Changeset{} = changeset) do
+    Repo.update(changeset)
+    |> broadcast_folder()
+  end
+
+  def broadcast_folder({:ok, %Folder{} = folder}) do
+    folders = list_folders()
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
+    {:ok, folder}
+  end
+  def broadcast_folder(any), do: any
 
   @doc """
   Deletes a Folder.
@@ -214,8 +228,6 @@ defmodule Agregat.Feeds do
   def change_folder(%Folder{} = folder) do
     Folder.changeset(folder, %{})
   end
-
-  alias Agregat.Feeds.Feed
 
   @doc """
   Returns the list of feeds.
@@ -262,6 +274,7 @@ defmodule Agregat.Feeds do
     %Feed{}
     |> Feed.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_feed()
   end
 
   @doc """
@@ -279,8 +292,20 @@ defmodule Agregat.Feeds do
   def update_feed(%Feed{} = feed, attrs) do
     feed
     |> Feed.changeset(attrs)
-    |> Repo.update()
+    |> update_feed()
   end
+  def update_feed(%Ecto.Changeset{} = changeset) do
+    Repo.update(changeset)
+    |> broadcast_feed()
+  end
+
+  def broadcast_feed({:ok, %Feed{} = feed}) do
+    folders = list_folders()
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feed]})
+    {:ok, feed}
+  end
+  def broadcast_feed(any), do: any
 
   @doc """
   Deletes a Feed.
@@ -310,8 +335,6 @@ defmodule Agregat.Feeds do
   def change_feed(%Feed{} = feed) do
     Feed.changeset(feed, %{})
   end
-
-  alias Agregat.Feeds.Item
 
   @doc """
   Returns the list of items.
@@ -358,6 +381,8 @@ defmodule Agregat.Feeds do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_item()
+    |> update_unread_count()
   end
 
   @doc """
@@ -375,8 +400,22 @@ defmodule Agregat.Feeds do
   def update_item(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
-    |> Repo.update()
+    |> update_item()
   end
+  def update_item(%Ecto.Changeset{} = changeset) do
+    Repo.update(changeset)
+    |> update_unread_count()
+    |> broadcast_item()
+  end
+
+  def broadcast_item({:ok, %Item{} = item}) do
+    item = Repo.preload(item, [:feed, :medias])
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: [item]})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: [item]})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: [item]})
+    {:ok, item}
+  end
+  def broadcast_item(any), do: any
 
   @doc """
   Deletes a Item.
@@ -406,8 +445,6 @@ defmodule Agregat.Feeds do
   def change_item(%Item{} = item) do
     Item.changeset(item, %{})
   end
-
-  alias Agregat.Feeds.Media
 
   @doc """
   Returns the list of medias.
@@ -503,10 +540,16 @@ defmodule Agregat.Feeds do
     Media.changeset(media, %{})
   end
 
+  def update_unread_count({:ok, data}), do: update_unread_count(data)
+  def update_unread_count(%Item{} = item) do
+    get_feed!(item.feed_id)
+    |> update_unread_count()
+    {:ok, item}
+  end
   def update_unread_count(%Feed{} = feed) do
     Repo.transaction fn ->
       count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
-      Feed.changeset(feed, %{unread_count: count}) |> Repo.update!()
+      update_feed(feed, %{unread_count: count})
     end
   end
 end
