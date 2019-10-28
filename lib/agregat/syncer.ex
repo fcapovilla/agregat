@@ -11,10 +11,6 @@ defmodule Agregat.Syncer do
     Repo.all(from f in Feed, where: datetime_add(f.last_sync, f.update_frequency, "minute") < ^DateTime.utc_now)
     |> Task.async_stream(&sync_feed/1, max_concurrency: 5, timeout: 30_000)
     |> Enum.to_list()
-
-    # Broadcast updated folder list
-    folders = Agregat.Feeds.list_folders()
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
   end
 
   # Update items for the feed in parameter.
@@ -55,7 +51,6 @@ defmodule Agregat.Syncer do
         )
 
         frequency = if month_count < 360, do: round(30/(month_count+1)*6*60), else: 30
-        IO.puts frequency
         Agregat.Feeds.update_feed(feed, %{update_frequency: frequency})
       end
     end)
@@ -86,22 +81,16 @@ defmodule Agregat.Syncer do
         preload: [:medias]
       )
 
-      updated_items = Enum.map(items, fn(item) ->
+      for item <- items do
         existing = Enum.find(existing_items, &(&1.guid == item.guid))
         if existing do
-          changeset = Item.changeset(existing, item)
-          if changeset.changes != %{} do
-            Agregat.Feeds.update_item(changeset)
-          else
-            false
-          end
+          Agregat.Feeds.update_item(existing, item)
         else
           Agregat.Feeds.create_item(item)
         end
-      end)
-      |> Enum.filter(&(&1))
+      end
 
-      updated_feed = Agregat.Feeds.update_feed(feed, %{
+      Agregat.Feeds.update_feed(feed, %{
         title: (if parsed_feed.title == "", do: feed.title, else: parsed_feed.title),
         last_sync: DateTime.utc_now,
         sync_status: ""

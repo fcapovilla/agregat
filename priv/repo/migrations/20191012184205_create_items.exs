@@ -20,5 +20,6 @@ defmodule Agregat.Repo.Migrations.CreateItems do
     create index(:items, [:user_id])
     create index(:items, [:feed_id])
     create index(:items, [:date])
+    create index(:items, [:guid])
   end
 end

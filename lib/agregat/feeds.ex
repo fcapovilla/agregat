@@ -381,8 +381,8 @@ defmodule Agregat.Feeds do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
-    |> broadcast_item()
     |> update_unread_count()
+    |> broadcast_item()
   end
 
   @doc """
@@ -400,10 +400,7 @@ defmodule Agregat.Feeds do
   def update_item(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
-    |> update_item()
-  end
-  def update_item(%Ecto.Changeset{} = changeset) do
-    Repo.update(changeset)
+    |> Repo.update()
     |> update_unread_count()
     |> broadcast_item()
   end
@@ -416,6 +413,19 @@ defmodule Agregat.Feeds do
     {:ok, item}
   end
   def broadcast_item(any), do: any
+
+  def update_unread_count({:ok, data}), do: update_unread_count(data)
+  def update_unread_count(%Item{} = item) do
+    get_feed!(item.feed_id)
+    |> update_unread_count()
+    {:ok, item}
+  end
+  def update_unread_count(%Feed{} = feed) do
+    Repo.transaction fn ->
+      count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
+      update_feed(feed, %{unread_count: count})
+    end
+  end
 
   @doc """
   Deletes a Item.
@@ -538,18 +548,5 @@ defmodule Agregat.Feeds do
   """
   def change_media(%Media{} = media) do
     Media.changeset(media, %{})
-  end
-
-  def update_unread_count({:ok, data}), do: update_unread_count(data)
-  def update_unread_count(%Item{} = item) do
-    get_feed!(item.feed_id)
-    |> update_unread_count()
-    {:ok, item}
-  end
-  def update_unread_count(%Feed{} = feed) do
-    Repo.transaction fn ->
-      count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
-      update_feed(feed, %{unread_count: count})
-    end
   end
 end
