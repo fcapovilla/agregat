@@ -39,4 +39,9 @@ defmodule AgregatWeb.Router do
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show
   end
+
+  scope "/", AgregatWeb do
+    pipe_through [:browser, :protected, :admin]
+    resources "/users", UserController
+  end
 end

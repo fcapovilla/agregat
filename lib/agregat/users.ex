@@ -73,6 +73,12 @@ defmodule Agregat.Users do
     |> Repo.update()
   end
 
+  def admin_update_user(%User{} = user, attrs) do
+    user
+    |> User.admin_changeset(attrs)
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a User.
 

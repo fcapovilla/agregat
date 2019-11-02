@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <%= form_for @changeset, @action, fn f -> %>
+        <div class="modal-body">
+          <%= if @changeset.action do %>
+            <div class="alert alert-danger">
+              <p>Oops, something went wrong! Please check the errors below.</p>
+            </div>
+          <% end %>
+
+          <%= label f, :email %>
+          <%= text_input f, :email, class: "form-control" %>
+          <%= error_tag f, :email %>
+
+          <%= label f, :password %>
+          <%= password_input f, :password, class: "form-control" %>
+          <%= error_tag f, :password %>
+
+          <%= label f, :confirm_password %>
+          <%= password_input f, :confirm_password, class: "form-control" %>
+          <%= error_tag f, :confirm_password %>
+
+          <%= checkbox f, :admin %>
+          <%= label f, :admin %>
+          <%= error_tag f, :admin %>
+
+          <div class="modal-footer">
+            <%= link "Back", to: Routes.user_path(@conn, :index), class: "btn btn-default" %>
+            <%= submit "Save", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

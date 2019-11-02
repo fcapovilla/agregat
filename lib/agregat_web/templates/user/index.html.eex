@@ -1,0 +1,37 @@
+<center>
+  <h1>Listing Users</h1>
+</center>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Admin</th>
+
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+      <%= for user <- @users do %>
+          <tr>
+            <td><%= user.email %></td>
+            <td><%= user.admin %></td>
+
+            <td>
+              <span><%= link "Edit", to: Routes.user_path(@conn, :edit, user) %></span>
+              <span><%= link "Delete", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"] %></span>
+            </td>
+          </tr>
+      <% end %>
+        </tbody>
+      </table>
+
+      <span><%= link "New User", to: Routes.user_path(@conn, :new), class: "btn btn-primary" %></span>
+      <span><%= link "Return to feeds", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "btn btn-default" %></span>
+    </div>
+  </div>
+</div>
+
