@@ -16,6 +16,10 @@ defmodule AgregatWeb.Router do
     error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
+  pipeline :admin do
+    plug AgregatWeb.EnsureAdminPlug
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -23,7 +27,7 @@ defmodule AgregatWeb.Router do
   scope "/" do
     pipe_through :browser
 
-    pow_routes()
+    pow_session_routes()
     get "/logout", Pow.Phoenix.SessionController, :delete
   end
 
@@ -34,5 +38,11 @@ defmodule AgregatWeb.Router do
     resources "/folder", FolderController
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show
+  end
+
+  scope "/", AgregatWeb do
+    pipe_through [:browser, :protected, :admin]
+
+    resources "/registration", RegistrationController, singleton: true, only: [:new, :edit, :update, :delete]
   end
 end
