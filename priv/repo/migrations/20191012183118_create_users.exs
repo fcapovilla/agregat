@@ -3,13 +3,13 @@ defmodule Agregat.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :username, :string
-      add :hashed_password, :string
+      add :email, :string, null: false
+      add :password_hash, :string
       add :admin, :boolean, default: false, null: false
 
       timestamps()
     end
 
-    create unique_index(:users, [:username])
+    create unique_index(:users, [:email])
   end
 end

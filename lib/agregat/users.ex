@@ -1,12 +1,12 @@
-defmodule Agregat.Accounts do
+defmodule Agregat.Users do
   @moduledoc """
-  The Accounts context.
+  The Users context.
   """
 
   import Ecto.Query, warn: false
   alias Agregat.Repo
 
-  alias Agregat.Accounts.User
+  alias Agregat.Users.User
 
   @doc """
   Returns the list of users.

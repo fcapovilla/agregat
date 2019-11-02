@@ -30,6 +30,11 @@ config :phoenix, :json_library, Jason
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
 
+config :agregat, :pow,
+  user: Agregat.Users.User,
+  repo: Agregat.Repo,
+  web_module: AgregatWeb
+
 # Quantum scheduled tasks
 config :agregat, Agregat.Scheduler, jobs: [
   sync: [

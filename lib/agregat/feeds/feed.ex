@@ -11,7 +11,7 @@ defmodule Agregat.Feeds.Feed do
     field :unread_count, :integer
     field :update_frequency, :integer
     field :url, :string
-    belongs_to :user, Agregat.Accounts.User
+    belongs_to :user, Agregat.Users.User
     belongs_to :folder, Agregat.Feeds.Folder
     belongs_to :favicon, Agregat.Feeds.Favicon
     has_many :items, Agregat.Feeds.Item

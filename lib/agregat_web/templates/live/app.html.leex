@@ -15,7 +15,7 @@
         <a <%= Routes.folder_path(@socket, :index) %> class="btn btn-default" title="Settings">
           <i class="fa fa-cog"></i>
         </a>
-        <a <%= Routes.folder_path(@socket, :index) %> class="btn btn-default" title="Log out">
+        <a href="<%= Routes.session_path(@socket, :delete) %>" class="btn btn-default" title="Log out">
           <i class="fa fa-sign-out-alt"></i>
         </a>
       </div>

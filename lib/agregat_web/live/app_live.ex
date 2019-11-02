@@ -31,11 +31,8 @@ defmodule AgregatWeb.AppLive do
     folder_id = String.to_integer(folder_id)
     folder = Enum.find(socket.assigns.folders, &(&1.id == folder_id))
     case Feeds.update_folder(folder, %{open: !folder.open}) do
-      {:ok, folder} ->
-        folders = Feeds.list_folders()
-        {:noreply, assign(socket, folders: folders)}
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+      {:ok, folder} -> {:noreply, socket}
+      {:error, %Ecto.Changeset{} = changeset} -> {:noreply, assign(socket, changeset: changeset)}
     end
   end
 

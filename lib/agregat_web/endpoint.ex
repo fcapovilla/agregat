@@ -44,5 +44,7 @@ defmodule AgregatWeb.Endpoint do
     key: "_agregat_key",
     signing_salt: "C5I8/GrL"
 
+  plug Pow.Plug.Session, otp_app: :agregat
+
   plug AgregatWeb.Router
 end

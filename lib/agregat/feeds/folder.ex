@@ -7,7 +7,7 @@ defmodule Agregat.Feeds.Folder do
     field :position, :integer
     field :title, :string
     field :unread_count, :integer, virtual: true, default: 0
-    belongs_to :user, Agregat.Accounts.User
+    belongs_to :user, Agregat.Users.User
     has_many :feeds, Agregat.Feeds.Feed
 
     timestamps()

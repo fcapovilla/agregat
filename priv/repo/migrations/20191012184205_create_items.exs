@@ -5,7 +5,7 @@ defmodule Agregat.Repo.Migrations.CreateItems do
     create table(:items) do
       add :title, :text
       add :url, :string, size: 2000
-      add :guid, :string
+      add :guid, :string, size: 2000
       add :content, :text
       add :read, :boolean, default: false, null: false
       add :favorite, :boolean, default: false, null: false

@@ -1,5 +1,6 @@
 defmodule AgregatWeb.Router do
   use AgregatWeb, :router
+  use Pow.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -10,21 +11,28 @@ defmodule AgregatWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :protected do
+    plug Pow.Plug.RequireAuthenticated,
+    error_handler: Pow.Phoenix.PlugErrorHandler
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/", AgregatWeb do
+  scope "/" do
     pipe_through :browser
+
+    pow_routes()
+    get "/logout", Pow.Phoenix.SessionController, :delete
+  end
+
+  scope "/", AgregatWeb do
+    pipe_through [:browser, :protected]
 
     live "/", AppLive
     resources "/folder", FolderController
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", AgregatWeb do
-  #   pipe_through :api
-  # end
 end

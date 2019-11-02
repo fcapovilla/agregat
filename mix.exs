@@ -48,7 +48,8 @@ defmodule Agregat.MixProject do
       {:timex, "~> 3.0"},
       {:tesla, "~> 1.3"},
       {:hackney, "~> 1.15.0"},
-      {:feeder_ex, ">= 0.0.0"}
+      {:feeder_ex, ">= 0.0.0"},
+      {:pow, "~> 1.0.14"}
     ]
   end
 

@@ -11,7 +11,7 @@ defmodule Agregat.Feeds.Item do
     field :read, :boolean, default: false
     field :title, :string
     field :url, :string
-    belongs_to :user, Agregat.Accounts.User
+    belongs_to :user, Agregat.Users.User
     belongs_to :feed, Agregat.Feeds.Feed
     has_many :medias, Agregat.Feeds.Media, on_replace: :delete
 
