@@ -30,6 +30,7 @@
           <%= error_tag f, :auto_frequency %>
 
           <div class="modal-footer">
+            <%= link "Cancel", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "btn btn-default" %>
             <%= submit "Save", class: "btn btn-primary" %>
           </div>
         </div>

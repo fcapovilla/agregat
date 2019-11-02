@@ -64,7 +64,7 @@
               <div phx-click="toggle-folder-<%= folder.id %>" class="folder-toggle">
                 <i class="fa <%= if folder.open, do: "fa-minus-square", else: "fa-plus-square" %>"></i>
               </div>
-              <div phx-click="open-menu-folder-<%= folder.id %>" class="folder-icon">
+              <div phx-click="toggle-menu-folder-<%= folder.id %>" class="folder-icon">
                 <i class="fa fa-folder"></i>
               </div>
               <%= if false do %>
@@ -78,8 +78,8 @@
             <div class="btn-group folderMenu">
               <a phx-click="mark-folder-read-<%= folder.id %>" class="btn btn-default" title="Mark as read"><i class="fa fa-eye"></i></a>
               <a phx-click="mark-folder-unread-<%= folder.id %>" class="btn btn-default" title="Mark as unread"><i class="fa fa-eye-slash"></i></a>
-              <a phx-click="edit-folder-<%= folder.id %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
-              <a phx-click="delete-folder-<%= folder.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash-o"></i></a>
+              <a href="<%= Routes.folder_path(@socket, :edit, folder) %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
+              <a phx-click="delete-folder-<%= folder.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash"></i></a>
             </div>
           <% end %>
 
@@ -92,7 +92,7 @@
                   </div>
                 <% end %>
                 <div class="feed-text">
-                  <div phx-click="open-menu-feed-<%= feed.id %>" class="feed-icon">
+                  <div phx-click="toggle-menu-feed-<%= feed.id %>" class="feed-icon">
                     <%= if feed.favicon_id do %>
                       <img class="favicon" src="/favicons/<%= feed.favicon_id %>">
                     <% else %>
@@ -108,10 +108,10 @@
               </div>
               <%= if @menu_open == "feed-#{feed.id}" do %>
                 <div class="btn-group feedMenu">
-                  <a phx-click="mark-feed-read-<%= folder.id %>" class="btn btn-default" title="Mark as read"><i class="fa fa-eye"></i></a>
-                  <a phx-click="mark-feed-unread-<%= folder.id %>" class="btn btn-default" title="Mark as unread"><i class="fa fa-eye-slash"></i></a>
-                  <a phx-click="edit-feed-<%= folder.id %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
-                  <a phx-click="delete-feed-<%= folder.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash-o"></i></a>
+                  <a phx-click="mark-feed-read-<%= feed.id %>" class="btn btn-default" title="Mark as read"><i class="fa fa-eye"></i></a>
+                  <a phx-click="mark-feed-unread-<%= feed.id %>" class="btn btn-default" title="Mark as unread"><i class="fa fa-eye-slash"></i></a>
+                  <a href="<%= Routes.feed_path(@socket, :edit, feed) %>" class="btn btn-default" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a phx-click="delete-feed-<%= feed.id %>" class="btn btn-default" title="Delete"><i class="fa fa-trash"></i></a>
                 </div>
               <% end %>
             <% end %>

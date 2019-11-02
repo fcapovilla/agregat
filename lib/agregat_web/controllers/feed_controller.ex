@@ -36,19 +36,10 @@ defmodule AgregatWeb.FeedController do
       {:ok, feed} ->
         conn
         |> put_flash(:info, "Feed updated successfully.")
-        |> redirect(to: Routes.feed_path(conn, :show, feed))
+        |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", feed: feed, changeset: changeset)
     end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    feed = Feeds.get_feed!(id)
-    {:ok, _feed} = Feeds.delete_feed(feed)
-
-    conn
-    |> put_flash(:info, "Feed deleted successfully.")
-    |> redirect(to: Routes.feed_path(conn, :index))
   end
 end

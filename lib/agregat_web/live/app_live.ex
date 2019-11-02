@@ -32,22 +32,38 @@ defmodule AgregatWeb.AppLive do
     {:noreply, assign(socket, params: params, selected: selected)}
   end
 
-  def handle_event("toggle-folder-" <> folder_id, _, socket) do
-    folder_id = String.to_integer(folder_id)
-    folder = Enum.find(socket.assigns.folders, &(&1.id == folder_id))
+  def handle_event("toggle-folder-" <> id, _, socket) do
+    id = String.to_integer(id)
+    folder = Enum.find(socket.assigns.folders, &(&1.id == id))
     case Feeds.update_folder(folder, %{open: !folder.open}) do
       {:ok, folder} -> {:noreply, socket}
       {:error, %Ecto.Changeset{} = changeset} -> {:noreply, assign(socket, changeset: changeset)}
     end
   end
 
-  def handle_event("select-folder-" <> folder_id, _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["feed_id", "favorite"]) |> Map.put("folder_id", folder_id)
+  def handle_event("toggle-menu-" <> element, _, socket) do
+    {:noreply, assign(socket, menu_open: (if socket.assigns.menu_open == element, do: nil, else: element))}
+  end
+
+  def handle_event("delete-folder-" <> id, _, socket) do
+    folder = Feeds.get_folder!(id, user_id: socket.assigns.user.id)
+    {:ok, folder} = Feeds.delete_folder(folder)
+    {:noreply, socket}
+  end
+
+  def handle_event("delete-feed-" <> id, _, socket) do
+    feed = Feeds.get_feed!(id, user_id: socket.assigns.user.id)
+    {:ok, feed} = Feeds.delete_feed(feed)
+    {:noreply, socket}
+  end
+
+  def handle_event("select-folder-" <> id, _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["feed_id", "favorite"]) |> Map.put("folder_id", id)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
-  def handle_event("select-feed-" <> feed_id, _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["folder_id", "favorite"]) |> Map.put("feed_id", feed_id)
+  def handle_event("select-feed-" <> id, _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["folder_id", "favorite"]) |> Map.put("feed_id", id)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 

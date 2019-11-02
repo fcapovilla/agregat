@@ -15,7 +15,7 @@ defmodule Agregat.Feeds.Feed do
     field :url, :string
     field :folder_title, :string, virtual: true, default: ""
     belongs_to :user, Agregat.Users.User
-    belongs_to :folder, Agregat.Feeds.Folder
+    belongs_to :folder, Agregat.Feeds.Folder, on_replace: :update
     belongs_to :favicon, Agregat.Feeds.Favicon
     has_many :items, Agregat.Feeds.Item
 
@@ -32,7 +32,7 @@ defmodule Agregat.Feeds.Feed do
 
   defp update_folder(%Ecto.Changeset{valid?: true, changes: %{folder_title: folder_title}} = changeset) do
     folder = Feeds.first_or_create_folder!(%{title: folder_title, user_id: get_field(changeset, :user_id)})
-    put_change(changeset, :folder, folder)
+    put_change(changeset, :folder_id, folder.id)
   end
   defp update_folder(changeset), do: changeset
 end

@@ -1,23 +1,28 @@
-<%= form_for @changeset, @action, fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <%= form_for @changeset, @action, fn f -> %>
+        <div class="modal-body">
+          <%= if @changeset.action do %>
+            <div class="alert alert-danger">
+              <p>Oops, something went wrong! Please check the errors below.</p>
+            </div>
+          <% end %>
+
+          <%= label f, :title %>
+          <%= textarea f, :title, class: "form-control" %>
+          <%= error_tag f, :title %>
+
+          <%= label f, :position %>
+          <%= number_input f, :position, class: "form-control" %>
+          <%= error_tag f, :position %>
+
+          <div class="modal-footer">
+            <%= link "Cancel", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "btn btn-default" %>
+            <%= submit "Save", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <%= label f, :title %>
-  <%= textarea f, :title %>
-  <%= error_tag f, :title %>
-
-  <%= label f, :open %>
-  <%= checkbox f, :open %>
-  <%= error_tag f, :open %>
-
-  <%= label f, :position %>
-  <%= number_input f, :position %>
-  <%= error_tag f, :position %>
-
-  <div>
-    <%= submit "Save" %>
   </div>
-<% end %>
+</div>

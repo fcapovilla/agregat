@@ -14,17 +14,11 @@ defmodule AgregatWeb.FolderController do
       {:ok, folder} ->
         conn
         |> put_flash(:info, "Folder created successfully.")
-        |> redirect(to: Routes.folder_path(conn, :show, folder))
+        |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    conn
-    |> assign(:selected, "folder-#{id}")
-    |> Phoenix.LiveView.Controller.live_render(AgregatWeb.ItemsLive, session: %{folder_id: id})
   end
 
   def edit(conn, %{"id" => id}) do
@@ -40,19 +34,10 @@ defmodule AgregatWeb.FolderController do
       {:ok, folder} ->
         conn
         |> put_flash(:info, "Folder updated successfully.")
-        |> redirect(to: Routes.folder_path(conn, :show, folder))
+        |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", folder: folder, changeset: changeset)
     end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    folder = Feeds.get_folder!(id)
-    {:ok, _folder} = Feeds.delete_folder(folder)
-
-    conn
-    |> put_flash(:info, "Folder deleted successfully.")
-    |> redirect(to: Routes.folder_path(conn, :index))
   end
 end

@@ -258,6 +258,7 @@ defmodule Agregat.Feeds do
   """
   def delete_folder(%Folder{} = folder) do
     Repo.delete(folder)
+    |> broadcast_folder()
   end
 
   @doc """
@@ -394,6 +395,7 @@ defmodule Agregat.Feeds do
   """
   def delete_feed(%Feed{} = feed) do
     Repo.delete(feed)
+    |> broadcast_feed()
   end
 
   @doc """
