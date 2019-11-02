@@ -10,21 +10,17 @@ defmodule AgregatWeb.FeedController do
   end
 
   def create(conn, %{"feed" => feed_params}) do
+    user = Pow.Plug.current_user(conn)
+    feed_params = Map.put(feed_params, "user_id", user.id)
     case Feeds.create_feed(feed_params) do
       {:ok, feed} ->
         conn
         |> put_flash(:info, "Feed created successfully.")
-        |> redirect(to: Routes.feed_path(conn, :show, feed))
+        |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    conn
-    |> assign(:selected, "feed-#{id}")
-    |> Phoenix.LiveView.Controller.live_render(AgregatWeb.ItemsLive, session: %{feed_id: id})
   end
 
   def edit(conn, %{"id" => id}) do

@@ -29,7 +29,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("toggle-favorite-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
-    item = Feeds.get_item!(String.to_integer(item_id), socket.assigns.user)
+    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
     case Feeds.update_item(item, %{favorite: !item.favorite}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -39,7 +39,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("toggle-read-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
-    item = Feeds.get_item!(String.to_integer(item_id), socket.assigns.user)
+    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
     case Feeds.update_item(item, %{read: !item.read}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -83,16 +83,16 @@ defmodule AgregatWeb.ItemsLive do
   defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
     items =
       (from i in Feeds.Item, preload: [:medias, :feed])
-      |> Feeds.filter_by(socket.assigns.user)
       |> filter(params)
       |> sort(params)
-      |> paginate(page)
+      |> Feeds.filter_by(user_id: socket.assigns.user.id)
+      |> Feeds.paginate(page)
       |> Agregat.Repo.all()
     assign(socket, items: items, ids: ids ++ Enum.map(items, &(&1.id)))
   end
 
   defp select_item(%{assigns: %{selected: selected}} = socket, item_id) do
-    item = Feeds.get_item!(item_id, socket.assigns.user)
+    item = Feeds.get_item!(item_id, user_id: socket.assigns.user.id)
     case Feeds.update_item(item, %{read: true}) do
       {:ok, item} ->
         if selected != nil do
@@ -121,11 +121,11 @@ defmodule AgregatWeb.ItemsLive do
     from i in query, order_by: [desc: :date]
   end
 
-  defp paginate(query, page) do
-    from i in query, limit: 50, offset: ^((page - 1) * 50)
-  end
-
-  def handle_info(%{items: items}, socket) do
-    {:noreply, assign(socket, items: items)}
+  def handle_info(%{items: items, user_id: user_id}, socket) do
+    if user_id == socket.assigns.user.id do
+      {:noreply, assign(socket, items: items)}
+    else
+      {:noreply, socket}
+    end
   end
 end

@@ -11,13 +11,14 @@ defmodule AgregatWeb.AppLive do
   end
 
   def mount(session, socket) do
-    user = case Pow.Store.CredentialsCache.get([backend: Pow.Store.Backend.EtsCache], session.agregat_auth) do
-      {user, _} -> user
-      _ -> nil
+    user = get_user(session.agregat_auth)
+    if user do
+      Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
+      folders = Feeds.list_folders(user_id: user.id)
+      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user)}
+    else
+      {:error, "Unauthorized"}
     end
-    Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
-    folders = Feeds.list_folders(user)
-    {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user)}
   end
 
   def handle_params(params, _, socket) do
@@ -86,7 +87,18 @@ defmodule AgregatWeb.AppLive do
     {:noreply, socket}
   end
 
-  def handle_info(%{folders: folders}, socket) do
-    {:noreply, assign(socket, folders: folders)}
+  def handle_info(%{folders: folders, user_id: user_id}, socket) do
+    if user_id == socket.assigns.user.id do
+      {:noreply, assign(socket, folders: folders)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp get_user(token) do
+    case Pow.Store.CredentialsCache.get([backend: Pow.Store.Backend.EtsCache], token) do
+      {user, _} -> user
+      _ -> nil
+    end
   end
 end

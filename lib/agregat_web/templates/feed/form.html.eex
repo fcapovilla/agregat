@@ -1,47 +1,39 @@
-<%= form_for @changeset, @action, fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <%= form_for @changeset, @action, fn f -> %>
+        <div class="modal-body">
+          <%= if @changeset.action do %>
+            <div class="alert alert-danger">
+              <p>Oops, something went wrong! Please check the errors below.</p>
+            </div>
+          <% end %>
+
+          <%= label f, :url %>
+          <%= text_input f, :url, class: "form-control" %>
+          <%= error_tag f, :url %>
+
+          <%= label f, :folder_title %>
+          <%= text_input f, :folder_title, class: "form-control" %>
+          <%= error_tag f, :folder_title %>
+
+          <%= label f, :position %>
+          <%= number_input f, :position, class: "form-control" %>
+          <%= error_tag f, :position %>
+
+          <%= label f, :update_frequency %>
+          <%= number_input f, :update_frequency, class: "form-control" %>
+          <%= error_tag f, :update_frequency %>
+
+          <%= checkbox f, :auto_frequency%>
+          <%= label f, :auto_frequency %>
+          <%= error_tag f, :auto_frequency %>
+
+          <div class="modal-footer">
+            <%= submit "Save", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <%= label f, :title %>
-  <%= textarea f, :title %>
-  <%= error_tag f, :title %>
-
-  <%= label f, :url %>
-  <%= text_input f, :url %>
-  <%= error_tag f, :url %>
-
-  <%= label f, :last_sync %>
-  <%= datetime_select f, :last_sync %>
-  <%= error_tag f, :last_sync %>
-
-  <%= label f, :unread_count %>
-  <%= number_input f, :unread_count %>
-  <%= error_tag f, :unread_count %>
-
-  <%= label f, :sync_status %>
-  <%= textarea f, :sync_status %>
-  <%= error_tag f, :sync_status %>
-
-  <%= label f, :position %>
-  <%= number_input f, :position %>
-  <%= error_tag f, :position %>
-
-  <%= label f, :update_frequency %>
-  <%= number_input f, :update_frequency %>
-  <%= error_tag f, :update_frequency %>
-
-  <%= label f, :auto_frequency %>
-  <%= checkbox f, :auto_frequency %>
-  <%= error_tag f, :auto_frequency %>
-
-  <%= label f, :last_sync %>
-  <%= datetime_select f, :last_sync %>
-  <%= error_tag f, :last_sync %>
-
-  <div>
-    <%= submit "Save" %>
   </div>
-<% end %>
+</div>

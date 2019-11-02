@@ -22,8 +22,29 @@ defmodule Agregat.Feeds do
       [%Favicon{}, ...]
 
   """
-  def list_favicons do
-    Repo.all(Favicon)
+  def list_favicons(filters \\ %{}) do
+    Favicon
+    |> filter_by(filters)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the first favicon matching the filters in parameter.
+  If the favicon doesn't exist, it is created.
+
+  ## Examples
+
+      iex> first_or_create_favicon!(%{url: "Test"})
+      %Favicon{}
+
+  """
+  def first_or_create_favicon!(filters \\ %{}) do
+    case list_favicons(filters) do
+      [favicon | _] -> favicon
+      _ ->
+        {:ok, favicon} = create_favicon(filters)
+        favicon
+    end
   end
 
   @doc """
@@ -40,7 +61,11 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_favicon!(id), do: Repo.get!(Favicon, id)
+  def get_favicon!(id, filters \\ %{}) do
+    Favicon
+    |> filter_by(filters)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a favicon.
@@ -116,13 +141,32 @@ defmodule Agregat.Feeds do
       [%Folder{}, ...]
 
   """
-  def list_folders(user \\ nil) do
+  def list_folders(filters \\ %{}) do
     Folder
-    |> filter_by(user)
+    |> filter_by(filters)
     |> order_by(:position)
     |> preload(feeds: ^(from f in Feed, order_by: f.position))
     |> Repo.all()
     |> count_unread()
+  end
+
+  @doc """
+  Returns the first folder matching the filters in parameter.
+  If the folder doesn't exist, it is created.
+
+  ## Examples
+
+      iex> first_or_create_folder!(%{title: "Test"})
+      %Folder{}
+
+  """
+  def first_or_create_folder!(filters \\ %{}) do
+    case list_folders(filters) do
+      [folder | _] -> folder
+      _ ->
+        {:ok, folder} = create_folder(filters)
+        folder
+    end
   end
 
   @doc """
@@ -139,9 +183,9 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_folder!(id, user \\ nil) do
+  def get_folder!(id, filters \\ %{}) do
     Folder
-    |> filter_by(user)
+    |> filter_by(filters)
     |> preload(:feeds)
     |> Repo.get!(id)
     |> count_unread()
@@ -152,7 +196,7 @@ defmodule Agregat.Feeds do
   end
 
   defp count_unread(folder) do
-    %{folder | unread_count: Enum.reduce(folder.feeds, 0, &(&1.unread_count + &2))}
+    %{folder | unread_count: Enum.reduce(folder.feeds, 0, &((&1.unread_count || 0) + &2))}
   end
 
   @doc """
@@ -194,8 +238,8 @@ defmodule Agregat.Feeds do
   end
 
   def broadcast_folder({:ok, %Folder{} = folder}) do
-    folders = list_folders()
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
+    folders = list_folders(user_id: folder.user_id)
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders, user_id: folder.user_id})
     {:ok, folder}
   end
   def broadcast_folder(any), do: any
@@ -238,10 +282,31 @@ defmodule Agregat.Feeds do
       [%Feed{}, ...]
 
   """
-  def list_feeds(user \\ nil) do
+  def list_feeds(filters \\ %{}) do
     Feed
-    |> filter_by(user)
+    |> filter_by(filters)
+    |> preload(:folder)
     |> Repo.all()
+    |> set_feed_virtuals()
+  end
+
+  @doc """
+  Returns the first feed matching the filters in parameter.
+  If the feed doesn't exist, it is created.
+
+  ## Examples
+
+      iex> first_or_create_feed!(%{url: "Test"})
+      %Feed{}
+
+  """
+  def first_or_create_feed!(filters \\ %{}) do
+    case list_feeds(filters) do
+      [feed | _] -> feed
+      _ ->
+        {:ok, feed} = create_feed(filters)
+        feed
+    end
   end
 
   @doc """
@@ -258,10 +323,12 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_feed!(id, user \\ nil) do
+  def get_feed!(id, filters \\ %{}) do
     Feed
-    |> filter_by(user)
+    |> filter_by(filters)
+    |> preload(:folder)
     |> Repo.get!(id)
+    |> set_feed_virtuals()
   end
 
   @doc """
@@ -303,12 +370,15 @@ defmodule Agregat.Feeds do
   end
 
   def broadcast_feed({:ok, %Feed{} = feed}) do
-    folders = list_folders()
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feed]})
+    folders = list_folders(user_id: feed.user_id)
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders, user_id: feed.user_id})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feed], user_id: feed.user_id})
     {:ok, feed}
   end
   def broadcast_feed(any), do: any
+
+  defp set_feed_virtuals([] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
+  defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
 
   @doc """
   Deletes a Feed.
@@ -348,10 +418,29 @@ defmodule Agregat.Feeds do
       [%Item{}, ...]
 
   """
-  def list_items(user \\ nil) do
+  def list_items(filters \\ %{}) do
     Item
-    |> filter_by(user)
+    |> filter_by(filters)
     |> Repo.all()
+  end
+
+  @doc """
+  Returns the first item matching the filters in parameter.
+  If the item doesn't exist, it is created.
+
+  ## Examples
+
+      iex> first_or_create_item!(%{url: "Test"})
+      %Item{}
+
+  """
+  def first_or_create_item!(filters \\ %{}) do
+    case list_items(filters) do
+      [item | _] -> item
+      _ ->
+        {:ok, item} = create_item(filters)
+        item
+    end
   end
 
   @doc """
@@ -368,9 +457,9 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_item!(id, user \\ nil) do
+  def get_item!(id, filters \\ %{}) do
     Item
-    |> filter_by(user)
+    |> filter_by(filters)
     |> preload([:feed, :medias])
     |> Repo.get!(id)
   end
@@ -417,9 +506,9 @@ defmodule Agregat.Feeds do
 
   def broadcast_item({:ok, %Item{} = item}) do
     item = Repo.preload(item, [:feed, :medias])
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: [item]})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: [item]})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: [item]})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: [item], user_id: item.user_id})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: [item], user_id: item.user_id})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: [item], user_id: item.user_id})
     {:ok, item}
   end
   def broadcast_item(any), do: any
@@ -476,8 +565,29 @@ defmodule Agregat.Feeds do
       [%Media{}, ...]
 
   """
-  def list_medias do
-    Repo.all(Media)
+  def list_medias(filters \\ %{}) do
+    Media
+    |> filter_by(filters)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the first media matching the filters in parameter.
+  If the media doesn't exist, it is created.
+
+  ## Examples
+
+      iex> first_or_create_media!(%{url: "Test"})
+      %Media{}
+
+  """
+  def first_or_create_media!(filters \\ %{}) do
+    case list_medias(filters) do
+      [media | _] -> media
+      _ ->
+        {:ok, media} = create_media(filters)
+        media
+    end
   end
 
   @doc """
@@ -494,7 +604,11 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_media!(id), do: Repo.get!(Media, id)
+  def get_media!(id, filters \\ %{}) do
+    Media
+    |> filter_by(filters)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a media.
@@ -561,8 +675,11 @@ defmodule Agregat.Feeds do
     Media.changeset(media, %{})
   end
 
-  def filter_by(query, %User{} = user) do
-    from x in query, where: x.user_id == ^user.id
+  def filter_by(query, filters) do
+    Enum.reduce(filters, query, fn ({key, value}, query) -> (from x in query, where: field(x, ^key) == ^value) end)
   end
-  def filter_by(query, nil), do: query
+
+  def paginate(query, page, per_page \\ 50) do
+    from i in query, limit: ^per_page, offset: ^((page - 1) * per_page)
+  end
 end

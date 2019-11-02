@@ -1,3 +1,5 @@
-<h1>Edit Feed</h1>
+<center>
+  <h1>Edit Feed</h1>
+</center>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.feed_path(@conn, :update, @feed)) %>
