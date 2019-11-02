@@ -9,13 +9,14 @@ defmodule AgregatWeb.ItemsLive do
     AgregatWeb.LiveView.render("items.html", assigns)
   end
 
-  def mount(%{params: params}, socket) do
+  def mount(%{params: params, user: user}, socket) do
     case params do
       %{"folder_id" => folder_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "folder-#{folder_id}")
       %{"feed_id" => feed_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "feed-#{feed_id}")
       _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
     end
-    {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: []) |> fetch_items(), temporary_assigns: [:items]}
+    {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: [], user: user)
+          |> fetch_items(), temporary_assigns: [:items]}
   end
 
   def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
@@ -28,7 +29,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("toggle-favorite-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
-    item = Feeds.get_item!(String.to_integer(item_id))
+    item = Feeds.get_item!(String.to_integer(item_id), socket.assigns.user)
     case Feeds.update_item(item, %{favorite: !item.favorite}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -38,7 +39,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("toggle-read-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
-    item = Feeds.get_item!(String.to_integer(item_id))
+    item = Feeds.get_item!(String.to_integer(item_id), socket.assigns.user)
     case Feeds.update_item(item, %{read: !item.read}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -82,6 +83,7 @@ defmodule AgregatWeb.ItemsLive do
   defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
     items =
       (from i in Feeds.Item, preload: [:medias, :feed])
+      |> Feeds.filter_by(socket.assigns.user)
       |> filter(params)
       |> sort(params)
       |> paginate(page)
@@ -90,7 +92,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   defp select_item(%{assigns: %{selected: selected}} = socket, item_id) do
-    item = Feeds.get_item!(item_id)
+    item = Feeds.get_item!(item_id, socket.assigns.user)
     case Feeds.update_item(item, %{read: true}) do
       {:ok, item} ->
         if selected != nil do

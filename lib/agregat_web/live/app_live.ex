@@ -11,9 +11,13 @@ defmodule AgregatWeb.AppLive do
   end
 
   def mount(session, socket) do
+    user = case Pow.Store.CredentialsCache.get([backend: Pow.Store.Backend.EtsCache], session.agregat_auth) do
+      {user, _} -> user
+      _ -> nil
+    end
     Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
-    folders = Feeds.list_folders()
-    {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil)}
+    folders = Feeds.list_folders(user)
+    {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user)}
   end
 
   def handle_params(params, _, socket) do

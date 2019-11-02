@@ -6,6 +6,7 @@ defmodule Agregat.Feeds do
   import Ecto.Query, warn: false
   alias Agregat.Repo
 
+  alias Agregat.Users.User
   alias Agregat.Feeds.Favicon
   alias Agregat.Feeds.Feed
   alias Agregat.Feeds.Folder
@@ -115,8 +116,9 @@ defmodule Agregat.Feeds do
       [%Folder{}, ...]
 
   """
-  def list_folders do
+  def list_folders(user \\ nil) do
     Folder
+    |> filter_by(user)
     |> order_by(:position)
     |> preload(feeds: ^(from f in Feed, order_by: f.position))
     |> Repo.all()
@@ -137,8 +139,9 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_folder!(id) do
+  def get_folder!(id, user \\ nil) do
     Folder
+    |> filter_by(user)
     |> preload(:feeds)
     |> Repo.get!(id)
     |> count_unread()
@@ -235,8 +238,10 @@ defmodule Agregat.Feeds do
       [%Feed{}, ...]
 
   """
-  def list_feeds do
-    Repo.all(Feed)
+  def list_feeds(user \\ nil) do
+    Feed
+    |> filter_by(user)
+    |> Repo.all()
   end
 
   @doc """
@@ -253,7 +258,11 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_feed!(id), do: Repo.get!(Feed, id)
+  def get_feed!(id, user \\ nil) do
+    Feed
+    |> filter_by(user)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a feed.
@@ -339,8 +348,10 @@ defmodule Agregat.Feeds do
       [%Item{}, ...]
 
   """
-  def list_items do
-    Repo.all(Item)
+  def list_items(user \\ nil) do
+    Item
+    |> filter_by(user)
+    |> Repo.all()
   end
 
   @doc """
@@ -357,7 +368,12 @@ defmodule Agregat.Feeds do
       ** (Ecto.NoResultsError)
 
   """
-  def get_item!(id), do: Repo.get!(Item |> preload([:feed, :medias]), id)
+  def get_item!(id, user \\ nil) do
+    Item
+    |> filter_by(user)
+    |> preload([:feed, :medias])
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a item.
@@ -544,4 +560,9 @@ defmodule Agregat.Feeds do
   def change_media(%Media{} = media) do
     Media.changeset(media, %{})
   end
+
+  def filter_by(query, %User{} = user) do
+    from x in query, where: x.user_id == ^user.id
+  end
+  def filter_by(query, nil), do: query
 end

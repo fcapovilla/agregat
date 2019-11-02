@@ -34,15 +34,9 @@ defmodule AgregatWeb.Router do
   scope "/", AgregatWeb do
     pipe_through [:browser, :protected]
 
-    live "/", AppLive
+    live "/", AppLive, session: [:agregat_auth]
     resources "/folder", FolderController
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show
-  end
-
-  scope "/", AgregatWeb do
-    pipe_through [:browser, :protected, :admin]
-
-    resources "/registration", RegistrationController, singleton: true, only: [:new, :edit, :update, :delete]
   end
 end

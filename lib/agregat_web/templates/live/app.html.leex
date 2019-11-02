@@ -122,5 +122,5 @@
   </div>
 </div>
 <div class="content <%= if @selected == nil, do: "hidden-xs", else: "" %>">
-  <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params}, id: "items?#{URI.encode_query(@params)}") %>
+  <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params, user: @user}, id: "items?#{URI.encode_query(@params)}") %>
 </div>
