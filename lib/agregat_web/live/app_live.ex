@@ -14,6 +14,7 @@ defmodule AgregatWeb.AppLive do
     user = get_user(session.agregat_auth)
     if user do
       Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
+      Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
       folders = Feeds.list_folders(user_id: user.id)
       {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user)}
     else
@@ -105,6 +106,15 @@ defmodule AgregatWeb.AppLive do
 
   def handle_info(%{folders: folders, user_id: user_id}, socket) do
     if user_id == socket.assigns.user.id do
+      {:noreply, assign(socket, folders: folders)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_info(%{feeds: feeds, user_id: user_id}, socket) do
+    if user_id == socket.assigns.user.id do
+      folders = Feeds.list_folders(user_id: user_id)
       {:noreply, assign(socket, folders: folders)}
     else
       {:noreply, socket}

@@ -81,14 +81,17 @@ defmodule Agregat.Syncer do
         preload: [:medias]
       )
 
-      for item <- items do
+      items = Enum.map(items, fn (item) ->
         existing = Enum.find(existing_items, &(&1.guid == item.guid))
-        if existing do
-          Agregat.Feeds.update_item(existing, item)
-        else
-          Agregat.Feeds.create_item(item)
-        end
-      end
+        {:ok, item} =
+          if existing do
+            Agregat.Feeds.update_item(existing, item, %{broadcast: false})
+          else
+            Agregat.Feeds.create_item(item, %{broadcast: false})
+          end
+        item
+      end)
+      Agregat.Feeds.broadcast_items(items)
 
       Agregat.Feeds.update_feed(feed, %{
         title: (if parsed_feed.title == "", do: feed.title, else: parsed_feed.title),

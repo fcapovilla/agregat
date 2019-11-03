@@ -6,7 +6,6 @@ defmodule Agregat.Feeds do
   import Ecto.Query, warn: false
   alias Agregat.Repo
 
-  alias Agregat.Users.User
   alias Agregat.Feeds.Favicon
   alias Agregat.Feeds.Feed
   alias Agregat.Feeds.Folder
@@ -211,11 +210,11 @@ defmodule Agregat.Feeds do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_folder(attrs \\ %{}) do
+  def create_folder(attrs \\ %{}, opts \\ %{}) do
     %Folder{}
     |> Folder.changeset(attrs)
     |> Repo.insert()
-    |> broadcast_folder()
+    |> broadcast_folder(opts)
   end
 
   @doc """
@@ -230,19 +229,26 @@ defmodule Agregat.Feeds do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_folder(%Folder{} = folder, attrs) do
+  def update_folder(%Folder{} = folder, attrs, opts \\ %{}) do
     folder
     |> Folder.changeset(attrs)
     |> Repo.update()
-    |> broadcast_folder()
+    |> broadcast_folder(opts)
   end
 
-  def broadcast_folder({:ok, %Folder{} = folder}) do
+  def broadcast_folder(any, opts \\ %{})
+  def broadcast_folder(any, %{broadcast: false}), do: any
+  def broadcast_folder({:ok, %Folder{} = folder}, _), do: {:ok, broadcast_folder(folder)}
+  def broadcast_folder(%Folder{} = folder, _), do: broadcast_folders([folder]) |> hd()
+  def broadcast_folder(any, _), do: any
+
+  def broadcast_folders([%Folder{}|_] = folders) do
+    folder = hd(folders)
     folders = list_folders(user_id: folder.user_id)
     Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders, user_id: folder.user_id})
-    {:ok, folder}
+    folders
   end
-  def broadcast_folder(any), do: any
+  def broadcast_folders(any), do: any
 
   @doc """
   Deletes a Folder.
@@ -370,13 +376,18 @@ defmodule Agregat.Feeds do
     |> broadcast_feed()
   end
 
-  def broadcast_feed({:ok, %Feed{} = feed}) do
-    folders = list_folders(user_id: feed.user_id)
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders, user_id: feed.user_id})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feed], user_id: feed.user_id})
-    {:ok, feed}
+  def broadcast_feed(any, opts \\ %{})
+  def broadcast_feed(any, %{broadcast: false}), do: any
+  def broadcast_feed({:ok, %Feed{} = feed}, _), do: {:ok, broadcast_feed(feed)}
+  def broadcast_feed(%Feed{} = feed, _), do: broadcast_feeds([feed]) |> hd()
+  def broadcast_feed(any, _), do: any
+
+  def broadcast_feeds([%Feed{}|_] = feeds) do
+    feed = hd(feeds)
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feeds], user_id: feed.user_id})
+    feeds
   end
-  def broadcast_feed(any), do: any
+  def broadcast_feeds(any), do: any
 
   defp set_feed_virtuals([] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
   defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
@@ -478,12 +489,12 @@ defmodule Agregat.Feeds do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(attrs \\ %{}) do
+  def create_item(attrs \\ %{}, opts \\ %{}) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
     |> update_unread_count()
-    |> broadcast_item()
+    |> broadcast_item(opts)
   end
 
   @doc """
@@ -498,22 +509,29 @@ defmodule Agregat.Feeds do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_item(%Item{} = item, attrs) do
+  def update_item(%Item{} = item, attrs, opts \\ %{}) do
     item
     |> Item.changeset(attrs)
     |> Repo.update()
     |> update_unread_count()
-    |> broadcast_item()
+    |> broadcast_item(opts)
   end
 
-  def broadcast_item({:ok, %Item{} = item}) do
-    item = Repo.preload(item, [:feed, :medias])
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: [item], user_id: item.user_id})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: [item], user_id: item.user_id})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: [item], user_id: item.user_id})
-    {:ok, item}
+  def broadcast_item(any, opts \\ %{})
+  def broadcast_item(any, %{broadcast: false}), do: any
+  def broadcast_item({:ok, %Item{} = item}, _), do: {:ok, broadcast_item(item)}
+  def broadcast_item(%Item{} = item, _), do: broadcast_items([item]) |> hd()
+  def broadcast_item(any, _), do: any
+
+  def broadcast_items([%Item{}|_] = items) do
+    items = Repo.preload(items, [:feed, :medias])
+    item = hd(items)
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: items, user_id: item.user_id})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: items, user_id: item.user_id})
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: items, user_id: item.user_id})
+    items
   end
-  def broadcast_item(any), do: any
+  def broadcast_items(any), do: any
 
   def update_unread_count({:ok, data}), do: update_unread_count(data)
   def update_unread_count(%Item{} = item) do
