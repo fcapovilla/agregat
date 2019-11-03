@@ -14,6 +14,7 @@ defmodule AgregatWeb.FeedController do
     feed_params = Map.put(feed_params, "user_id", user.id)
     case Feeds.create_feed(feed_params) do
       {:ok, feed} ->
+        Agregat.Syncer.sync_feed(feed)
         conn
         |> put_flash(:info, "Feed created successfully.")
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
@@ -34,6 +35,7 @@ defmodule AgregatWeb.FeedController do
 
     case Feeds.update_feed(feed, feed_params) do
       {:ok, feed} ->
+        Agregat.Syncer.sync_feed(feed)
         conn
         |> put_flash(:info, "Feed updated successfully.")
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
