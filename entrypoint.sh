@@ -13,6 +13,7 @@ export DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST/$PGDATABASE"
 # Compile the project
 mix deps.get --only prod
 mix compile
+npm install --prefix ./assets
 npm run deploy --prefix ./assets
 mix phx.digest
 
