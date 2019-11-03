@@ -15,6 +15,7 @@ defmodule AgregatWeb.ItemsLive do
       %{"feed_id" => feed_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "feed-#{feed_id}")
       _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
     end
+    Phoenix.PubSub.subscribe(Agregat.PubSub, "item-selection-#{user.id}")
     {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: [], user: user)
           |> fetch_items(), temporary_assigns: [:items]}
   end
@@ -52,7 +53,7 @@ defmodule AgregatWeb.ItemsLive do
     {:noreply, assign(socket, page: page + 1) |> fetch_items()}
   end
 
-  def handle_event("keydown", %{"key" => "j"}, %{assigns: %{ids: ids, selected: selected}} = socket) do
+  def handle_event("next-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
     position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
     cond do
       position == nil ->
@@ -64,7 +65,7 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  def handle_event("keydown", %{"key" => "k"}, %{assigns: %{ids: ids, selected: selected}} = socket) do
+  def handle_event("previous-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
     position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
     cond do
       position == nil ->
@@ -74,6 +75,14 @@ defmodule AgregatWeb.ItemsLive do
       true ->
         {:noreply, select_item(socket, Enum.at(ids, position - 1))}
     end
+  end
+
+  def handle_event("keydown", %{"key" => "j"}, socket) do
+    handle_event("next-item", nil, socket)
+  end
+
+  def handle_event("keydown", %{"key" => "k"}, socket) do
+    handle_event("previous-item", nil, socket)
   end
 
   def handle_event("keydown", _, socket) do
@@ -127,5 +136,13 @@ defmodule AgregatWeb.ItemsLive do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_info(%{action: "next"}, socket) do
+    handle_event("next-item", nil, socket)
+  end
+
+  def handle_info(%{action: "previous"}, socket) do
+    handle_event("previous-item", nil, socket)
   end
 end

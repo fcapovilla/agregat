@@ -28,7 +28,8 @@ defmodule AgregatWeb.AppLive do
         %{"folder_id" => folder_id} -> "folder-#{folder_id}"
         %{"feed_id" => feed_id} -> "feed-#{feed_id}"
         %{"favorite" => _} -> "favorites"
-        %{} -> "all"
+        %{"all" => _} -> "all"
+        %{} -> nil
       end
     {:noreply, assign(socket, params: params, selected: selected)}
   end
@@ -59,23 +60,33 @@ defmodule AgregatWeb.AppLive do
   end
 
   def handle_event("select-folder-" <> id, _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["feed_id", "favorite"]) |> Map.put("folder_id", id)
+    params = params |> Map.drop(["all", "feed_id", "favorite"]) |> Map.put("folder_id", id)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-feed-" <> id, _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["folder_id", "favorite"]) |> Map.put("feed_id", id)
+    params = params |> Map.drop(["all", "folder_id", "favorite"]) |> Map.put("feed_id", id)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-favorites", _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["feed_id", "folder_id"]) |> Map.put("favorite", true)
+    params = params |> Map.drop(["all", "feed_id", "folder_id"]) |> Map.put("favorite", true)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-all", _, %{assigns: %{params: params}} = socket) do
-    params = params |> Map.drop(["feed_id", "folder_id", "favorite"])
+    params = params |> Map.drop(["feed_id", "folder_id", "favorite"]) |> Map.put("all", true)
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+  end
+
+  def handle_event("next-item", _, %{assigns: %{user: user}} = socket) do
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "item-selection-#{user.id}", %{action: "next"})
+    {:noreply, socket}
+  end
+
+  def handle_event("previous-item", _, %{assigns: %{user: user}} = socket) do
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "item-selection-#{user.id}", %{action: "previous"})
+    {:noreply, socket}
   end
 
   def handle_event("toggle-read-filter", _, %{assigns: %{params: params}} = socket) do
