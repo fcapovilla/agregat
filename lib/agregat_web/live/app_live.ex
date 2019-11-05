@@ -4,8 +4,6 @@ defmodule AgregatWeb.AppLive do
   alias Agregat.Feeds
   alias AgregatWeb.Router.Helpers, as: Routes
 
-  import Ecto.Query, only: [from: 2]
-
   def render(assigns) do
     AgregatWeb.LiveView.render("app.html", assigns)
   end
@@ -38,7 +36,7 @@ defmodule AgregatWeb.AppLive do
     id = String.to_integer(id)
     folder = Enum.find(socket.assigns.folders, &(&1.id == id))
     case Feeds.update_folder(folder, %{open: !folder.open}) do
-      {:ok, folder} -> {:noreply, socket}
+      {:ok, _} -> {:noreply, socket}
       {:error, %Ecto.Changeset{} = changeset} -> {:noreply, assign(socket, changeset: changeset)}
     end
   end
@@ -49,13 +47,13 @@ defmodule AgregatWeb.AppLive do
 
   def handle_event("delete-folder-" <> id, _, socket) do
     folder = Feeds.get_folder!(id, user_id: socket.assigns.user.id)
-    {:ok, folder} = Feeds.delete_folder(folder)
+    Feeds.delete_folder(folder)
     {:noreply, socket}
   end
 
   def handle_event("delete-feed-" <> id, _, socket) do
     feed = Feeds.get_feed!(id, user_id: socket.assigns.user.id)
-    {:ok, feed} = Feeds.delete_feed(feed)
+    Feeds.delete_feed(feed)
     {:noreply, socket}
   end
 
@@ -123,7 +121,7 @@ defmodule AgregatWeb.AppLive do
     end
   end
 
-  def handle_info(%{feeds: feeds, user_id: user_id}, socket) do
+  def handle_info(%{feeds: _, user_id: user_id}, socket) do
     if user_id == socket.assigns.user.id do
       folders = Feeds.list_folders(user_id: user_id)
       {:noreply, assign(socket, folders: folders)}

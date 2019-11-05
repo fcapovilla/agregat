@@ -2,7 +2,6 @@ defmodule AgregatWeb.FaviconController do
   use AgregatWeb, :controller
 
   alias Agregat.Feeds
-  alias Agregat.Feeds.Favicon
 
   def show(conn, %{"id" => id}) do
     favicon = Feeds.get_favicon!(id)

@@ -29,7 +29,7 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  def handle_event("toggle-favorite-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
+  def handle_event("toggle-favorite-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
     case Feeds.update_item(item, %{favorite: !item.favorite}) do
       {:ok, item} ->
@@ -39,7 +39,7 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  def handle_event("toggle-read-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
+  def handle_event("toggle-read-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
     case Feeds.update_item(item, %{read: !item.read}) do
       {:ok, item} ->
@@ -126,7 +126,7 @@ defmodule AgregatWeb.ItemsLive do
     end)
   end
 
-  defp sort(query, params) do
+  defp sort(query, _params) do
     from i in query, order_by: [desc: :date]
   end
 

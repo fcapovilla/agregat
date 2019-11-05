@@ -11,7 +11,7 @@ defmodule AgregatWeb.FolderController do
 
   def create(conn, %{"folder" => folder_params}) do
     case Feeds.create_folder(folder_params) do
-      {:ok, folder} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "Folder created successfully.")
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
@@ -31,7 +31,7 @@ defmodule AgregatWeb.FolderController do
     folder = Feeds.get_folder!(id)
 
     case Feeds.update_folder(folder, folder_params) do
-      {:ok, folder} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "Folder updated successfully.")
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))

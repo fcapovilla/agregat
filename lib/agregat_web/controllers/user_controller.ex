@@ -16,7 +16,7 @@ defmodule AgregatWeb.UserController do
 
   def create(conn, %{"user" => user_params}) do
     case Users.create_user(user_params) do
-      {:ok, user} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: Routes.user_path(conn, :index))
@@ -36,7 +36,7 @@ defmodule AgregatWeb.UserController do
     user = Users.get_user!(id)
 
     case Users.admin_update_user(user, user_params) do
-      {:ok, user} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "User updated successfully.")
         |> redirect(to: Routes.user_path(conn, :index))
