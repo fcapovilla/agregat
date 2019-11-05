@@ -9,8 +9,9 @@ To start your Phoenix server:
 
 To start in Docker:
 
-  * Update the `docker-compose-prod.yml` to set the `SECRET_KEY_BASE` and `HOST` environment variables.
-  * Run `docker-compose -f docker-compose-prod.yml up`
+  * Go in the `release` directory.
+  * Update the `docker-compose.yml` to set the `SECRET_KEY_BASE` and `HOST` environment variables.
+  * Run `docker-compose up`.
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
