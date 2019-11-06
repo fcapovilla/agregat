@@ -97,6 +97,26 @@ defmodule AgregatWeb.AppLive do
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
+  def handle_event("mark-folder-read-" <> folder_id, _, socket) do
+    Feeds.update_folder_items(String.to_integer(folder_id), %{read: true})
+    {:noreply, socket}
+  end
+
+  def handle_event("mark-folder-unread-" <> folder_id, _, socket) do
+    Feeds.update_folder_items(String.to_integer(folder_id), %{read: false})
+    {:noreply, socket}
+  end
+
+  def handle_event("mark-feed-read-" <> feed_id, _, socket) do
+    Feeds.update_feed_items(String.to_integer(feed_id), %{read: true})
+    {:noreply, socket}
+  end
+
+  def handle_event("mark-feed-unread-" <> feed_id, _, socket) do
+    Feeds.update_feed_items(String.to_integer(feed_id), %{read: false})
+    {:noreply, socket}
+  end
+
   def handle_event("keydown", %{"key" => "h"}, %{assigns: %{user: user, selected: selected}} = socket) do
     list = get_selection_list(user.id)
     index = Enum.find_index(list, &(&1 == selected))

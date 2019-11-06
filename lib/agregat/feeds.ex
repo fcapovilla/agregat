@@ -517,6 +517,24 @@ defmodule Agregat.Feeds do
     |> broadcast_item(opts)
   end
 
+  def update_folder_items(folder_id, attrs) do
+    query = (from i in Item, join: f in assoc(i, :feed), where: f.folder_id == ^folder_id)
+    Repo.update_all(query, set: Map.to_list(attrs))
+    Repo.all(query)
+    |> broadcast_items()
+    |> hd()
+    |> update_unread_count()
+  end
+
+  def update_feed_items(feed_id, attrs) do
+    query = (from i in Item, where: i.feed_id == ^feed_id)
+    Repo.update_all(query, set: Map.to_list(attrs))
+    Repo.all(query)
+    |> broadcast_items()
+    |> hd()
+    |> update_unread_count()
+  end
+
   def broadcast_item(any, opts \\ %{})
   def broadcast_item(any, %{broadcast: false}), do: any
   def broadcast_item({:ok, %Item{} = item}, _), do: {:ok, broadcast_item(item)}
