@@ -1,6 +1,6 @@
 <div id="item-list" phx-keydown="keydown" phx-target="window" phx-hook="InfiniteScroll">
   <div>
-    <ul id="items" class="item-list list-unstyled" phx-update="append">
+    <ul id="items" class="item-list list-unstyled" phx-update="append" phx-hook="Keyboard">
       <%= for item <- @items do %>
         <li id="item-<%= item.id %>" class="item-container <%= if item == @selected, do: "active"%>">
           <div class="item-labels">

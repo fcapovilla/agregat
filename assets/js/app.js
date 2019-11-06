@@ -36,17 +36,44 @@ let scrollAt = () => {
 }
 
 Hooks.InfiniteScroll = {
-  page() { return this.el.dataset.page },
+  page() {
+    return this.el.dataset.page
+  },
+  scroll(e){
+    console.log("scroll")
+    if(this.pending == this.page() && scrollAt() > 90){
+      this.pending = this.page() + 1
+      this.pushEvent("load-more", {})
+    }
+  },
   mounted(){
     this.pending = this.page()
-    window.addEventListener("scroll", e => {
-      if(this.pending == this.page() && scrollAt() > 90){
-        this.pending = this.page() + 1
-        this.pushEvent("load-more", {})
-      }
-    })
+    this.boundScroll = this.scroll.bind(this)
+    window.addEventListener("scroll", this.boundScroll, false)
   },
-  updated(){ this.pending = this.page() }
+  updated(){
+    this.pending = this.page()
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.boundScroll, false)
+  }
+}
+
+Hooks.Keyboard = {
+  keydown(e){
+    if (e.key == 'n') {
+      let elem = document.querySelector("#items .item-container.active .item-content-title")
+      if(elem && elem.href) {
+        window.open(elem.href, '_blank')
+      }
+    }
+  },
+  mounted(){
+    window.addEventListener("keydown", this.keydown, false)
+  },
+  destroyed(){
+    window.removeEventListener('keydown', this.keydown, false)
+  }
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks})
