@@ -12,6 +12,12 @@ defmodule AgregatWeb.FeedController do
   def create(conn, %{"feed" => feed_params}) do
     user = Pow.Plug.current_user(conn)
     feed_params = Map.put(feed_params, "user_id", user.id)
+    feed_params =
+      if feed_params["folder_title"] == "" do
+        Map.put(feed_params, "folder_title", "Default")
+      else
+        feed_params
+      end
     case Feeds.create_feed(feed_params) do
       {:ok, feed} ->
         Agregat.Syncer.sync_feed(feed)
