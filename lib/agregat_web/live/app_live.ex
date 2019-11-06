@@ -97,12 +97,34 @@ defmodule AgregatWeb.AppLive do
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
-  def handle_event("keydown", %{"key" => "h"}, socket) do
-    {:noreply, socket}
+  def handle_event("keydown", %{"key" => "h"}, %{assigns: %{user: user, selected: selected}} = socket) do
+    list = get_selection_list(user.id)
+    index = Enum.find_index(list, &(&1 == selected))
+    if index != nil and index > 0 do
+      new_selection = Enum.at(list, index - 1)
+      if new_selection do
+        handle_event("select-#{new_selection}", %{}, socket)
+      else
+        {:noreply, socket}
+      end
+    else
+      handle_event("select-all", %{}, socket)
+    end
   end
 
-  def handle_event("keydown", %{"key" => "l"}, socket) do
-    {:noreply, socket}
+  def handle_event("keydown", %{"key" => "l"}, %{assigns: %{user: user, selected: selected}} = socket) do
+    list = get_selection_list(user.id)
+    index = Enum.find_index(list, &(&1 == selected))
+    if index != nil do
+      new_selection = Enum.at(list, index + 1)
+      if new_selection do
+        handle_event("select-#{new_selection}", %{}, socket)
+      else
+        {:noreply, socket}
+      end
+    else
+      handle_event("select-all", %{}, socket)
+    end
   end
 
   def handle_event("keydown", %{"key" => "i"} = value, socket) do
@@ -135,5 +157,12 @@ defmodule AgregatWeb.AppLive do
       {user, _} -> user
       _ -> nil
     end
+  end
+
+  defp get_selection_list(user_id) do
+    ["all", "favorites"] ++ (
+      Feeds.list_folders(user_id: user_id)
+      |> Enum.flat_map(fn f -> ["folder-#{f.id}"] ++ if f.open, do: Enum.map(f.feeds, &("feed-#{&1.id}")), else: [] end)
+    )
   end
 end
