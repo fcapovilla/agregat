@@ -40,7 +40,6 @@ Hooks.InfiniteScroll = {
     return this.el.dataset.page
   },
   scroll(e){
-    console.log("scroll")
     if(this.pending == this.page() && scrollAt() > 90){
       this.pending = this.page() + 1
       this.pushEvent("load-more", {})
@@ -59,7 +58,7 @@ Hooks.InfiniteScroll = {
   }
 }
 
-Hooks.Keyboard = {
+Hooks.ItemList = {
   keydown(e){
     if (e.key == 'n') {
       let elem = document.querySelector("#items .item-container.active .item-content-title")
@@ -69,7 +68,16 @@ Hooks.Keyboard = {
     }
   },
   mounted(){
+    this.active_id = null
     window.addEventListener("keydown", this.keydown, false)
+  },
+  updated(){
+    // Scroll to active item if it changed
+    let active = this.el.querySelector('.item-container.active');
+    if(active && this.active_id !== active.id) {
+      active.scrollIntoView(true)
+      this.active_id = active.id
+    }
   },
   destroyed(){
     window.removeEventListener('keydown', this.keydown, false)
