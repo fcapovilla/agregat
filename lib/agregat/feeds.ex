@@ -389,7 +389,7 @@ defmodule Agregat.Feeds do
   end
   def broadcast_feeds(any), do: any
 
-  defp set_feed_virtuals([] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
+  defp set_feed_virtuals([%Feed{}|_] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
   defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
 
   @doc """
@@ -523,6 +523,7 @@ defmodule Agregat.Feeds do
     Repo.all(query)
     |> broadcast_items()
     |> hd()
+    list_feeds(%{folder_id: folder_id})
     |> update_unread_count()
   end
 
@@ -557,6 +558,7 @@ defmodule Agregat.Feeds do
     |> update_unread_count()
     {:ok, item}
   end
+  def update_unread_count([%Feed{}|_] = items), do: Enum.map(items, &update_unread_count/1)
   def update_unread_count(%Feed{} = feed) do
     Repo.transaction fn ->
       count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
