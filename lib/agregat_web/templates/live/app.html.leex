@@ -12,6 +12,13 @@
             <i class="fa fa-eye-slash"></i>
           <% end %>
         </a>
+        <a phx-click="toggle-mode" class="btn btn-default" title="Toggle mode">
+          <%= if @mode == :reader do %>
+            <i class="fa fa-binoculars"></i>
+          <% else %>
+            <i class="fa fa-list"></i>
+          <% end %>
+        </a>
         <a href="<%= Routes.user_path(@socket, :index) %>" class="btn btn-default" title="Settings">
           <i class="fa fa-cog"></i>
         </a>
@@ -122,5 +129,9 @@
   </div>
 </div>
 <div class="content <%= if @selected == nil, do: "hidden-xs", else: "" %>">
-  <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params, user: @user}, id: "items?#{URI.encode_query(@params)}") %>
+  <%= if @mode == :reader do %>
+    <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ReaderLive, session: %{params: @params, user: @user}, id: "reader?#{URI.encode_query(@params)}") %>
+  <% else %>
+    <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params, user: @user}, id: "items?#{URI.encode_query(@params)}") %>
+  <% end %>
 </div>

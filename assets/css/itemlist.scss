@@ -6,6 +6,9 @@
 
 	.item-list {
 		margin: 0;
+		&.reader {
+			padding-bottom: 1000px;
+		}
 
 		&>li {
 			border-bottom: 1px solid lightgrey;

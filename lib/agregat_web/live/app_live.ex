@@ -14,7 +14,7 @@ defmodule AgregatWeb.AppLive do
       Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
       Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
       folders = Feeds.list_folders(user_id: user.id)
-      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user)}
+      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user, mode: :reader)}
     else
       {:error, "Unauthorized"}
     end
@@ -95,6 +95,10 @@ defmodule AgregatWeb.AppLive do
         Map.put(params, "read", "false")
       end
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+  end
+
+  def handle_event("toggle-mode", _, socket) do
+    {:noreply, assign(socket, mode: (if socket.assigns.mode == :reader, do: :items, else: :reader))}
   end
 
   def handle_event("mark-folder-read-" <> folder_id, _, socket) do
