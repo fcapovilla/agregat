@@ -14,7 +14,7 @@ defmodule AgregatWeb.AppLive do
       Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
       Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
       folders = Feeds.list_folders(user_id: user.id)
-      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user, mode: :reader)}
+      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user, mode: :items)}
     else
       {:error, "Unauthorized"}
     end
