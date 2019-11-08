@@ -11,8 +11,10 @@ defmodule AgregatWeb.AppLive do
   def mount(session, socket) do
     user = get_user(session.agregat_auth)
     if user do
-      Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
-      Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
+        Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
+      end
       folders = Feeds.list_folders(user_id: user.id)
       {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user, mode: :items)}
     else
