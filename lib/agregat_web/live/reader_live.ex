@@ -12,7 +12,7 @@ defmodule AgregatWeb.ReaderLive do
   def mount(%{params: params, user: user}, socket) do
     Phoenix.PubSub.subscribe(Agregat.PubSub, "item-selection-#{user.id}")
     {:ok, assign(socket, selected: nil, params: params, items: [], prev: nil, next: nil, user: user)
-          |> fetch_items(), temporary_assigns: [:items]}
+          |> fetch_items(), temporary_assigns: [items: true]}
   end
 
   def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
