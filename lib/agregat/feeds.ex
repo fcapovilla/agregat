@@ -553,10 +553,8 @@ defmodule Agregat.Feeds do
   end
   def update_unread_count([%Feed{}|_] = items), do: Enum.map(items, &update_unread_count/1)
   def update_unread_count(%Feed{} = feed) do
-    Repo.transaction fn ->
-      count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
-      update_feed(feed, %{unread_count: count})
-    end
+    count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
+    update_feed(feed, %{unread_count: count})
   end
   def update_unread_count(any), do: any
 
