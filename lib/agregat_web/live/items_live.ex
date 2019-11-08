@@ -91,7 +91,7 @@ defmodule AgregatWeb.ItemsLive do
 
   defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
     items =
-      (from i in Feeds.Item, preload: [:medias, :feed])
+      (from i in Feeds.Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
       |> filter(params)
       |> sort(params)
       |> Feeds.filter_by(user_id: socket.assigns.user.id)

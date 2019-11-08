@@ -141,10 +141,8 @@ defmodule Agregat.Feeds do
 
   """
   def list_folders(filters \\ %{}) do
-    Folder
+    (from f in Folder, left_join: feeds in assoc(f, :feeds), preload: [feeds: feeds], order_by: [asc: f.position, asc: feeds.position])
     |> filter_by(filters)
-    |> order_by(:position)
-    |> preload(feeds: ^(from f in Feed, order_by: f.position))
     |> Repo.all()
     |> count_unread()
   end
@@ -183,9 +181,8 @@ defmodule Agregat.Feeds do
 
   """
   def get_folder!(id, filters \\ %{}) do
-    Folder
+    (from f in Folder, left_join: feeds in assoc(f, :feeds), preload: [feeds: feeds], order_by: [asc: feeds.position])
     |> filter_by(filters)
-    |> preload(:feeds)
     |> Repo.get!(id)
     |> count_unread()
   end
@@ -290,9 +287,8 @@ defmodule Agregat.Feeds do
 
   """
   def list_feeds(filters \\ %{}) do
-    Feed
+    (from f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
     |> filter_by(filters)
-    |> preload(:folder)
     |> Repo.all()
     |> set_feed_virtuals()
   end
@@ -331,9 +327,8 @@ defmodule Agregat.Feeds do
 
   """
   def get_feed!(id, filters \\ %{}) do
-    Feed
+    (from f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
     |> filter_by(filters)
-    |> preload(:folder)
     |> Repo.get!(id)
     |> set_feed_virtuals()
   end
@@ -432,7 +427,7 @@ defmodule Agregat.Feeds do
 
   """
   def list_items(filters \\ %{}) do
-    Item
+    (from i in Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
     |> filter_by(filters)
     |> Repo.all()
   end
@@ -471,9 +466,8 @@ defmodule Agregat.Feeds do
 
   """
   def get_item!(id, filters \\ %{}) do
-    Item
+    (from i in Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
     |> filter_by(filters)
-    |> preload([:feed, :medias])
     |> Repo.get!(id)
   end
 
@@ -510,11 +504,10 @@ defmodule Agregat.Feeds do
 
   """
   def update_item(%Item{} = item, attrs, opts \\ %{}) do
-    item
-    |> Item.changeset(attrs)
-    |> Repo.update()
-    |> update_unread_count()
-    |> broadcast_item(opts)
+    result = item |> Item.changeset(attrs) |> Repo.update()
+    Task.start(__MODULE__, :update_unread_count, [result])
+    Task.start(__MODULE__, :broadcast_item, [result, opts])
+    result
   end
 
   def update_folder_items(folder_id, attrs) do
