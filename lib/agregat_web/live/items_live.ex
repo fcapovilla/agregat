@@ -17,7 +17,7 @@ defmodule AgregatWeb.ItemsLive do
     end
     Phoenix.PubSub.subscribe(Agregat.PubSub, "item-selection-#{user.id}")
     {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: [], user: user)
-          |> fetch_items(), temporary_assigns: [items: true]}
+          |> fetch_items(), temporary_assigns: [items: []]}
   end
 
   def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
