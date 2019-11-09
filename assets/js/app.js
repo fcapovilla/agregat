@@ -27,60 +27,62 @@ import LiveSocket from "phoenix_live_view"
 
 let Hooks = {}
 
-let scrollAt = () => {
-  let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-  let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
-  let clientHeight = document.documentElement.clientHeight
-
-  return scrollTop / (scrollHeight - clientHeight) * 100
-}
-
 Hooks.InfiniteScroll = {
-  page() {
-    return this.el.dataset.page
-  },
-  scroll(e){
-    if(this.pending == this.page() && scrollAt() > 90){
-      this.pending = this.page() + 1
-      this.pushEvent("load-more", {})
-    }
-  },
   mounted(){
     this.pending = this.page()
     this.boundScroll = this.scroll.bind(this)
-    window.addEventListener("scroll", this.boundScroll, false)
+    this.el.addEventListener("scroll", this.boundScroll, false)
   },
   updated(){
     this.pending = this.page()
   },
   destroyed() {
-    window.removeEventListener('scroll', this.boundScroll, false)
+    this.el.removeEventListener('scroll', this.boundScroll, false)
+  },
+  page() {
+    return this.el.dataset.page
+  },
+  scrollAt() {
+    return this.el.scrollTop / (this.el.scrollHeight - this.el.clientHeight) * 100
+  },
+  scroll(e){
+    if(this.pending == this.page() && this.scrollAt() > 90){
+      this.pending = this.page() + 1
+      this.pushEvent("load-more", {})
+    }
   }
 }
 
 Hooks.FeedList = {
+  mounted(){
+    window.addEventListener("resize", this.resize, false)
+    this.resize()
+  },
   updated(){
+    this.resize()
     let elem = this.el.querySelector(".feed-list .total-unread-count")
     if(elem) {
       document.title = "Agregat (" + elem.textContent + ")"
     }
   },
+  destroyed(){
+    window.removeEventListener("resize", this.resize, false)
+  },
+  resize(){
+    let feedList = document.querySelector('.feed-list');
+    feedList.style.height = (document.documentElement.clientHeight - feedList.getBoundingClientRect().top) + "px"
+  }
 }
 
 Hooks.ItemList = {
-  keydown(e){
-    if (e.key == 'n') {
-      let elem = document.querySelector("#items .item-container.active .item-content-title")
-      if(elem && elem.href) {
-        window.open(elem.href, '_blank')
-      }
-    }
-  },
   mounted(){
+    this.resize()
     this.active_id = null
     window.addEventListener("keydown", this.keydown, false)
+    window.addEventListener("resize", this.resize, false)
   },
   updated(){
+    this.resize()
     // Scroll to active item if it changed
     let active = this.el.querySelector('.item-container.active');
     if(active && this.active_id !== active.id) {
@@ -89,7 +91,20 @@ Hooks.ItemList = {
     }
   },
   destroyed(){
-    window.removeEventListener('keydown', this.keydown, false)
+    window.removeEventListener("keydown", this.keydown, false)
+    window.removeEventListener("resize", this.resize, false)
+  },
+  keydown(e){
+    if (e.key == 'n') {
+      let elem = document.querySelector("#items .item-container.active .item-content-title")
+      if(elem && elem.href) {
+        window.open(elem.href, '_blank')
+      }
+    }
+  },
+  resize(){
+    let itemList = document.querySelector('#item-list');
+    itemList.style.height = (document.documentElement.clientHeight - itemList.getBoundingClientRect().top) + "px"
   }
 }
 
