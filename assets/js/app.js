@@ -78,8 +78,10 @@ Hooks.ItemList = {
   mounted(){
     this.resize()
     this.active_id = null
-    window.addEventListener("keydown", this.keydown, false)
+    this.boundKeydown = this.keydown.bind(this)
+    window.addEventListener("keydown", this.boundKeydown, false)
     window.addEventListener("resize", this.resize, false)
+    document.querySelector('#item-list').focus()
   },
   updated(){
     this.resize()
@@ -89,9 +91,10 @@ Hooks.ItemList = {
       active.scrollIntoView(true)
       this.active_id = active.id
     }
+    document.querySelector('#item-list').focus()
   },
   destroyed(){
-    window.removeEventListener("keydown", this.keydown, false)
+    window.removeEventListener("keydown", this.boundKeydown, false)
     window.removeEventListener("resize", this.resize, false)
   },
   keydown(e){
@@ -99,6 +102,17 @@ Hooks.ItemList = {
       let elem = document.querySelector("#items .item-container.active .item-content-title")
       if(elem && elem.href) {
         window.open(elem.href, '_blank')
+      }
+    }
+    if (e.key == ' ') {
+      let active = this.el.querySelector('.item-container.active')
+      if(active) {
+        let position = active.getBoundingClientRect()
+        if(position.top + position.height - document.documentElement.clientHeight < 0) {
+          this.pushEvent('next-item')
+        }
+      } else {
+        this.pushEvent('next-item')
       }
     }
   },
