@@ -32,16 +32,17 @@ defmodule AgregatWeb.Router do
   end
 
   scope "/", AgregatWeb do
+    pipe_through [:browser, :protected, :admin]
+    resources "/users", UserController
+    get "/favicons/refresh", FaviconController, :refresh
+  end
+
+  scope "/", AgregatWeb do
     pipe_through [:browser, :protected]
 
     live "/", AppLive, session: [:agregat_auth]
     resources "/folder", FolderController
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show
-  end
-
-  scope "/", AgregatWeb do
-    pipe_through [:browser, :protected, :admin]
-    resources "/users", UserController
   end
 end

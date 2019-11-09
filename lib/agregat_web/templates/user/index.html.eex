@@ -30,6 +30,7 @@
       </table>
 
       <span><%= link "New User", to: Routes.user_path(@conn, :new), class: "btn btn-primary" %></span>
+      <span><%= link "Refresh favicons", to: Routes.favicon_path(@conn, :refresh), class: "btn btn-default" %></span>
       <span><%= link "Return to feeds", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "btn btn-default" %></span>
     </div>
   </div>

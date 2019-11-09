@@ -348,6 +348,7 @@ defmodule Agregat.Feeds do
   def create_feed(attrs \\ %{}) do
     %Feed{}
     |> Feed.changeset(attrs)
+    |> fetch_feed_favicon()
     |> Repo.insert()
     |> broadcast_feed()
   end
@@ -386,6 +387,13 @@ defmodule Agregat.Feeds do
 
   defp set_feed_virtuals([%Feed{}|_] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
   defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
+
+  defp fetch_feed_favicon(changeset) do
+    case Agregat.FaviconFetcher.fetch(Ecto.Changeset.get_field(changeset, :url)) do
+      {:ok, favicon} -> Ecto.Changeset.put_change(changeset, :favicon_id, favicon.id)
+      {:error, _} -> changeset
+    end
+  end
 
   @doc """
   Deletes a Feed.
