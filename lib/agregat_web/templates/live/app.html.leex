@@ -2,7 +2,7 @@
   <div class="navbar navbar-default">
     <div class="navbar-form" id="mainmenu">
       <div class="btn-group">
-        <a href="<%= Routes.feed_path(@socket, :new) %>" class="btn btn-default" title="Add feed">
+        <a href="<%= Routes.feed_path(@socket, :new) %>" class="btn btn-default hidden-tiny-phone" title="Add feed">
           <i class="fa fa-plus"></i>
         </a>
         <a phx-click="toggle-read-filter" class="btn btn-default" title="Toggle read visibility">
@@ -12,14 +12,14 @@
             <i class="fa fa-eye-slash"></i>
           <% end %>
         </a>
-        <a phx-click="toggle-mode" class="btn btn-default" title="Toggle mode">
+        <a phx-click="toggle-mode" class="btn btn-default hidden-tiny-phone" title="Toggle mode">
           <%= if @mode == :reader do %>
             <i class="fa fa-binoculars"></i>
           <% else %>
             <i class="fa fa-list"></i>
           <% end %>
         </a>
-        <a href="<%= Routes.user_path(@socket, :index) %>" class="btn btn-default" title="Settings">
+        <a href="<%= Routes.user_path(@socket, :index) %>" class="btn btn-default hidden-tiny-phone" title="Settings">
           <i class="fa fa-cog"></i>
         </a>
         <a href="<%= Routes.session_path(@socket, :delete) %>" class="btn btn-default" title="Log out">
@@ -27,6 +27,9 @@
         </a>
       </div>
       <div class="btn-group mobile-item-buttons visible-xs <%= if @selected == nil, do: "invisible", else: "" %>">
+        <button phx-click="select-none" class="btn btn-default mobile-item-button" title="Back to feed list">
+          <i class="fa fa-step-backward"></i>
+        </button>
         <button phx-click="previous-item" class="btn btn-default mobile-item-button" title="previous">
           <i class="fa fa-arrow-circle-up"></i>
         </button>

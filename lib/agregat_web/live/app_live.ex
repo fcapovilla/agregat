@@ -79,6 +79,11 @@ defmodule AgregatWeb.AppLive do
     {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
+  def handle_event("select-none", _, %{assigns: %{params: params}} = socket) do
+    params = params |> Map.drop(["feed_id", "folder_id", "favorite", "all"])
+    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+  end
+
   def handle_event("next-item", _, %{assigns: %{user: user}} = socket) do
     Phoenix.PubSub.broadcast(Agregat.PubSub, "item-selection-#{user.id}", %{action: "next"})
     {:noreply, socket}
