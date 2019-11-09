@@ -58,6 +58,16 @@ Hooks.InfiniteScroll = {
   }
 }
 
+Hooks.FeedList = {
+  updated(){
+    // Scroll to active item if it changed
+    let elem = this.el.querySelector(".feed-list .total-unread-count")
+    if(elem) {
+      document.title = "Agregat (" + elem.textContent + ")"
+    }
+  },
+}
+
 Hooks.ItemList = {
   keydown(e){
     if (e.key == 'n') {
