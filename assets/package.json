@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "file-loader": "^4.2.0",
-    "jquery": "^1.12.4",
+    "jquery": "^3.5.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@fortawesome/fontawesome-free": "^5.11.2",
