@@ -8,8 +8,8 @@ defmodule AgregatWeb.AppLive do
     AgregatWeb.LiveView.render("app.html", assigns)
   end
 
-  def mount(session, socket) do
-    user = get_user(session.agregat_auth)
+  def mount(_params, session, socket) do
+    user = AgregatWeb.Pow.get_user(socket, session)
     if user do
       if connected?(socket) do
         Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
@@ -61,27 +61,27 @@ defmodule AgregatWeb.AppLive do
 
   def handle_event("select-folder-" <> id, _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["all", "feed_id", "favorite"]) |> Map.put("folder_id", id)
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-feed-" <> id, _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["all", "folder_id", "favorite"]) |> Map.put("feed_id", id)
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-favorites", _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["all", "feed_id", "folder_id"]) |> Map.put("favorite", true)
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-all", _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["feed_id", "folder_id", "favorite"]) |> Map.put("all", true)
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("select-none", _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["feed_id", "folder_id", "favorite", "all"])
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("next-item", _, %{assigns: %{user: user}} = socket) do
@@ -101,11 +101,7 @@ defmodule AgregatWeb.AppLive do
       else
         Map.put(params, "read", "false")
       end
-    {:noreply, live_redirect(socket, to: Routes.live_path(socket, __MODULE__, params))}
-  end
-
-  def handle_event("toggle-mode", _, socket) do
-    {:noreply, assign(socket, mode: (if socket.assigns.mode == :reader, do: :items, else: :reader))}
+    {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
   end
 
   def handle_event("mark-folder-read-" <> folder_id, _, socket) do
@@ -180,13 +176,6 @@ defmodule AgregatWeb.AppLive do
       {:noreply, assign(socket, folders: folders)}
     else
       {:noreply, socket}
-    end
-  end
-
-  defp get_user(token) do
-    case Pow.Store.CredentialsCache.get([backend: Pow.Store.Backend.EtsCache], token) do
-      {user, _} -> user
-      _ -> nil
     end
   end
 

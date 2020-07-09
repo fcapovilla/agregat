@@ -14,9 +14,9 @@ config :agregat,
 config :agregat, AgregatWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "HZmrk2nnUX3HywwkmFQbO+zsFs9EKDbVVc5Ynhk6Xm84CqyshSoX+we7VIeIiwlB",
-  render_errors: [view: AgregatWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Agregat.PubSub, adapter: Phoenix.PubSub.PG2],
-  live_view: [signing_salt: "UQAdDQFE1E+7rfqEGYWprRk6HRXdF/HX"]
+  render_errors: [view: AgregatWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Agregat.PubSub,
+  live_view: [signing_salt: "jGkaQilb"]
 
 # Configures Elixir's Logger
 config :logger, :console,

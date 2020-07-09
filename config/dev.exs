@@ -60,7 +60,7 @@ config :agregat, AgregatWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/agregat_web/{live,views}/.*(ex)$",
+      ~r"lib/agregat_web/(live|views)/.*(ex)$",
       ~r"lib/agregat_web/templates/.*(eex)$"
     ]
   ]

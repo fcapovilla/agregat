@@ -1,4 +1,4 @@
-<div id="item-list" phx-keydown="keydown" phx-target="window" phx-hook="InfiniteScroll" tabindex="-1">
+<div id="item-list" phx-window-keydown="keydown" phx-hook="InfiniteScroll" tabindex="-1">
   <div>
     <ul id="items" class="item-list list-unstyled" phx-update="append" phx-hook="ItemList">
       <%= for item <- @items do %>

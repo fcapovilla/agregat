@@ -1,4 +1,3 @@
 defmodule Agregat.Scheduler do
-  use Quantum.Scheduler,
-    otp_app: :agregat
+  use Quantum, otp_app: :agregat
 end

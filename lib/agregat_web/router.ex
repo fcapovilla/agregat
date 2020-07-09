@@ -6,14 +6,15 @@ defmodule AgregatWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
-    plug Phoenix.LiveView.Flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {AgregatWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
   pipeline :protected do
     plug Pow.Plug.RequireAuthenticated,
-    error_handler: Pow.Phoenix.PlugErrorHandler
+         error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
   pipeline :admin do
@@ -40,7 +41,7 @@ defmodule AgregatWeb.Router do
   scope "/", AgregatWeb do
     pipe_through [:browser, :protected]
 
-    live "/", AppLive, session: [:agregat_auth]
+    live "/", AppLive
     resources "/folder", FolderController
     resources "/feed", FeedController
     get "/favicons/:id", FaviconController, :show

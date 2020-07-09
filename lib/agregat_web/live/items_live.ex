@@ -9,7 +9,7 @@ defmodule AgregatWeb.ItemsLive do
     AgregatWeb.LiveView.render("items.html", assigns)
   end
 
-  def mount(%{params: params, user: user}, socket) do
+  def mount(_params, %{"params" => params, "user" => user}, socket) do
     if connected?(socket) do
       case params do
         %{"folder_id" => folder_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "folder-#{folder_id}")

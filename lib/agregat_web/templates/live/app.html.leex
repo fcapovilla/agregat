@@ -12,13 +12,6 @@
             <i class="fa fa-eye-slash"></i>
           <% end %>
         </a>
-        <a phx-click="toggle-mode" class="btn btn-default hidden-tiny-phone" title="Toggle mode">
-          <%= if @mode == :reader do %>
-            <i class="fa fa-binoculars"></i>
-          <% else %>
-            <i class="fa fa-list"></i>
-          <% end %>
-        </a>
         <a href="<%= Routes.user_path(@socket, :index) %>" class="btn btn-default hidden-tiny-phone" title="Settings">
           <i class="fa fa-cog"></i>
         </a>
@@ -41,7 +34,7 @@
   </div>
   <div class="dragbar hidden-xs"></div>
   <div class="<%= if @selected != nil, do: "hidden-xs", else: "" %>">
-    <div class="feed-list" phx-keydown="keydown" phx-target="window" phx-hook="FeedList">
+    <div class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList">
       <ul class="list-unstyled" id="feed-list">
         <li>
           <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>">
@@ -132,9 +125,8 @@
   </div>
 </div>
 <div class="content <%= if @selected == nil, do: "hidden-xs", else: "" %>">
-  <%= if @mode == :reader do %>
-    <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ReaderLive, session: %{params: @params, user: @user}, id: "reader?#{URI.encode_query(@params)}") %>
-  <% else %>
-    <%= Phoenix.LiveView.live_render(@socket, AgregatWeb.ItemsLive, session: %{params: @params, user: @user}, id: "items?#{URI.encode_query(@params)}") %>
-  <% end %>
+  <%= live_render(@socket,
+                  AgregatWeb.ItemsLive,
+                  session: %{"params" => @params, "user" => @user},
+                  id: "items_#{Enum.join(Map.keys(@params) ++ Map.values(@params), "_")}") %>
 </div>

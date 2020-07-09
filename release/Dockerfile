@@ -1,7 +1,7 @@
 # ./Dockerfile
 
 # Extend from the official Elixir image
-FROM elixir:1.9.2
+FROM elixir:1.10.4
 
 RUN apt-get update && \
   apt-get install -y postgresql-client && \
