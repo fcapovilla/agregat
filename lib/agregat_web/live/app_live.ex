@@ -29,7 +29,7 @@ defmodule AgregatWeb.AppLive do
         %{"feed_id" => feed_id} -> "feed-#{feed_id}"
         %{"favorite" => _} -> "favorites"
         %{"all" => _} -> "all"
-        %{} -> nil
+        %{} -> "none"
       end
     {:noreply, assign(socket, params: params, selected: selected)}
   end
@@ -82,16 +82,6 @@ defmodule AgregatWeb.AppLive do
   def handle_event("select-none", _, %{assigns: %{params: params}} = socket) do
     params = params |> Map.drop(["feed_id", "folder_id", "favorite", "all"])
     {:noreply, push_patch(socket, to: Routes.live_path(socket, __MODULE__, params))}
-  end
-
-  def handle_event("next-item", _, %{assigns: %{user: user}} = socket) do
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "item-selection-#{user.id}", %{action: "next"})
-    {:noreply, socket}
-  end
-
-  def handle_event("previous-item", _, %{assigns: %{user: user}} = socket) do
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "item-selection-#{user.id}", %{action: "previous"})
-    {:noreply, socket}
   end
 
   def handle_event("toggle-read-filter", _, %{assigns: %{params: params}} = socket) do

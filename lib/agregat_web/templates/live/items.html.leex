@@ -1,43 +1,8 @@
 <div id="item-list" phx-window-keydown="keydown" phx-hook="InfiniteScroll" tabindex="-1">
   <div>
     <ul id="items" class="item-list list-unstyled" phx-update="append" phx-hook="ItemList">
-      <%= for item <- @items do %>
-        <li id="item-<%= item.id %>" class="item-container <%= if item == @selected, do: "active"%>">
-          <div class="item-labels">
-            <%= if item.feed != nil and item.feed.title do %>
-              <span class="item-feed-title label <%= if item.read, do: "label-default", else: "label-primary" %> hidden-small-phone">
-              <%= item.feed.title %>
-              </span>
-            <% end %>
-            <span class="item-date label label-default hidden-phone">
-              <%= item.date %>
-            </span>
-          </div>
-          <div phx-click="open-item-<%= item.id %>" class="item-title">
-            <i phx-click="toggle-favorite-<%= item.id %>" class="favoriteIcon fa fa-star <%= if !item.favorite, do: "far" %>"></i>
-            <i phx-click="toggle-read-<%= item.id %>" class="readUnreadIcon fa fa-circle <%= if item.read, do: "far" %>"></i>
-            <%= if item.read do %>
-              <%= item.title %>
-            <% else %>
-              <b><%= item.title %></b>
-            <% end %>
-          </div>
-          <%= if item == @selected do %>
-            <div class="well item-content">
-              <a class="item-content-title" href="<%= item.url %>" target="_blank"><%= item.title %></a>
-              <br>
-              <%= raw item.content %>
-              <%= if item.medias do %>
-                <br>
-                <%= for media <- item.medias do %>
-                  <a class="btn btn-default" href="<%= media.url %>">
-                    <i class="fa fa-download"></i> <%= media.type %>
-                  </a>
-                <% end %>
-              <% end %>
-            </div>
-          <% end %>
-        </li>
+      <%= for id <- @new_ids do %>
+        <%= live_component @socket, AgregatWeb.ItemComponent, id: id, user: @user %>
       <% end %>
     </ul>
   </div>

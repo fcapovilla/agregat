@@ -19,21 +19,21 @@
           <i class="fa fa-sign-out-alt"></i>
         </a>
       </div>
-      <div class="btn-group mobile-item-buttons visible-xs <%= if @selected == nil, do: "invisible", else: "" %>">
+      <div class="btn-group mobile-item-buttons visible-xs <%= if @selected == "none", do: "invisible", else: "" %>">
         <button phx-click="select-none" class="btn btn-default mobile-item-button" title="Back to feed list">
           <i class="fa fa-step-backward"></i>
         </button>
-        <button phx-click="previous-item" class="btn btn-default mobile-item-button" title="previous">
+        <button id="btn-previous-item" class="btn btn-default mobile-item-button" title="previous">
           <i class="fa fa-arrow-circle-up"></i>
         </button>
-        <button phx-click="next-item" class="btn btn-default mobile-item-button" title="next">
+        <button id="btn-next-item" class="btn btn-default mobile-item-button" title="next">
           <i class="fa fa-arrow-circle-down"></i>
         </button>
       </div>
     </div>
   </div>
   <div class="dragbar hidden-xs"></div>
-  <div class="<%= if @selected != nil, do: "hidden-xs", else: "" %>">
+  <div class="<%= if @selected != "none", do: "hidden-xs", else: "" %>">
     <div class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList">
       <ul class="list-unstyled" id="feed-list">
         <li>
@@ -124,9 +124,9 @@
     </div>
   </div>
 </div>
-<div class="content <%= if @selected == nil, do: "hidden-xs", else: "" %>">
+<div class="content <%= if @selected == "none", do: "hidden-xs", else: "" %>">
   <%= live_render(@socket,
                   AgregatWeb.ItemsLive,
                   session: %{"params" => @params, "user" => @user},
-                  id: "items_#{Enum.join(Map.keys(@params) ++ Map.values(@params), "_")}") %>
+                  id: "items-#{@selected}-#{@params["read"]}") %>
 </div>

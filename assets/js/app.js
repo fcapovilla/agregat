@@ -72,25 +72,24 @@ Hooks.FeedList = {
 Hooks.ItemList = {
   mounted(){
     this.resize()
-    this.active_id = null
     this.boundKeydown = this.keydown.bind(this)
+    this.boundBtnNextItem = this.btnNextItem.bind(this)
+    this.boundBtnPreviousItem = this.btnPreviousItem.bind(this)
     window.addEventListener("keydown", this.boundKeydown, false)
     window.addEventListener("resize", this.resize, false)
+    document.querySelector('#btn-previous-item').addEventListener("click", this.boundBtnPreviousItem, false)
+    document.querySelector('#btn-next-item').addEventListener("click", this.boundBtnNextItem, false)
     document.querySelector('#item-list').focus()
   },
   updated(){
     this.resize()
-    // Scroll to active item if it changed
-    let active = this.el.querySelector('.item-container.active');
-    if(active && this.active_id !== active.id) {
-      active.scrollIntoView(true)
-      this.active_id = active.id
-    }
     document.querySelector('#item-list').focus()
   },
   destroyed(){
     window.removeEventListener("keydown", this.boundKeydown, false)
     window.removeEventListener("resize", this.resize, false)
+    document.querySelector('#btn-previous-item').removeEventListener("click", this.boundBtnPreviousItem, false)
+    document.querySelector('#btn-next-item').removeEventListener("click", this.boundBtnNextItem, false)
   },
   keydown(e){
     if (e.key == 'n') {
@@ -114,6 +113,25 @@ Hooks.ItemList = {
   resize(){
     let itemList = document.querySelector('#item-list');
     itemList.style.height = (document.documentElement.clientHeight - itemList.getBoundingClientRect().top) + "px"
+  },
+  btnNextItem(){
+    this.pushEvent('next-item')
+  },
+  btnPreviousItem(){
+    this.pushEvent('previous-item')
+  }
+}
+
+Hooks.Item = {
+  mounted(){
+    this.active = false
+  },
+  updated(){
+    let active = this.el.classList.contains('active')
+    if(active && !this.active) {
+      this.el.scrollIntoView(true)
+    }
+    this.active = active
   }
 }
 

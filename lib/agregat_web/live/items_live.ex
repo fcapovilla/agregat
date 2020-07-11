@@ -16,16 +16,15 @@ defmodule AgregatWeb.ItemsLive do
         %{"feed_id" => feed_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "feed-#{feed_id}")
         _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
       end
-      Phoenix.PubSub.subscribe(Agregat.PubSub, "item-selection-#{user.id}")
     end
-    {:ok, assign(socket, selected: nil, page: 1, params: params, items: [], ids: [], user: user)
-          |> fetch_items(), temporary_assigns: [items: []]}
+    {:ok, assign(socket, selected: nil, page: 1, params: params, ids: [], new_ids: [], user: user)
+          |> fetch_items(), temporary_assigns: [new_ids: []]}
   end
 
   def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
     item_id = String.to_integer(item_id)
-    if selected != nil and selected.id == item_id do
-      {:noreply, assign(socket, items: [selected], selected: nil)}
+    if selected != nil and selected == item_id do
+      {:noreply, select_item(socket, nil)}
     else
       {:noreply, select_item(socket, item_id)}
     end
@@ -56,7 +55,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("next-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
-    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
+    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected)), else: nil
     cond do
       position == nil ->
         {:noreply, select_item(socket, Enum.at(ids, 0))}
@@ -68,7 +67,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("previous-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
-    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected.id)), else: nil
+    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected)), else: nil
     cond do
       position == nil ->
         {:noreply, select_item(socket, Enum.at(ids, 0))}
@@ -92,28 +91,20 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
-    items =
-      (from i in Feeds.Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
+    new_ids =
+      (from i in Feeds.Item, select: i.id)
       |> filter(params)
       |> sort(params)
       |> Feeds.filter_by(user_id: socket.assigns.user.id)
       |> Feeds.paginate(page)
       |> Agregat.Repo.all()
-    assign(socket, items: items, ids: ids ++ Enum.map(items, &(&1.id)))
+    assign(socket, ids: Enum.uniq(ids ++ new_ids), new_ids: new_ids)
   end
 
   defp select_item(%{assigns: %{selected: selected}} = socket, item_id) do
-    item = Feeds.get_item!(item_id, user_id: socket.assigns.user.id)
-    case Feeds.update_item(item, %{read: true}) do
-      {:ok, item} ->
-        if selected != nil do
-          assign(socket, items: [selected, item], selected: item)
-        else
-          assign(socket, items: [item], selected: item)
-        end
-      {:error, %Ecto.Changeset{} = changeset} ->
-        assign(socket, changeset: changeset)
-    end
+    if selected, do: send_update(AgregatWeb.ItemComponent, id: selected, selected: false)
+    if item_id, do: send_update(AgregatWeb.ItemComponent, id: item_id, selected: true)
+    assign(socket, selected: item_id)
   end
 
   defp filter(query, params) do
@@ -134,17 +125,13 @@ defmodule AgregatWeb.ItemsLive do
 
   def handle_info(%{items: items, user_id: user_id}, socket) do
     if user_id == socket.assigns.user.id do
-      {:noreply, assign(socket, items: items)}
+      for item <- items do
+        send_update(AgregatWeb.ItemComponent, id: item.id, item: item)
+      end
+      new_ids = Enum.map(items, &(&1.id)) -- socket.assigns.ids
+      {:noreply, assign(socket, new_ids: new_ids, ids: socket.assigns.ids ++ new_ids)}
     else
       {:noreply, socket}
     end
-  end
-
-  def handle_info(%{action: "next"}, socket) do
-    handle_event("next-item", nil, socket)
-  end
-
-  def handle_info(%{action: "previous"}, socket) do
-    handle_event("previous-item", nil, socket)
   end
 end
