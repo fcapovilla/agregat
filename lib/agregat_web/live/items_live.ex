@@ -125,6 +125,12 @@ defmodule AgregatWeb.ItemsLive do
 
   def handle_info(%{items: items, user_id: user_id}, socket) do
     if user_id == socket.assigns.user.id do
+      items =
+        if socket.assigns.params["read"] == "false" do
+          Enum.filter(items, &(!&1.read))
+        else
+          items
+        end
       for item <- items do
         send_update(AgregatWeb.ItemComponent, id: item.id, item: item)
       end

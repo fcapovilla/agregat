@@ -128,5 +128,5 @@
   <%= live_render(@socket,
                   AgregatWeb.ItemsLive,
                   session: %{"params" => @params, "user" => @user},
-                  id: "items-#{@selected}-#{@params["read"]}") %>
+                  id: "items-#{@selected}#{if @params["read"], do: "-read", else: ""}") %>
 </div>
