@@ -39,16 +39,23 @@ defmodule Agregat.Syncer do
 
   def parse_feed(%Feed{is_html: false}, data), do: FeederEx.parse(data)
   def parse_feed(feed, data) do
+    feed_uri = URI.parse(feed.url)
+    feed_host = feed_uri.scheme <> "://" <> feed_uri.authority
+
     {:ok, document} = Floki.parse_document(data)
     elements = Floki.find(document, feed.parsing_settings["container"])
-    entries = Enum.map(elements, fn(element) -> %{
-      title: Floki.find(element, feed.parsing_settings["title"]) |> Floki.text,
-      link: Floki.find(element, feed.parsing_settings["url"]) |> Floki.attribute("href") |> Enum.at(0),
-      id: Floki.find(element, feed.parsing_settings["url"]) |> Floki.attribute("href") |> Enum.at(0),
-      summary: Floki.find(element, feed.parsing_settings["content"]) |> Floki.raw_html,
-      updated: Floki.find(element, feed.parsing_settings["date"]) |> Floki.text,
-      enclosure: nil,
-    } end)
+    entries = Enum.map(elements, fn(element) ->
+      link = Floki.find(element, feed.parsing_settings["url"]) |> Floki.attribute("href") |> Enum.at(0)
+      link = if link =~ ~r/^http/, do: link, else: feed_host <> link
+      %{
+        title: Floki.find(element, feed.parsing_settings["title"]) |> Floki.text,
+        link: link,
+        id: link,
+        summary: Floki.find(element, feed.parsing_settings["content"]) |> Floki.raw_html,
+        updated: Floki.find(element, feed.parsing_settings["date"]) |> Floki.text,
+        enclosure: nil,
+       }
+    end)
     {:ok, %{
        title: Floki.find(document, "head title") |> Floki.text,
        entries: entries,
