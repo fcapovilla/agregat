@@ -16,7 +16,7 @@ defmodule Agregat.Syncer do
   # Update items for the feed in parameter.
   def sync_feed(feed) do
     with {:ok, data} <- Agregat.HttpClient.get(feed.url),
-         {:ok, parsed_feed, _} <- FeederEx.parse(data.body)
+         {:ok, parsed_feed, _} <- parse_feed(feed, data.body)
     do
       update_feed(feed, parsed_feed)
     else
@@ -35,6 +35,24 @@ defmodule Agregat.Syncer do
         Logger.error "Error syncing " <> feed.url
         Agregat.Feeds.update_feed(feed, %{sync_status: "Unknown error."})
     end
+  end
+
+  def parse_feed(%Feed{is_html: false}, data), do: FeederEx.parse(data)
+  def parse_feed(feed, data) do
+    {:ok, document} = Floki.parse_document(data)
+    elements = Floki.find(document, feed.parsing_settings["container"])
+    entries = Enum.map(elements, fn(element) -> %{
+      title: Floki.find(element, feed.parsing_settings["title"]) |> Floki.text,
+      link: Floki.find(element, feed.parsing_settings["url"]) |> Floki.attribute("href") |> Enum.at(0),
+      id: Floki.find(element, feed.parsing_settings["url"]) |> Floki.attribute("href") |> Enum.at(0),
+      summary: Floki.find(element, feed.parsing_settings["content"]) |> Floki.raw_html,
+      updated: Floki.find(element, feed.parsing_settings["date"]) |> Floki.text,
+      enclosure: nil,
+    } end)
+    {:ok, %{
+       title: Floki.find(document, "head title") |> Floki.text,
+       entries: entries,
+    }, nil}
   end
 
   # Recalculate the sync frequency of all feeds using automatic frequency calculation

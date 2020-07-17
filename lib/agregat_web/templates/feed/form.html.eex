@@ -25,9 +25,35 @@
           <%= number_input f, :update_frequency, class: "form-control" %>
           <%= error_tag f, :update_frequency %>
 
-          <%= checkbox f, :auto_frequency%>
-          <%= label f, :auto_frequency %>
-          <%= error_tag f, :auto_frequency %>
+          <div>
+            <%= checkbox f, :auto_frequency%>
+            <%= label f, :auto_frequency %>
+            <%= error_tag f, :auto_frequency %>
+          </div>
+
+          <div class="well">
+            <div>
+              <%= checkbox f, :is_html%>
+              <%= label f, :is_html %>
+              <%= error_tag f, :is_html %>
+            </div>
+
+            <%= label f, :parsing_settings, "HTML Container" %>
+            <%= text_input f, :parsing_settings_container, name: "feed[parsing_settings][container]", value: @changeset.data.parsing_settings["container"], class: "form-control" %>
+            <%= error_tag f, :parsing_settings %>
+
+            <%= label f, :parsing_settings, "Title" %>
+            <%= text_input f, :parsing_settings_title, name: "feed[parsing_settings][title]", value: @changeset.data.parsing_settings["title"], class: "form-control" %>
+
+            <%= label f, :parsing_settings, "URL" %>
+            <%= text_input f, :parsing_settings_url, name: "feed[parsing_settings][url]", value: @changeset.data.parsing_settings["url"], class: "form-control" %>
+
+            <%= label f, :parsing_settings, "Content" %>
+            <%= text_input f, :parsing_settings_content, name: "feed[parsing_settings][content]", value: @changeset.data.parsing_settings["content"], class: "form-control" %>
+
+            <%= label f, :parsing_settings, "Date" %>
+            <%= text_input f, :parsing_settings_date, name: "feed[parsing_settings][date]", value: @changeset.data.parsing_settings["date"], class: "form-control" %>
+          </div>
 
           <div class="modal-footer">
             <%= link "Cancel", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "btn btn-default" %>

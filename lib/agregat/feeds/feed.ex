@@ -14,6 +14,8 @@ defmodule Agregat.Feeds.Feed do
     field :update_frequency, :integer, default: 30
     field :url, :string
     field :folder_title, :string, virtual: true, default: ""
+    field :is_html, :boolean, default: false
+    field :parsing_settings, :map
     belongs_to :user, Agregat.Users.User
     belongs_to :folder, Agregat.Feeds.Folder, on_replace: :update
     belongs_to :favicon, Agregat.Feeds.Favicon
@@ -25,7 +27,7 @@ defmodule Agregat.Feeds.Feed do
   @doc false
   def changeset(feed, attrs) do
     feed
-    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency, :user_id, :folder_id, :favicon_id, :folder_title])
+    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency, :user_id, :folder_id, :favicon_id, :folder_title, :is_html, :parsing_settings])
     |> validate_required([:url])
     |> update_folder()
   end
