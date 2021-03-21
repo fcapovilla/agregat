@@ -7,6 +7,7 @@
     "ENV PGUSER=postgres",
     "ENV PGPASSWORD=postgres",
     "ENV PGHOST=srv-captain--agregat-db",
+    "ENV PGPORT=5432",
     "ENV PGDATABASE=agregat",
     "ENV MIX_ENV=prod",
     "ENV SECRET_KEY_BASE=CHANGE_ME",

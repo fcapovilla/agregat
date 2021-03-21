@@ -15,6 +15,7 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
       PGHOST: postgres
+      PGPORT: 5432
       PGDATABASE: agregat
       MIX_ENV: prod
       HOST: localhost
