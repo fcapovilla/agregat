@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "dockerfileLines": [
-    "FROM docker.pkg.github.com/fcapovilla/agregat/agregat:latest",
+    "FROM ghcr.io/fcapovilla/agregat:latest",
     "ENV HOST=localhost",
     "ENV PORT=80",
     "ENV PGUSER=postgres",

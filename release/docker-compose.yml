@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data/pgdata
   phoenix:
-    image: docker.pkg.github.com/fcapovilla/agregat/agregat:latest
+    image: ghcr.io/fcapovilla/agregat:latest
     environment:
       PGUSER: postgres
       PGPASSWORD: postgres
