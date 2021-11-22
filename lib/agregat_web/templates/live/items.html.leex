@@ -1,8 +1,8 @@
 <div id="item-list" phx-window-keydown="keydown" phx-hook="InfiniteScroll" tabindex="-1">
   <div>
-    <ul id="items" class="item-list list-unstyled" phx-update="append" phx-hook="ItemList">
+    <ul id="items" x-data="{selected: false}" class="item-list list-unstyled" phx-update="append" phx-hook="ItemList">
       <%= for id <- @new_ids do %>
-        <%= live_component @socket, AgregatWeb.ItemComponent, id: id, user: @user %>
+        <%= live_component @socket, AgregatWeb.ItemComponent, id: id, current_user: @current_user %>
       <% end %>
     </ul>
   </div>

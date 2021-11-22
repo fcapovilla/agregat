@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4 well">
+      <h2>
+        Login
+      </h2>
+      <.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
+        <%= if @error_message do %>
+          <div class="alert alert-danger">
+            <p><%= @error_message %></p>
+          </div>
+        <% end %>
+
+        <fieldset>
+          <div class="clearfix">
+            <%= text_input f, :email, class: "form-control", placeholder: "Username" %>
+          </div>
+          <div class="clearfix">
+            <%= password_input f, :password, class: "form-control", placeholder: "Password" %>
+          </div>
+          <div class="clearfix">
+            <%= label f, :remember_me, "Keep me logged in for 60 days" %>
+            <%= checkbox f, :remember_me %>
+          </div>
+          <%= submit "Log in", class: "btn btn-primary pull-right" %>
+        </fieldset>
+      </.form>
+    </div>
+  </div>
+</div>

@@ -7,12 +7,8 @@ defmodule AgregatWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_agregat_key",
-    signing_salt: "DHSG6xAl"
+    signing_salt: "9pzhDu8t"
   ]
-
-  socket "/socket", AgregatWeb.UserSocket,
-    websocket: true,
-    longpoll: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
@@ -24,7 +20,7 @@ defmodule AgregatWeb.Endpoint do
     at: "/",
     from: :agregat,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(assets fonts images favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -36,8 +32,8 @@ defmodule AgregatWeb.Endpoint do
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
-       param_key: "request_logger",
-       cookie_key: "request_logger"
+    param_key: "request_logger",
+    cookie_key: "request_logger"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
@@ -50,6 +46,5 @@ defmodule AgregatWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug Pow.Plug.Session, otp_app: :agregat
   plug AgregatWeb.Router
 end

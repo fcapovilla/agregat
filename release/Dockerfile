@@ -1,7 +1,7 @@
 # ./Dockerfile
 
 # Extend from the official Elixir image
-FROM elixir:1.10.4
+FROM elixir:1.12.3
 
 RUN apt-get update && \
   apt-get install -y postgresql-client && \
@@ -28,7 +28,6 @@ WORKDIR /app
 RUN mix deps.get --only prod
 RUN mix compile
 RUN npm install --prefix ./assets
-RUN npm run deploy --prefix ./assets
 RUN mix phx.digest
 
 CMD ["/app/release/entrypoint.sh"]

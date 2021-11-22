@@ -1,5 +1,5 @@
 defmodule AgregatWeb.ItemComponent do
-  use Phoenix.LiveComponent
+  use AgregatWeb, :live_component
 
   import Ecto.Query, only: [from: 2]
 
@@ -28,26 +28,12 @@ defmodule AgregatWeb.ItemComponent do
     end)
   end
 
-  def update(%{item: item} = assigns, socket) do
-    socket = assign(socket, assigns)
-    if Map.has_key?(assigns, :selected) and assigns.selected do
-      case Feeds.update_item(item, %{read: true}) do
-        {:ok, item} ->
-          {:ok, assign(socket, item: item, selected: true)}
-        {:error, %Ecto.Changeset{} = changeset} ->
-          {:ok, assign(socket, changeset: changeset)}
-      end
-    else
-      {:ok, socket}
-    end
-  end
-
   def mount(socket) do
-    {:ok, assign(socket, selected: false), temporary_assigns: [item: nil]}
+    {:ok, socket, temporary_assigns: [item: nil]}
   end
 
   def handle_event("toggle-favorite", _, %{assigns: %{id: id}} = socket) do
-    item = Feeds.get_item!(id, user_id: socket.assigns.user.id)
+    item = Feeds.get_item!(id, user_id: socket.assigns.current_user.id)
     case Feeds.update_item(item, %{favorite: !item.favorite}) do
       {:ok, item} ->
         {:noreply, assign(socket, item: item)}
@@ -57,8 +43,18 @@ defmodule AgregatWeb.ItemComponent do
   end
 
   def handle_event("toggle-read", _, %{assigns: %{id: id}} = socket) do
-    item = Feeds.get_item!(id, user_id: socket.assigns.user.id)
+    item = Feeds.get_item!(id, user_id: socket.assigns.current_user.id)
     case Feeds.update_item(item, %{read: !item.read}) do
+      {:ok, item} ->
+        {:noreply, assign(socket, item: item)}
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("set-read", %{"read" => read}, %{assigns: %{id: id}} = socket) do
+    item = Feeds.get_item!(id, user_id: socket.assigns.current_user.id)
+    case Feeds.update_item(item, %{read: read}) do
       {:ok, item} ->
         {:noreply, assign(socket, item: item)}
       {:error, %Ecto.Changeset{} = changeset} ->

@@ -1,245 +1,254 @@
 /* This file is for your main application css. */
-@import "feedlist.scss";
-@import "itemlist.scss";
+@import "./feedlist.scss";
+@import "./itemlist.scss";
 
-@import "../node_modules/nprogress/nprogress.css";
+@import "bootstrap/dist/css/bootstrap";
 
-@import "~bootstrap/dist/css/bootstrap.css";
+/* x-cloak support for AlpineJS */
 
-/* LiveView specific classes for your customizations */
-.invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+[x-cloak] {
+    display: none !important;
 }
 
-.phx-no-feedback.invalid-feedback, .phx-no-feedback .invalid-feedback {
-  display: none;
+/* Alerts and form errors used by phx.new */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.alert p {
+    margin-bottom: 0;
+}
+.alert:empty {
+    display: none;
+}
+.invalid-feedback {
+    color: #a94442;
+    display: block;
+    margin: -1rem 0 2rem;
+}
+
+/* LiveView specific classes for your customization */
+.phx-no-feedback.invalid-feedback,
+.phx-no-feedback .invalid-feedback {
+    display: none;
 }
 
 .phx-click-loading {
-  opacity: 0.5;
-  transition: opacity 1s ease-out;
+    opacity: 0.5;
+    transition: opacity 1s ease-out;
 }
 
 .phx-disconnected{
-  cursor: wait;
+    cursor: wait;
 }
 .phx-disconnected *{
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .phx-modal {
-  opacity: 1!important;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
+    opacity: 1!important;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
 }
 
 .phx-modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+    background-color: #fefefe;
+    margin: 15vh auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
 }
 
 .phx-modal-close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 .phx-modal-close:hover,
 .phx-modal-close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-
-/* Alerts and form errors */
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-.alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-}
-.alert-warning {
-  color: #8a6d3b;
-  background-color: #fcf8e3;
-  border-color: #faebcc;
-}
-.alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
-}
-.alert p {
-  margin-bottom: 0;
-}
-.alert:empty {
-  display: none;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 // Default font sizes
 body {
-	font-size: 13px;
+    font-size: 13px;
 }
 .badge,
 .label{
-	font-size: 11px;
+    font-size: 11px;
 }
 
 // Hover on list elements
 .feed-title,
 .folder-title,
 .item-container {
-	&:hover {
-		background-color: rgb(230, 230, 230);
-	}
-	&.active {
-		color: #ffffff;
-		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-		background-color: rgb(91, 165, 202);
-	}
+    &:hover {
+        background-color: rgb(230, 230, 230);
+    }
+    .item-content {
+        display: none;
+    }
+    &.active {
+        color: #ffffff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+        background-color: rgb(91, 165, 202);
+        .item-content {
+            display: block;
+        }
+    }
 }
 
 // Subscription list
 .togglePSHBAction,
 .sortable {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 // Fix navbar
 .navbar {
-	margin-bottom: 0;
-	min-height: 0;
+    margin-bottom: 0;
+    min-height: 0;
 }
 .navbar-form {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 //Badge coloring
 .badge-primary {
-	background-color: #428BCA;
+    background-color: #428BCA;
 }
 
 // Wide modal dialogs
 .modal-wide {
-	width: 90%;
+    width: 90%;
 }
 
 .mobile-item-buttons {
-	float: right;
+    float: right;
 }
 
 // Fix for forms in modal dialogs
 form {
-	margin: 0;
+    margin: 0;
 }
 
 // Feed Edit Dialog PSHB section
 .feedPSHBInfos {
-	max-width: 550px;
-	overflow: auto;
+    max-width: 550px;
+    overflow: auto;
 }
 
 // Table style with minimal padding
 td.no-padding {
-	padding: 2px !important;
+    padding: 2px !important;
 }
 
 #searchForm {
-	.form-group,
-	.checkbox {
-		width: 200px;
-	}
+    .form-group,
+    .checkbox {
+        width: 200px;
+    }
 }
 
 #spinner {
-	vertical-align: text-top;
+    vertical-align: text-top;
 }
 
 // Desktop view
 @media screen and (min-width:768px) {
-	.content {
-		margin-left: 300px;
-	}
+    .content {
+        margin-left: 300px;
+    }
 
-	.side-bar {
-		width:300px;
-		position: fixed;
-		top: 0px;
-		left: 0px;
-		height: 100%;
-		.dragbar {
-			background-color: rgb(230, 230, 230);
-			height:100%;
-			float: right;
-			width: 5px;
-			cursor: col-resize;
-		}
-	}
+    .side-bar {
+        width:300px;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100%;
+        .dragbar {
+            background-color: rgb(230, 230, 230);
+            height:100%;
+            float: right;
+            width: 5px;
+            cursor: col-resize;
+        }
+    }
 }
 
 // Mobile view
 @media screen and (max-width:767px) {
-	body {
-		padding: 0px;
-		font-size: 13px;
-		.fa {
-			font-size: 15px;
-		}
-	}
+    body {
+        padding: 0px;
+        font-size: 13px;
+        .fa {
+            font-size: 15px;
+        }
+    }
 
-	.btn .fa{
-		font-size: 20px;
-	}
+    .btn .fa{
+        font-size: 20px;
+    }
 
-	.btn img{
-		height: 20px;
-	}
+    .btn img{
+        height: 20px;
+    }
 
-	.mobile-item-button {
-		display: inline !important;
-	}
+    .mobile-item-button {
+        display: inline !important;
+    }
 
-	.content {
-		margin-left: 0px !important;
-	}
+    .content {
+        margin-left: 0px !important;
+    }
 
-	.side-bar {
-		width: 100% !important;
-	}
+    .side-bar {
+        width: 100% !important;
+    }
 
-	.hidden-phone {
-		display: none !important;
-	}
+    .hidden-phone {
+        display: none !important;
+    }
 }
 
 // Additional mobile hidden classes
 @media screen and (max-width:365px) {
-	.hidden-tiny-phone {
-		display: none !important;
-	}
+    .hidden-tiny-phone {
+        display: none !important;
+    }
 }
 
 @media screen and (max-width:500px) {
-	.hidden-small-phone {
-		display: none !important;
-	}
+    .hidden-small-phone {
+        display: none !important;
+    }
 }

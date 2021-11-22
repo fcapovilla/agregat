@@ -1,5 +1,5 @@
 defmodule AgregatWeb.ItemsLive do
-  use Phoenix.LiveView
+  use AgregatWeb, :live_view
 
   import Ecto.Query, only: [from: 2]
 
@@ -9,7 +9,8 @@ defmodule AgregatWeb.ItemsLive do
     AgregatWeb.LiveView.render("items.html", assigns)
   end
 
-  def mount(_params, %{"params" => params, "user" => user}, socket) do
+  def mount(_params, %{"params" => params} = session, socket) do
+    socket = assign_defaults(session, socket)
     if connected?(socket) do
       case params do
         %{"folder_id" => folder_id} -> Phoenix.PubSub.subscribe(Agregat.PubSub, "folder-#{folder_id}")
@@ -17,21 +18,12 @@ defmodule AgregatWeb.ItemsLive do
         _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
       end
     end
-    {:ok, assign(socket, selected: nil, page: 1, params: params, ids: [], new_ids: [], user: user)
+    {:ok, assign(socket, page: 1, params: params, ids: [], new_ids: [])
           |> fetch_items(), temporary_assigns: [new_ids: []]}
   end
 
-  def handle_event("open-item-" <> item_id, _, %{assigns: %{selected: selected}} = socket) do
-    item_id = String.to_integer(item_id)
-    if selected != nil and selected == item_id do
-      {:noreply, select_item(socket, nil)}
-    else
-      {:noreply, select_item(socket, item_id)}
-    end
-  end
-
   def handle_event("toggle-favorite-" <> item_id, _, socket) do
-    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
+    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
     case Feeds.update_item(item, %{favorite: !item.favorite}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -41,7 +33,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_event("toggle-read-" <> item_id, _, socket) do
-    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.user.id)
+    item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
     case Feeds.update_item(item, %{read: !item.read}) do
       {:ok, item} ->
         {:noreply, assign(socket, items: [item])}
@@ -54,38 +46,6 @@ defmodule AgregatWeb.ItemsLive do
     {:noreply, assign(socket, page: page + 1) |> fetch_items()}
   end
 
-  def handle_event("next-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
-    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected)), else: nil
-    cond do
-      position == nil ->
-        {:noreply, select_item(socket, Enum.at(ids, 0))}
-      position + 1 >= Enum.count(ids) ->
-        {:noreply, socket}
-      true ->
-        {:noreply, select_item(socket, Enum.at(ids, position + 1))}
-    end
-  end
-
-  def handle_event("previous-item", _, %{assigns: %{ids: ids, selected: selected}} = socket) do
-    position = if selected != nil, do: Enum.find_index(ids, &(&1 == selected)), else: nil
-    cond do
-      position == nil ->
-        {:noreply, select_item(socket, Enum.at(ids, 0))}
-      position < 1 ->
-        {:noreply, socket}
-      true ->
-        {:noreply, select_item(socket, Enum.at(ids, position - 1))}
-    end
-  end
-
-  def handle_event("keydown", %{"key" => "j"}, socket) do
-    handle_event("next-item", nil, socket)
-  end
-
-  def handle_event("keydown", %{"key" => "k"}, socket) do
-    handle_event("previous-item", nil, socket)
-  end
-
   def handle_event("keydown", _, socket) do
     {:noreply, socket}
   end
@@ -95,16 +55,10 @@ defmodule AgregatWeb.ItemsLive do
       (from i in Feeds.Item, select: i.id)
       |> filter(params)
       |> sort(params)
-      |> Feeds.filter_by(user_id: socket.assigns.user.id)
+      |> Feeds.filter_by(user_id: socket.assigns.current_user.id)
       |> Feeds.paginate(page)
       |> Agregat.Repo.all()
     assign(socket, ids: Enum.uniq(ids ++ new_ids), new_ids: new_ids)
-  end
-
-  defp select_item(%{assigns: %{selected: selected}} = socket, item_id) do
-    if selected, do: send_update(AgregatWeb.ItemComponent, id: selected, selected: false)
-    if item_id, do: send_update(AgregatWeb.ItemComponent, id: item_id, selected: true)
-    assign(socket, selected: item_id)
   end
 
   defp filter(query, params) do
@@ -124,7 +78,7 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   def handle_info(%{items: items, user_id: user_id}, socket) do
-    if user_id == socket.assigns.user.id do
+    if user_id == socket.assigns.current_user.id do
       items =
         if socket.assigns.params["read"] == "false" do
           Enum.filter(items, &(!&1.read))

@@ -1,4 +1,11 @@
-<li id="item-<%= @id %>" class="item-container <%= if @selected, do: "active"%>" phx-hook="Item">
+<li
+  id="item-<%= @id %>"
+  class="item-container"
+  x-data="{}"
+  :class="{'active': selected === <%= @id %>}"
+  @select-item="selected = selected == <%= @id %> ? false : <%= @id %>;window.requestAnimationFrame(() => {$el.scrollIntoView()})"
+  phx-hook="Item"
+>
   <%= if @item do %>
     <div class="item-labels">
       <%= if @item.feed != nil and @item.feed.title do %>
@@ -10,32 +17,27 @@
         <%= @item.date %>
       </span>
     </div>
-    <div phx-click="open-item-<%= @item.id %>" class="item-title">
-      <i phx-click="toggle-favorite" phx-target="<%= @myself %>" class="favoriteIcon fa fa-star <%= if !@item.favorite, do: "far" %>"></i>
-      <i phx-click="toggle-read" phx-target="<%= @myself %>" class="readUnreadIcon fa fa-circle <%= if @item.read, do: "far" %>"></i>
+    <div class="item-title" @click.prevent="$dispatch('select-item')" >
+      <i @click.prevent.stop="$dispatch('toggle-favorite')" class="favoriteIcon fa fa-star <%= if !@item.favorite, do: "far" %>"></i>
+      <i @click.prevent.stop="$dispatch('toggle-read')" class="readUnreadIcon fa fa-circle <%= if @item.read, do: "far" %>"></i>
       <%= if @item.read do %>
         <%= @item.title %>
       <% else %>
         <b><%= @item.title %></b>
       <% end %>
     </div>
-    <%= if @selected do %>
-      <div class="well item-content">
-        <a class="item-content-title" href="<%= @item.url %>" target="_blank"><%= @item.title %></a>
+    <div class="well item-content">
+      <a class="item-content-title" href="<%= @item.url %>" target="_blank"><%= @item.title %></a>
+      <br>
+      <%= raw @item.content %>
+      <%= if @item.medias do %>
         <br>
-        <%= raw @item.content %>
-        <%= if @item.medias do %>
-          <br>
-          <%= for media <- @item.medias do %>
-            <a class="btn btn-default" href="<%= media.url %>">
-              <i class="fa fa-download"></i> <%= media.type %>
-            </a>
-          <% end %>
+        <%= for media <- @item.medias do %>
+          <a class="btn btn-default" href="<%= media.url %>">
+            <i class="fa fa-download"></i> <%= media.type %>
+          </a>
         <% end %>
-      </div>
-    <% else %>
-      <div class="item-content">
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   <% end %>
 </li>

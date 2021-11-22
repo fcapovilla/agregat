@@ -48,6 +48,7 @@ defmodule AgregatWeb do
         layout: {AgregatWeb.LayoutView, "live.html"}
 
       unquote(view_helpers())
+      import AgregatWeb.LiveHelpers
     end
   end
 
@@ -81,7 +82,7 @@ defmodule AgregatWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      # Import LiveView helpers (live_render, live_component, live_patch, etc)
+      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
       import Phoenix.LiveView.Helpers
 
       # Import basic rendering functionality (render, render_layout, etc)

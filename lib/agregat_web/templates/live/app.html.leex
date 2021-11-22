@@ -15,12 +15,12 @@
         <a href="<%= Routes.user_path(@socket, :index) %>" class="btn btn-default hidden-tiny-phone" title="Settings">
           <i class="fa fa-cog"></i>
         </a>
-        <a href="<%= Routes.session_path(@socket, :delete) %>" class="btn btn-default" title="Log out">
+        <a href="<%= Routes.user_session_path(@socket, :delete) %>" class="btn btn-default" title="Log out">
           <i class="fa fa-sign-out-alt"></i>
         </a>
       </div>
       <div class="btn-group mobile-item-buttons visible-xs <%= if @selected == "none", do: "invisible", else: "" %>">
-        <button phx-click="select-none" class="btn btn-default mobile-item-button" title="Back to feed list">
+        <button id="btn-back" phx-click="select-none" class="btn btn-default mobile-item-button" title="Back to feed list">
           <i class="fa fa-step-backward"></i>
         </button>
         <button id="btn-previous-item" class="btn btn-default mobile-item-button" title="previous">
@@ -34,7 +34,7 @@
   </div>
   <div class="dragbar hidden-xs"></div>
   <div class="<%= if @selected != "none", do: "hidden-xs", else: "" %>">
-    <div class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList">
+    <div id="feed-list-<%= @selected %>" class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList">
       <ul class="list-unstyled" id="feed-list">
         <li>
           <div phx-click="select-all" class="folder-title <%= if @selected == "all", do: "active" %>">
@@ -127,6 +127,6 @@
 <div class="content <%= if @selected == "none", do: "hidden-xs", else: "" %>">
   <%= live_render(@socket,
                   AgregatWeb.ItemsLive,
-                  session: %{"params" => @params, "user" => @user},
+                  session: %{"params" => @params},
                   id: "items-#{@selected}#{if @params["read"], do: "-read", else: ""}") %>
 </div>

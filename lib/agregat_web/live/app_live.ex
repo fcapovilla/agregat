@@ -1,5 +1,5 @@
 defmodule AgregatWeb.AppLive do
-  use Phoenix.LiveView
+  use AgregatWeb, :live_view
 
   alias Agregat.Feeds
   alias AgregatWeb.Router.Helpers, as: Routes
@@ -9,14 +9,14 @@ defmodule AgregatWeb.AppLive do
   end
 
   def mount(_params, session, socket) do
-    user = AgregatWeb.Pow.get_user(socket, session)
-    if user do
+    socket = assign_defaults(session, socket)
+    if socket.assigns.current_user do
       if connected?(socket) do
         Phoenix.PubSub.subscribe(Agregat.PubSub, "folders")
         Phoenix.PubSub.subscribe(Agregat.PubSub, "feeds")
       end
-      folders = Feeds.list_folders(user_id: user.id)
-      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, user: user, mode: :items)}
+      folders = Feeds.list_folders(user_id: socket.assigns.current_user.id)
+      {:ok, assign(socket, folders: folders, items: [], selected: nil, total_unread: 0, menu_open: nil, mode: :items)}
     else
       {:error, "Unauthorized"}
     end
@@ -48,13 +48,13 @@ defmodule AgregatWeb.AppLive do
   end
 
   def handle_event("delete-folder-" <> id, _, socket) do
-    folder = Feeds.get_folder!(id, user_id: socket.assigns.user.id)
+    folder = Feeds.get_folder!(id, user_id: socket.assigns.current_user.id)
     Feeds.delete_folder(folder)
     {:noreply, socket}
   end
 
   def handle_event("delete-feed-" <> id, _, socket) do
-    feed = Feeds.get_feed!(id, user_id: socket.assigns.user.id)
+    feed = Feeds.get_feed!(id, user_id: socket.assigns.current_user.id)
     Feeds.delete_feed(feed)
     {:noreply, socket}
   end
@@ -114,8 +114,8 @@ defmodule AgregatWeb.AppLive do
     {:noreply, socket}
   end
 
-  def handle_event("keydown", %{"key" => "h"}, %{assigns: %{user: user, selected: selected}} = socket) do
-    list = get_selection_list(user.id)
+  def handle_event("keydown", %{"key" => "h"}, %{assigns: %{selected: selected}} = socket) do
+    list = get_selection_list(socket.assigns.current_user.id)
     index = Enum.find_index(list, &(&1 == selected))
     if index != nil and index > 0 do
       new_selection = Enum.at(list, index - 1)
@@ -129,8 +129,8 @@ defmodule AgregatWeb.AppLive do
     end
   end
 
-  def handle_event("keydown", %{"key" => "l"}, %{assigns: %{user: user, selected: selected}} = socket) do
-    list = get_selection_list(user.id)
+  def handle_event("keydown", %{"key" => "l"}, %{assigns: %{selected: selected}} = socket) do
+    list = get_selection_list(socket.assigns.current_user.id)
     index = Enum.find_index(list, &(&1 == selected))
     if index != nil do
       new_selection = Enum.at(list, index + 1)
@@ -153,7 +153,7 @@ defmodule AgregatWeb.AppLive do
   end
 
   def handle_info(%{folders: folders, user_id: user_id}, socket) do
-    if user_id == socket.assigns.user.id do
+    if user_id == socket.assigns.current_user.id do
       {:noreply, assign(socket, folders: folders)}
     else
       {:noreply, socket}
@@ -161,7 +161,7 @@ defmodule AgregatWeb.AppLive do
   end
 
   def handle_info(%{feeds: _, user_id: user_id}, socket) do
-    if user_id == socket.assigns.user.id do
+    if user_id == socket.assigns.current_user.id do
       folders = Feeds.list_folders(user_id: user_id)
       {:noreply, assign(socket, folders: folders)}
     else

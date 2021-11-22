@@ -84,13 +84,17 @@ defmodule Agregat.Syncer do
   # Update items for the feed in parameter using the parsed_feed.
   defp update_feed(feed, parsed_feed) do
     items = Enum.map(parsed_feed.entries, fn(entry) ->
+      date = case DateTimeParser.parse(entry.updated) do
+        {:ok, date} -> date
+        {:error, _} -> DateTime.utc_now
+      end
       %{
         feed_id: feed.id,
         user_id: feed.user_id,
         title: entry.title || entry.link || entry.id,
         url: entry.link || entry.id,
         content: entry.summary,
-        date: Agregat.DateParser.parse(entry.updated) || DateTime.utc_now,
+        date: date,
         guid: entry.id || entry.link,
         medias: (if entry.enclosure, do: [%{url: entry.enclosure.url, type: entry.enclosure.type}], else: [])
       }

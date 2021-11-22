@@ -10,12 +10,12 @@ defmodule AgregatWeb.UserController do
   end
 
   def new(conn, _params) do
-    changeset = Users.change_user(%User{})
+    changeset = Users.change_user_registration(%User{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params}) do
-    case Users.create_user(user_params) do
+    case Users.register_user(user_params) do
       {:ok, _} ->
         conn
         |> put_flash(:info, "User created successfully.")
@@ -28,7 +28,7 @@ defmodule AgregatWeb.UserController do
 
   def edit(conn, %{"id" => id}) do
     user = Users.get_user!(id)
-    changeset = Users.change_user(user)
+    changeset = Users.change_user_registration(user)
     render(conn, "edit.html", user: user, changeset: changeset)
   end
 

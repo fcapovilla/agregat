@@ -11,7 +11,6 @@ defmodule AgregatWeb.EnsureAdminPlug do
   alias AgregatWeb.Router.Helpers, as: Routes
   alias Phoenix.Controller
   alias Plug.Conn
-  alias Pow.Plug
 
   @doc false
   @spec init(any()) :: any()
@@ -20,8 +19,7 @@ defmodule AgregatWeb.EnsureAdminPlug do
   @doc false
   @spec call(Conn.t(), atom()) :: Conn.t()
   def call(conn, _) do
-    conn
-    |> Plug.current_user()
+    conn.assigns.current_user
     |> is_admin?()
     |> maybe_halt(conn)
   end
