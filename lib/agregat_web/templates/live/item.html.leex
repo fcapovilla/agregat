@@ -1,11 +1,4 @@
-<li
-  id="item-<%= @id %>"
-  class="item-container"
-  x-data="{}"
-  :class="{'active': selected === <%= @id %>}"
-  @select-item="selected = selected == <%= @id %> ? false : <%= @id %>;window.requestAnimationFrame(() => {$el.scrollIntoView()})"
-  phx-hook="Item"
->
+<li id="item-<%= @id %>" class="item-container" x-data="item" :class="{'active': selected === <%= @id %>}" @select-item="selectItem(<%= @id %>)" phx-hook="Item">
   <%= if @item do %>
     <div class="item-labels">
       <%= if @item.feed != nil and @item.feed.title do %>

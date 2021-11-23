@@ -29,6 +29,7 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+// Define Phoenix hooks
 let Hooks = {}
 
 Hooks.InfiniteScroll = {
@@ -49,7 +50,7 @@ Hooks.InfiniteScroll = {
     scrollAt() {
         return this.el.scrollTop / (this.el.scrollHeight - this.el.clientHeight) * 100
     },
-    scroll(e){
+    scroll(){
         if(this.pending == this.page() && this.scrollAt() > 90){
             this.pending = this.page() + 1
             this.pushEvent("load-more")
@@ -155,21 +156,35 @@ Hooks.ItemList = {
 
 Hooks.Item = {
     mounted(){
-        this.el.addEventListener('toggle-favorite', e => {
+        this.el.addEventListener('toggle-favorite', () => {
             this.pushEventTo(this.el, 'toggle-favorite')
         })
-        this.el.addEventListener('toggle-read', e => {
+        this.el.addEventListener('toggle-read', () => {
             this.pushEventTo(this.el, 'toggle-read')
         })
-        this.el.addEventListener('select-item', e => {
+        this.el.addEventListener('select-item', () => {
             this.pushEventTo(this.el, 'set-read', {read: true})
         })
     },
 }
 
-window.Alpine = Alpine;
-Alpine.start();
+// Define reusable Alpine components
+document.addEventListener('alpine:init', () => {
+    Alpine.data('item', () => ({
+        selectItem(id) {
+            this.selected = this.selected == id ? false : id
+            window.requestAnimationFrame(() => {
+                this.$el.scrollIntoView()
+            })
+        },
+    }))
+})
 
+// Start Alpine
+Alpine.start();
+window.Alpine = Alpine;
+
+// Start Phoenix LiveView
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
     params: {_csrf_token: csrfToken},

@@ -18,8 +18,8 @@ defmodule AgregatWeb.ItemsLive do
         _ -> Phoenix.PubSub.subscribe(Agregat.PubSub, "items")
       end
     end
-    {:ok, assign(socket, page: 1, params: params, ids: [], new_ids: [])
-          |> fetch_items(), temporary_assigns: [new_ids: []]}
+    {:ok, assign(socket, page: 1, params: params, item_ids: [])
+          |> fetch_items(), temporary_assigns: [item_ids: []]}
   end
 
   def handle_event("toggle-favorite-" <> item_id, _, socket) do
@@ -50,15 +50,15 @@ defmodule AgregatWeb.ItemsLive do
     {:noreply, socket}
   end
 
-  defp fetch_items(%{assigns: %{params: params, page: page, ids: ids}} = socket) do
-    new_ids =
+  defp fetch_items(%{assigns: %{params: params, page: page}} = socket) do
+    item_ids =
       (from i in Feeds.Item, select: i.id)
       |> filter(params)
       |> sort(params)
       |> Feeds.filter_by(user_id: socket.assigns.current_user.id)
       |> Feeds.paginate(page)
       |> Agregat.Repo.all()
-    assign(socket, ids: Enum.uniq(ids ++ new_ids), new_ids: new_ids)
+    assign(socket, item_ids: item_ids)
   end
 
   defp filter(query, params) do
@@ -88,8 +88,8 @@ defmodule AgregatWeb.ItemsLive do
       for item <- items do
         send_update(AgregatWeb.ItemComponent, id: item.id, item: item)
       end
-      new_ids = Enum.map(items, &(&1.id)) -- socket.assigns.ids
-      {:noreply, assign(socket, new_ids: new_ids, ids: socket.assigns.ids ++ new_ids)}
+      item_ids = Enum.map(items, &(&1.id))
+      {:noreply, assign(socket, item_ids: item_ids)}
     else
       {:noreply, socket}
     end
