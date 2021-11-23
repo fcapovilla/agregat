@@ -555,7 +555,6 @@ defmodule Agregat.Feeds do
 
     Repo.all(query)
     |> broadcast_items()
-    |> hd()
 
     list_feeds(%{folder_id: folder_id})
     |> update_unread_count()

@@ -10,7 +10,7 @@ defmodule AgregatWeb.FeedController do
   end
 
   def create(conn, %{"feed" => feed_params}) do
-    user = Pow.Plug.current_user(conn)
+    user = conn.assigns.current_user
     feed_params = Map.put(feed_params, "user_id", user.id)
 
     feed_params =

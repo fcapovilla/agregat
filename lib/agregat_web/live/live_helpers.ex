@@ -1,6 +1,8 @@
 defmodule AgregatWeb.LiveHelpers do
   import Phoenix.LiveView
 
+  alias AgregatWeb.Router.Helpers, as: Routes
+
   def assign_defaults(session, socket) do
     socket =
       assign_new(socket, :current_user, fn ->
