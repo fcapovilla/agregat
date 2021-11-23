@@ -45,7 +45,9 @@ defmodule Agregat.Users.User do
         changeset
         |> validate_confirmation(:password, message: "does not match password")
         |> validate_password(opts)
-      changeset -> changeset
+
+      changeset ->
+        changeset
     end
   end
 

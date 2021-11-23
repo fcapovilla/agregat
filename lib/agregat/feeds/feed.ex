@@ -27,14 +27,37 @@ defmodule Agregat.Feeds.Feed do
   @doc false
   def changeset(feed, attrs) do
     feed
-    |> cast(attrs, [:title, :url, :last_sync, :unread_count, :sync_status, :position, :update_frequency, :auto_frequency, :user_id, :folder_id, :favicon_id, :folder_title, :is_html, :parsing_settings])
+    |> cast(attrs, [
+      :title,
+      :url,
+      :last_sync,
+      :unread_count,
+      :sync_status,
+      :position,
+      :update_frequency,
+      :auto_frequency,
+      :user_id,
+      :folder_id,
+      :favicon_id,
+      :folder_title,
+      :is_html,
+      :parsing_settings
+    ])
     |> validate_required([:url])
     |> update_folder()
   end
 
-  defp update_folder(%Ecto.Changeset{valid?: true, changes: %{folder_title: folder_title}} = changeset) do
-    folder = Feeds.first_or_create_folder!(%{title: folder_title, user_id: get_field(changeset, :user_id)})
+  defp update_folder(
+         %Ecto.Changeset{valid?: true, changes: %{folder_title: folder_title}} = changeset
+       ) do
+    folder =
+      Feeds.first_or_create_folder!(%{
+        title: folder_title,
+        user_id: get_field(changeset, :user_id)
+      })
+
     put_change(changeset, :folder_id, folder.id)
   end
+
   defp update_folder(changeset), do: changeset
 end

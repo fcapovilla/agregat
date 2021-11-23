@@ -14,7 +14,10 @@ defmodule AgregatWeb.FaviconController do
 
   def refresh(conn, _params) do
     Feeds.list_favicons()
-    |> Task.async_stream(&(Agregat.FaviconFetcher.fetch(&1.host, true)), max_concurrency: 5, timeout: 30_000)
+    |> Task.async_stream(&Agregat.FaviconFetcher.fetch(&1.host, true),
+      max_concurrency: 5,
+      timeout: 30_000
+    )
     |> Enum.to_list()
 
     conn

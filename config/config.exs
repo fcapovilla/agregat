@@ -59,15 +59,16 @@ config :phoenix, :json_library, Jason
 import_config "#{config_env()}.exs"
 
 # Quantum scheduled tasks
-config :agregat, Agregat.Scheduler, jobs: [
-  sync: [
-    schedule: "*/10 * * * *",
-    task: {Agregat.Syncer, :sync_all, []},
-    overlap: false
-  ],
-  recalculate_sync_frequency: [
-    schedule: "0 1 * * *",
-    task: {Agregat.Syncer, :recalculate_sync_frequencies, []},
-    overlap: false
-  ],
-]
+config :agregat, Agregat.Scheduler,
+  jobs: [
+    sync: [
+      schedule: "*/10 * * * *",
+      task: {Agregat.Syncer, :sync_all, []},
+      overlap: false
+    ],
+    recalculate_sync_frequency: [
+      schedule: "0 1 * * *",
+      task: {Agregat.Syncer, :recalculate_sync_frequencies, []},
+      overlap: false
+    ]
+  ]

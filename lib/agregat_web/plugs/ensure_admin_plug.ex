@@ -28,6 +28,7 @@ defmodule AgregatWeb.EnsureAdminPlug do
   defp is_admin?(_), do: false
 
   defp maybe_halt(true, conn), do: conn
+
   defp maybe_halt(_any, conn) do
     conn
     |> Controller.put_flash(:error, "Unauthorized access")

@@ -39,7 +39,9 @@ defmodule Agregat.Feeds do
   """
   def first_or_create_favicon!(filters \\ %{}) do
     case list_favicons(filters) do
-      [favicon | _] -> favicon
+      [favicon | _] ->
+        favicon
+
       _ ->
         {:ok, favicon} = create_favicon(filters)
         favicon
@@ -141,7 +143,11 @@ defmodule Agregat.Feeds do
 
   """
   def list_folders(filters \\ %{}) do
-    (from f in Folder, left_join: feeds in assoc(f, :feeds), preload: [feeds: feeds], order_by: [asc: f.position, asc: feeds.position])
+    from(f in Folder,
+      left_join: feeds in assoc(f, :feeds),
+      preload: [feeds: feeds],
+      order_by: [asc: f.position, asc: feeds.position]
+    )
     |> filter_by(filters)
     |> Repo.all()
     |> count_unread()
@@ -159,7 +165,9 @@ defmodule Agregat.Feeds do
   """
   def first_or_create_folder!(filters \\ %{}) do
     case list_folders(filters) do
-      [folder | _] -> folder
+      [folder | _] ->
+        folder
+
       _ ->
         {:ok, folder} = create_folder(filters)
         folder
@@ -181,7 +189,11 @@ defmodule Agregat.Feeds do
 
   """
   def get_folder!(id, filters \\ %{}) do
-    (from f in Folder, left_join: feeds in assoc(f, :feeds), preload: [feeds: feeds], order_by: [asc: feeds.position])
+    from(f in Folder,
+      left_join: feeds in assoc(f, :feeds),
+      preload: [feeds: feeds],
+      order_by: [asc: feeds.position]
+    )
     |> filter_by(filters)
     |> Repo.get!(id)
     |> count_unread()
@@ -239,12 +251,18 @@ defmodule Agregat.Feeds do
   def broadcast_folder(%Folder{} = folder, _), do: broadcast_folders([folder]) |> hd()
   def broadcast_folder(any, _), do: any
 
-  def broadcast_folders([%Folder{}|_] = folders) do
+  def broadcast_folders([%Folder{} | _] = folders) do
     folder = hd(folders)
     folders = list_folders(user_id: folder.user_id)
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{folders: folders, user_id: folder.user_id})
+
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folders", %{
+      folders: folders,
+      user_id: folder.user_id
+    })
+
     folders
   end
+
   def broadcast_folders(any), do: any
 
   @doc """
@@ -287,7 +305,7 @@ defmodule Agregat.Feeds do
 
   """
   def list_feeds(filters \\ %{}) do
-    (from f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
+    from(f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
     |> filter_by(filters)
     |> Repo.all()
     |> set_feed_virtuals()
@@ -305,7 +323,9 @@ defmodule Agregat.Feeds do
   """
   def first_or_create_feed!(filters \\ %{}) do
     case list_feeds(filters) do
-      [feed | _] -> feed
+      [feed | _] ->
+        feed
+
       _ ->
         {:ok, feed} = create_feed(filters)
         feed
@@ -327,7 +347,7 @@ defmodule Agregat.Feeds do
 
   """
   def get_feed!(id, filters \\ %{}) do
-    (from f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
+    from(f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
     |> filter_by(filters)
     |> Repo.get!(id)
     |> set_feed_virtuals()
@@ -378,14 +398,15 @@ defmodule Agregat.Feeds do
   def broadcast_feed(%Feed{} = feed, _), do: broadcast_feeds([feed]) |> hd()
   def broadcast_feed(any, _), do: any
 
-  def broadcast_feeds([%Feed{}|_] = feeds) do
+  def broadcast_feeds([%Feed{} | _] = feeds) do
     feed = hd(feeds)
     Phoenix.PubSub.broadcast(Agregat.PubSub, "feeds", %{feeds: [feeds], user_id: feed.user_id})
     feeds
   end
+
   def broadcast_feeds(any), do: any
 
-  defp set_feed_virtuals([%Feed{}|_] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
+  defp set_feed_virtuals([%Feed{} | _] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
   defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
 
   defp fetch_feed_favicon(changeset) do
@@ -435,7 +456,11 @@ defmodule Agregat.Feeds do
 
   """
   def list_items(filters \\ %{}) do
-    (from i in Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
+    from(i in Item,
+      left_join: m in assoc(i, :medias),
+      left_join: f in assoc(i, :feed),
+      preload: [feed: f, medias: m]
+    )
     |> filter_by(filters)
     |> Repo.all()
   end
@@ -452,7 +477,9 @@ defmodule Agregat.Feeds do
   """
   def first_or_create_item!(filters \\ %{}) do
     case list_items(filters) do
-      [item | _] -> item
+      [item | _] ->
+        item
+
       _ ->
         {:ok, item} = create_item(filters)
         item
@@ -474,7 +501,11 @@ defmodule Agregat.Feeds do
 
   """
   def get_item!(id, filters \\ %{}) do
-    (from i in Item, left_join: m in assoc(i, :medias), left_join: f in assoc(i, :feed), preload: [feed: f, medias: m])
+    from(i in Item,
+      left_join: m in assoc(i, :medias),
+      left_join: f in assoc(i, :feed),
+      preload: [feed: f, medias: m]
+    )
     |> filter_by(filters)
     |> Repo.get!(id)
   end
@@ -519,18 +550,21 @@ defmodule Agregat.Feeds do
   end
 
   def update_folder_items(folder_id, attrs) do
-    query = (from i in Item, join: f in assoc(i, :feed), where: f.folder_id == ^folder_id)
+    query = from i in Item, join: f in assoc(i, :feed), where: f.folder_id == ^folder_id
     Repo.update_all(query, set: Map.to_list(attrs))
+
     Repo.all(query)
     |> broadcast_items()
     |> hd()
+
     list_feeds(%{folder_id: folder_id})
     |> update_unread_count()
   end
 
   def update_feed_items(feed_id, attrs) do
-    query = (from i in Item, where: i.feed_id == ^feed_id)
+    query = from i in Item, where: i.feed_id == ^feed_id
     Repo.update_all(query, set: Map.to_list(attrs))
+
     Repo.all(query)
     |> broadcast_items()
     |> hd()
@@ -543,27 +577,46 @@ defmodule Agregat.Feeds do
   def broadcast_item(%Item{} = item, _), do: broadcast_items([item]) |> hd()
   def broadcast_item(any, _), do: any
 
-  def broadcast_items([%Item{}|_] = items) do
+  def broadcast_items([%Item{} | _] = items) do
     items = Repo.preload(items, [:feed, :medias])
     item = hd(items)
     Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: items, user_id: item.user_id})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{items: items, user_id: item.user_id})
-    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{items: items, user_id: item.user_id})
+
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "feed-#{item.feed.id}", %{
+      items: items,
+      user_id: item.user_id
+    })
+
+    Phoenix.PubSub.broadcast(Agregat.PubSub, "folder-#{item.feed.folder_id}", %{
+      items: items,
+      user_id: item.user_id
+    })
+
     items
   end
+
   def broadcast_items(any), do: any
 
   def update_unread_count({:ok, data}), do: update_unread_count(data)
+
   def update_unread_count(%Item{} = item) do
     get_feed!(item.feed_id)
     |> update_unread_count()
+
     {:ok, item}
   end
-  def update_unread_count([%Feed{}|_] = items), do: Enum.map(items, &update_unread_count/1)
+
+  def update_unread_count([%Feed{} | _] = items), do: Enum.map(items, &update_unread_count/1)
+
   def update_unread_count(%Feed{} = feed) do
-    count = Repo.one(from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false)
+    count =
+      Repo.one(
+        from i in Item, select: count(i.id), where: i.feed_id == ^feed.id and i.read == false
+      )
+
     update_feed(feed, %{unread_count: count})
   end
+
   def update_unread_count(any), do: any
 
   @doc """
@@ -622,7 +675,9 @@ defmodule Agregat.Feeds do
   """
   def first_or_create_media!(filters \\ %{}) do
     case list_medias(filters) do
-      [media | _] -> media
+      [media | _] ->
+        media
+
       _ ->
         {:ok, media} = create_media(filters)
         media
@@ -715,7 +770,9 @@ defmodule Agregat.Feeds do
   end
 
   def filter_by(query, filters) do
-    Enum.reduce(filters, query, fn ({key, value}, query) -> (from x in query, where: field(x, ^key) == ^value) end)
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from x in query, where: field(x, ^key) == ^value
+    end)
   end
 
   def paginate(query, page, per_page \\ 50) do

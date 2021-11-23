@@ -8,6 +8,5 @@ defmodule Agregat.Repo.Migrations.CreateFavicons do
 
       timestamps()
     end
-
   end
 end

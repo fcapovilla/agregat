@@ -55,7 +55,7 @@ defmodule Agregat.MixProject do
       {:hackney, "~> 1.17"},
       {:date_time_parser, "~> 1.1.3"},
       {:feeder_ex, ">= 0.0.0"},
-      {:dart_sass, "~> 0.2", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.2", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -71,7 +71,11 @@ defmodule Agregat.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "sass default --no-source-map --style=compressed", "phx.digest"]
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map --style=compressed",
+        "phx.digest"
+      ]
     ]
   end
 end
