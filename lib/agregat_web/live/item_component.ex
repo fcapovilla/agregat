@@ -5,10 +5,6 @@ defmodule AgregatWeb.ItemComponent do
 
   alias Agregat.Feeds
 
-  def render(assigns) do
-    AgregatWeb.LiveView.render("item.html", assigns)
-  end
-
   def preload([%{item: _item}] = list_of_assigns), do: list_of_assigns
 
   def preload(list_of_assigns) do

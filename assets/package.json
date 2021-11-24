@@ -5,7 +5,6 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "bootstrap": "^3.3.7",
-    "jquery": "^1.12.4",
-    "alpinejs": "^3.5.1"
+    "jquery": "^1.12.4"
   }
 }

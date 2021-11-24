@@ -3,7 +3,7 @@
 import './jquery-global.js'
 import '@fortawesome/fontawesome-free/js/all'
 import 'bootstrap'
-import Alpine from 'alpinejs'
+import Alpine from "../vendor/alpinejs-csp-3.5.2"
 
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
@@ -156,26 +156,30 @@ Hooks.ItemList = {
 
 Hooks.Item = {
     mounted(){
-        this.el.addEventListener('toggle-favorite', () => {
-            this.pushEventTo(this.el, 'toggle-favorite')
-        })
-        this.el.addEventListener('toggle-read', () => {
-            this.pushEventTo(this.el, 'toggle-read')
-        })
         this.el.addEventListener('select-item', () => {
-            this.pushEventTo(this.el, 'set-read', {read: true})
+            if(!this.el.classList.contains('active')) {
+                this.pushEventTo(this.el, 'set-read', {read: true})
+            }
         })
     },
 }
 
-// Define reusable Alpine components
+// Define Alpine components
 document.addEventListener('alpine:init', () => {
+    Alpine.data('item-list', () => ({
+        selected: false
+    }))
     Alpine.data('item', () => ({
-        selectItem(id) {
-            this.selected = this.selected == id ? false : id
-            window.requestAnimationFrame(() => {
-                this.$el.scrollIntoView()
-            })
+        active() {
+            return this.selected == this.$el.id ? "active" : null
+        },
+        selectItem() {
+            this.selected = this.selected == this.$el.id ? false : this.$el.id
+            if (this.selected) {
+                window.requestAnimationFrame(() => {
+                    this.$el.scrollIntoView()
+                })
+            }
         },
     }))
 })

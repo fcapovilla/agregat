@@ -5,10 +5,6 @@ defmodule AgregatWeb.ItemsLive do
 
   alias Agregat.Feeds
 
-  def render(assigns) do
-    AgregatWeb.LiveView.render("items.html", assigns)
-  end
-
   def mount(_params, %{"params" => params} = session, socket) do
     socket = assign_defaults(session, socket)
 

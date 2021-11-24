@@ -4,10 +4,6 @@ defmodule AgregatWeb.AppLive do
   alias Agregat.Feeds
   alias AgregatWeb.Router.Helpers, as: Routes
 
-  def render(assigns) do
-    AgregatWeb.LiveView.render("app.html", assigns)
-  end
-
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket)
 
