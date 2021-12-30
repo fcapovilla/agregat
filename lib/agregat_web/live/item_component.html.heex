@@ -1,33 +1,29 @@
-<li id={"item-#{@id}"} class="item-container" x-data="item" :class="active" @select-item="selectItem" phx-hook="Item">
+<li id={"item-#{@id}"} class={"item-container #{if @item.read, do: "read"}"} class="item-container" x-data="item" :class="active" @select-item="selectItem" phx-hook="Item">
   <%= if @item do %>
-    <div class="item-labels">
+    <div class="item-tags">
       <%= if @item.feed != nil and @item.feed.title do %>
-        <span class={"item-feed-title label hidden-small-phone #{if @item.read, do: "label-default", else: "label-primary"}"}>
+        <span class="item-feed-title tag hidden-small-phone">
         <%= @item.feed.title %>
         </span>
       <% end %>
-      <span class="item-date label label-default hidden-phone">
+      <span class="item-date tag hidden-phone">
         <%= @item.date %>
       </span>
     </div>
     <div class="item-title" phx-click={JS.dispatch("select-item", to: "#item-#{@id}")}>
-      <i phx-click="toggle-favorite" phx-target={@myself} class={"favoriteIcon fa fa-star #{if !@item.favorite, do: "far"}"}></i>
-      <i phx-click="toggle-read" phx-target={@myself} class={"readUnreadIcon fa fa-circle #{if @item.read, do: "far"}"}></i>
-      <%= if @item.read do %>
-        <%= @item.title %>
-      <% else %>
-        <b><%= @item.title %></b>
-      <% end %>
+      <i phx-click="toggle-favorite" phx-target={@myself} class={"favoriteIcon fa-star #{if !@item.favorite, do: "far", else: "fas"}"}></i>
+      <i phx-click="toggle-read" phx-target={@myself} class={"readUnreadIcon fa-circle #{if @item.read, do: "far", else: "fas"}"}></i>
+      <%= @item.title %>
     </div>
-    <div class="well item-content">
+    <div class="item-content">
       <a class="item-content-title" href={@item.url} target="_blank"><%= @item.title %></a>
       <br>
       <%= raw @item.content %>
       <%= if @item.medias do %>
         <br>
         <%= for media <- @item.medias do %>
-          <a class="btn btn-default" href={media.url}>
-            <i class="fa fa-download"></i> <%= media.type %>
+          <a class="button button-small" href={media.url}>
+            <i class="fas fa-download"></i> <%= media.type %>
           </a>
         <% end %>
       <% end %>

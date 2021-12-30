@@ -1,9 +1,8 @@
-<div class="container">
+<div class="container login-box">
   <div class="row">
-    <div class="col-md-4 col-md-offset-4 well">
-      <h2>
-        Login
-      </h2>
+    <div class="column column-offset-33 column-33">
+      <h2>Login</h2>
+
       <.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
         <%= if @error_message do %>
           <div class="alert alert-danger">
@@ -12,18 +11,16 @@
         <% end %>
 
         <fieldset>
-          <div class="clearfix">
-            <%= text_input f, :email, class: "form-control", placeholder: "Username" %>
-          </div>
-          <div class="clearfix">
-            <%= password_input f, :password, class: "form-control", placeholder: "Password" %>
-          </div>
-          <div class="clearfix">
-            <%= label f, :remember_me, "Keep me logged in for 60 days" %>
-            <%= checkbox f, :remember_me %>
-          </div>
-          <%= submit "Log in", class: "btn btn-primary pull-right" %>
+          <%= text_input f, :email, class: "form-control", placeholder: "Username" %>
+
+          <%= password_input f, :password, class: "form-control", placeholder: "Password" %>
+
+          <%= checkbox f, :remember_me %>
+          <%= label f, :remember_me, "Keep me logged in for 60 days", class: "label-inline" %>
         </fieldset>
+        <div class="float-right">
+          <%= submit "Log in", class: "button" %>
+        </div>
       </.form>
     </div>
   </div>

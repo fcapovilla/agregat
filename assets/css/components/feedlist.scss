@@ -4,32 +4,31 @@
     background-color: #f8f8f8;
     height: 100vh;
 
-    -webkit-overflow-scrolling: touch;
-
     #feed-list {
         white-space: nowrap;
-        padding-top: 5px;
-        padding-bottom: 30px;
+        padding-top: .4rem;
+        list-style: none;
+        li {
+            margin-bottom: 0;
+        }
     }
 
-    .folder-icon,
-    .dropdown,
     .feed-title,
     .folder-title {
         cursor: pointer;
     }
 
     .feed-icon {
-        height: 16px;
+        height: 1.6rem;
         display: inline-block;
 
-        &>i:before {
-            font-size: 17px;
+        .fa-rss-square:before {
+            font-size: 1.7rem;
         }
 
-        &>img {
-            width: 16px;
-            height: 16px;
+        .favicon {
+            width: 1.6rem;
+            height: 1.6rem;
             vertical-align: top;
             display: inline-block;
         }
@@ -40,15 +39,14 @@
         display: inline-block;
     }
 
-    .drag-hovered {
-        border-bottom: 2px solid black;
-    }
-
-    .feed-badge,
-    .folder-badge {
+    .feed-tag,
+    .folder-tag {
         float: right;
-        margin: 0 3px;
-        max-height: 18px;
+        margin: 0 .3rem;
+        max-height: 1.6rem;
+        .tag {
+            height: 1.6rem;
+        }
     }
 
     .feed-text,
@@ -58,58 +56,58 @@
 }
 
 // Desktop view
-@media screen and (min-width:768px) {
+@media (min-width: 60.0rem) {
     .feed-list {
-        width: 300px - 5px;
+        width: 30.0rem - .5rem;
 
         .folder-toggle,
         .folder-icon,
         .feed-icon {
-            padding: 0px 2px;
+            padding: 0 .2rem;
         }
 
         .feed-title,
         .folder-title {
-            height: 19px;
+            height: 1.9rem;
         }
 
         .feed-title {
-            padding-left: 38px;
+            padding-left: 4rem;
         }
 
         #feed-list {
-            padding-left: 5px;
+            padding-left: .5rem;
         }
     }
 }
 
 // Mobile view
-@media screen and (max-width:767px) {
+@media (max-width: 60.0rem) {
     .feed-list {
         width: 100% !important;
 
         .folder-toggle,
         .folder-icon,
         .feed-icon {
-            margin: 3px 2px;
+            margin: .3rem .2rem;
         }
 
         .feed-title,
         .folder-title {
-            height: 28px;
+            height: 2.8rem;
         }
 
         .feed-title {
-            padding-left: 48px;
+            padding-left: 4.4rem;
         }
 
         #feed-list {
-            padding-left: 6px;
+            padding-left: .6rem;
         }
 
-        .feed-badge,
-        .folder-badge {
-            margin-top: 4px;
+        .feed-tag,
+        .folder-tag {
+            margin-top: .4rem;
         }
     }
 }

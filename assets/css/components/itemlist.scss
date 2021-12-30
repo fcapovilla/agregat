@@ -1,0 +1,95 @@
+#item-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+
+    .item-list {
+        list-style: none;
+        .item-container {
+            border-bottom: .1rem solid lightgrey;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+    }
+
+    .item-content {
+        background-color: #F5F5F5;
+        color: #333;
+        cursor: auto;
+        margin-bottom: 0;
+        padding: 2rem;
+        overflow: hidden;
+    }
+
+    .item-content-title {
+        font-size: 2em;
+        line-height: 1.2;
+    }
+
+    .item-container {
+        position: relative;
+
+        .item-tags {
+            float: right;
+            height: 2.0rem;
+            .tag {
+                white-space: nowrap;
+                overflow: hidden;
+            }
+        }
+
+        .item-title {
+            white-space: nowrap;
+            overflow: hidden;
+            padding: 0 .5rem;
+            height: 2.0rem;
+            font-weight: bold;
+        }
+
+        .item-date {
+            background-color: #777777;
+        }
+
+        &.read {
+            .item-title {
+                font-weight: normal;
+            }
+            .item-feed-title {
+                background-color: #777777;
+            }
+        }
+    }
+}
+
+// Desktop view
+@media (min-width: 60.0rem) {
+    #item-list {
+        position: relative;
+        .item-feed-title {
+            max-width: 20.0rem;
+        }
+    }
+}
+
+// Mobile view
+@media (max-width: 60.0rem) {
+    #item-list {
+        position: relative;
+        width: 100%;
+
+        .item-container {
+            .item-title {
+                height: 2.8rem;
+                padding: .5rem .6rem;
+                line-height: 1.5rem;
+            }
+        }
+
+        .item-feed-title {
+            max-width: 15.0rem;
+            padding: 1.1rem .4rem;
+            line-height: .5rem;
+            margin: .2rem 0;
+        }
+    }
+}

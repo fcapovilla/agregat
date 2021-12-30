@@ -1,34 +1,34 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="column column-offset-25 column-50">
       <%= form_for @changeset, @action, fn f -> %>
-        <div class="modal-body">
-          <%= if @changeset.action do %>
-            <div class="alert alert-danger">
-              <p>Oops, something went wrong! Please check the errors below.</p>
-            </div>
-          <% end %>
-
-          <%= label f, :email %>
-          <%= text_input f, :email, class: "form-control" %>
-          <%= error_tag f, :email %>
-
-          <%= label f, :password %>
-          <%= password_input f, :password, class: "form-control" %>
-          <%= error_tag f, :password %>
-
-          <%= label f, :password_confirmation %>
-          <%= password_input f, :password_confirmation, class: "form-control" %>
-          <%= error_tag f, :password_confirmation %>
-
-          <%= checkbox f, :admin %>
-          <%= label f, :admin %>
-          <%= error_tag f, :admin %>
-
-          <div class="modal-footer">
-            <%= link "Back", to: Routes.user_path(@conn, :index), class: "btn btn-default" %>
-            <%= submit "Save", class: "btn btn-primary" %>
+        <%= if @changeset.action do %>
+          <div class="alert alert-danger">
+            <p>Oops, something went wrong! Please check the errors below.</p>
           </div>
+        <% end %>
+
+        <%= label f, :email %>
+        <%= text_input f, :email %>
+        <%= error_tag f, :email %>
+
+        <%= label f, :password %>
+        <%= password_input f, :password %>
+        <%= error_tag f, :password %>
+
+        <%= label f, :password_confirmation %>
+        <%= password_input f, :password_confirmation %>
+        <%= error_tag f, :password_confirmation %>
+
+        <%= checkbox f, :admin %>
+        <%= label f, :admin, class: "label-inline" %>
+        <%= error_tag f, :admin %>
+
+        <hr/>
+
+        <div class="float-right">
+          <%= link "Cancel", to: Routes.user_path(@conn, :index), class: "button button-clear" %>
+          <%= submit "Save", class: "button" %>
         </div>
       <% end %>
     </div>
