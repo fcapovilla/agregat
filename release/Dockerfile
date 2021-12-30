@@ -27,7 +27,7 @@ WORKDIR /app
 # Compile the project
 RUN mix deps.get --only prod
 RUN mix compile
-RUN npm install --prefix ./assets
-RUN mix phx.digest
+RUN mix phx.digest.clean --all
+RUN mix assets.deploy
 
 CMD ["/app/release/entrypoint.sh"]

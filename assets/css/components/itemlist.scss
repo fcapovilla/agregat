@@ -26,6 +26,10 @@
         line-height: 1.2;
     }
 
+    &:focus {
+        outline: 0;
+    }
+
     .item-container {
         position: relative;
 
