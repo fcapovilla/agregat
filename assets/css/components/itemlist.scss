@@ -51,7 +51,8 @@
         }
 
         .item-date {
-            background-color: #777777;
+            background-color: #777;
+            border-color: #777;
         }
 
         &.read {
@@ -59,7 +60,8 @@
                 font-weight: normal;
             }
             .item-feed-title {
-                background-color: #777777;
+                background-color: #777;
+                border-color: #777;
             }
         }
     }
