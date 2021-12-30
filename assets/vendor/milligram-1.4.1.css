@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  color: #606c76;
+  color: #212529;
   font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   font-size: 1.6em;
   font-weight: 300;
@@ -71,8 +71,8 @@ input[type='reset']:focus,
 input[type='reset']:hover,
 input[type='submit']:focus,
 input[type='submit']:hover {
-  background-color: #606c76;
-  border-color: #606c76;
+  background-color: #212529;
+  border-color: #212529;
   color: #fff;
   outline: 0;
 }
@@ -118,8 +118,8 @@ input[type='reset'].button-outline:hover,
 input[type='submit'].button-outline:focus,
 input[type='submit'].button-outline:hover {
   background-color: transparent;
-  border-color: #606c76;
-  color: #606c76;
+  border-color: #212529;
+  color: #212529;
 }
 
 .button.button-outline[disabled]:focus, .button.button-outline[disabled]:hover,
@@ -156,7 +156,7 @@ input[type='submit'].button-clear:focus,
 input[type='submit'].button-clear:hover {
   background-color: transparent;
   border-color: transparent;
-  color: #606c76;
+  color: #212529;
 }
 
 .button.button-clear[disabled]:focus, .button.button-clear[disabled]:hover,
@@ -472,7 +472,7 @@ a {
 }
 
 a:focus, a:hover {
-  color: #606c76;
+  color: #212529;
 }
 
 dl,
