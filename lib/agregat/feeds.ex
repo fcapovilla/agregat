@@ -305,7 +305,11 @@ defmodule Agregat.Feeds do
 
   """
   def list_feeds(filters \\ %{}) do
-    from(f in Feed, left_join: folder in assoc(f, :folder), preload: [folder: folder])
+    from(f in Feed,
+      left_join: folder in assoc(f, :folder),
+      preload: [folder: folder],
+      order_by: [asc: f.position]
+    )
     |> filter_by(filters)
     |> Repo.all()
     |> set_feed_virtuals()
@@ -766,6 +770,46 @@ defmodule Agregat.Feeds do
   """
   def change_media(%Media{} = media) do
     Media.changeset(media, %{})
+  end
+
+  def move_feed(%Feed{} = feed, %Folder{} = dest_folder) do
+    list =
+      list_feeds(folder_id: dest_folder.id)
+      |> List.delete(feed)
+
+    list
+    |> List.insert_at(0, feed)
+    |> Enum.with_index(fn feed, index ->
+      update_feed(feed, %{position: index, folder_id: dest_folder.id})
+    end)
+  end
+
+  def move_feed(%Feed{} = feed, %Feed{} = dest_feed) do
+    list =
+      list_feeds(folder_id: dest_feed.folder_id)
+      |> List.delete(feed)
+
+    index = Enum.find_index(list, &(&1.id == dest_feed.id))
+
+    list
+    |> List.insert_at(index + 1, feed)
+    |> Enum.with_index(fn feed, index ->
+      update_feed(feed, %{position: index, folder_id: dest_feed.folder_id})
+    end)
+  end
+
+  def move_folder(%Folder{} = folder, %Folder{} = dest_folder) do
+    list =
+      list_folders(user_id: folder.user_id)
+      |> List.delete(folder)
+
+    index = Enum.find_index(list, &(&1.id == dest_folder.id))
+
+    list
+    |> List.insert_at(index + 1, folder)
+    |> Enum.with_index(fn folder, index ->
+      update_folder(folder, %{position: index})
+    end)
   end
 
   def filter_by(query, filters) do

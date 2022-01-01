@@ -18,6 +18,17 @@
         cursor: pointer;
     }
 
+    .drag-hovered {
+        border-bottom: 2px solid black;
+    }
+
+    &.dragging {
+        .feed-title *,
+        .folder-title * {
+            pointer-events: none;
+        }
+    }
+
     .feed-icon {
         height: 1.6rem;
         display: inline-block;

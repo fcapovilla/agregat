@@ -125,6 +125,41 @@ defmodule AgregatWeb.AppLive do
     {:noreply, socket}
   end
 
+  def handle_event(
+        "move-item",
+        %{"item" => "feed-" <> item_id, "destination" => "folder-" <> folder_id},
+        socket
+      ) do
+    feed = Feeds.get_feed!(item_id, user_id: socket.assigns.current_user.id)
+    folder = Feeds.get_folder!(folder_id, user_id: socket.assigns.current_user.id)
+    Feeds.move_feed(feed, folder)
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "move-item",
+        %{"item" => "feed-" <> item_id, "destination" => "feed-" <> feed_id},
+        socket
+      ) do
+    feed1 = Feeds.get_feed!(item_id, user_id: socket.assigns.current_user.id)
+    feed2 = Feeds.get_feed!(feed_id, user_id: socket.assigns.current_user.id)
+    Feeds.move_feed(feed1, feed2)
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "move-item",
+        %{"item" => "folder-" <> item_id, "destination" => "folder-" <> folder_id},
+        socket
+      ) do
+    folder1 = Feeds.get_folder!(item_id, user_id: socket.assigns.current_user.id)
+    folder2 = Feeds.get_folder!(folder_id, user_id: socket.assigns.current_user.id)
+    Feeds.move_folder(folder1, folder2)
+    {:noreply, socket}
+  end
+
+  def handle_event("move-item", _, socket), do: {:noreply, socket}
+
   def handle_event("keydown", %{"key" => "h"}, %{assigns: %{selected: selected}} = socket) do
     list = get_selection_list(socket.assigns.current_user.id)
     index = Enum.find_index(list, &(&1 == selected))
@@ -163,9 +198,7 @@ defmodule AgregatWeb.AppLive do
     handle_event("toggle-read-filter", value, socket)
   end
 
-  def handle_event("keydown", _, socket) do
-    {:noreply, socket}
-  end
+  def handle_event("keydown", _, socket), do: {:noreply, socket}
 
   def handle_info(%{folders: folders, user_id: user_id}, socket) do
     if user_id == socket.assigns.current_user.id do

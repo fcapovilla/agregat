@@ -41,6 +41,9 @@ Hooks.FeedList = {
     mounted(){
         window.addEventListener("resize", this.resize, false)
         this.resize()
+        this.el.addEventListener('move-item', (e) => {
+            this.pushEventTo(this.el, 'move-item', {item: e.detail.item, destination: e.detail.destination})
+        })
     },
     updated(){
         this.resize()
@@ -145,6 +148,27 @@ Hooks.Item = {
 
 // Define Alpine components
 document.addEventListener('alpine:init', () => {
+    Alpine.data('feed-list', () => ({
+        dragdrop: {
+            ['@dragstart'](e) {
+                e.dataTransfer.setData("text/plain", this.$el.id)
+                this.$root.classList.add('dragging')
+            },
+            ['@dragend']() {
+                this.$root.classList.remove('dragging')
+            },
+            ['@drop'](e) {
+                this.$dispatch('move-item', {item: e.dataTransfer.getData("text/plain"), destination: this.$el.id})
+                this.$el.classList.remove('drag-hovered')
+            },
+            ['@dragenter.prevent']() {
+                this.$el.classList.add('drag-hovered')
+            },
+            ['@dragleave.prevent']() {
+                this.$el.classList.remove('drag-hovered')
+            }
+        }
+    }))
     Alpine.data('item-list', () => ({
         selected: false
     }))

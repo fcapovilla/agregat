@@ -32,7 +32,7 @@
   </div>
   <div class="dragbar hidden-phone"></div>
   <div class={if @selected != "none", do: "hidden-phone", else: ""}>
-    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList">
+    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList" x-data="feed-list">
       <ul id="feed-list">
         <li>
           <div phx-click="select-all" class={"folder-title #{if @selected == "all", do: "active"}"}>
@@ -55,7 +55,7 @@
           </div>
         </li>
         <%= for folder <- @folders do %>
-          <div phx-click={"select-folder-#{folder.id}"} class={"folder-title #{if @selected == "folder-#{folder.id}", do: "active"}"}>
+          <div id={"folder-#{folder.id}"} phx-click={"select-folder-#{folder.id}"} class={"folder-title #{if @selected == "folder-#{folder.id}", do: "active"}"} draggable="true" x-bind="dragdrop">
             <%= if folder.unread_count > 0 do %>
               <div class="folder-tag">
                 <span class="tag"><%= folder.unread_count %></span>
@@ -86,7 +86,7 @@
 
           <%= if folder.open do %>
             <%= for feed <- folder.feeds do %>
-              <div phx-click={"select-feed-#{feed.id}"} class={"feed-title #{if @selected == "feed-#{feed.id}", do: "active"}"}>
+              <div id={"feed-#{feed.id}"} phx-click={"select-feed-#{feed.id}"} class={"feed-title #{if @selected == "feed-#{feed.id}", do: "active"}"} draggable="true" x-bind="dragdrop">
                 <%= if feed.unread_count > 0 do %>
                   <div class="feed-tag">
                     <span class="tag"><%= feed.unread_count %></span>
