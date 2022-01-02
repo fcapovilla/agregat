@@ -1,4 +1,4 @@
-<li id={"item-#{@id}"} class={"item-container #{if @item.read, do: "read"}"} class="item-container" x-data="item" :class="active" @select-item="selectItem" phx-hook="Item">
+<li id={"item-#{@id}"} class={"item-container #{if @item.read, do: "read"}"} class="item-container" x-data="item" :class="active" @select-item="selectItem">
   <%= if @item do %>
     <div class="item-tags">
       <%= if @item.feed != nil and @item.feed.title do %>

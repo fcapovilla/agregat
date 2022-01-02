@@ -39,116 +39,47 @@ Hooks.InfiniteScroll = {
 
 Hooks.FeedList = {
     mounted(){
-        window.addEventListener("resize", this.resize, false)
-        this.resize()
-        this.el.addEventListener('move-item', (e) => {
-            this.pushEventTo(this.el, 'move-item', {item: e.detail.item, destination: e.detail.destination})
-        })
+        window.FeedListHook = this
+        window.dispatchEvent(new Event("resize"))
     },
     updated(){
-        this.resize()
+        window.dispatchEvent(new Event("resize"))
         let elem = this.el.querySelector(".feed-list .total-unread-count")
         if(elem) {
             document.title = "Agregat (" + elem.textContent + ")"
         }
     },
-    destroyed(){
-        window.removeEventListener("resize", this.resize, false)
-    },
-    resize(){
-        let feedList = document.querySelector('.feed-list');
-        feedList.style.height = (document.documentElement.clientHeight - feedList.getBoundingClientRect().top) + "px"
-    }
 }
 
 Hooks.ItemList = {
-    mounted(){
-        this.resize()
-        this.boundKeydown = this.keydown.bind(this)
-        this.boundBtnNextItem = this.nextItem.bind(this)
-        this.boundBtnPreviousItem = this.previousItem.bind(this)
-        window.addEventListener("keydown", this.boundKeydown, false)
-        window.addEventListener("resize", this.resize, false)
-        document.querySelector('#btn-previous-item').addEventListener("click", this.boundBtnPreviousItem, false)
-        document.querySelector('#btn-next-item').addEventListener("click", this.boundBtnNextItem, false)
+    mounted() {
+        window.ItemListHook = this
+        window.dispatchEvent(new Event("resize"))
         document.querySelector('#item-list').focus()
     },
-    updated(){
-        this.resize()
+    updated() {
+        window.dispatchEvent(new Event("resize"))
         document.querySelector('#item-list').focus()
-    },
-    destroyed(){
-        window.removeEventListener("keydown", this.boundKeydown, false)
-        window.removeEventListener("resize", this.resize, false)
-        document.querySelector('#btn-previous-item').removeEventListener("click", this.boundBtnPreviousItem, false)
-        document.querySelector('#btn-next-item').removeEventListener("click", this.boundBtnNextItem, false)
-    },
-    keydown(e){
-        if (e.key == 'j') {
-            this.nextItem()
-        }
-        if (e.key == 'k') {
-            this.previousItem()
-        }
-        if (e.key == 'n') {
-            let elem = document.querySelector("#items .item-container.active .item-content-title")
-            if(elem && elem.href) {
-                window.open(elem.href, '_blank')
-            }
-        }
-        if (e.key == ' ') {
-            let active = this.el.querySelector('.item-container.active')
-            if(active) {
-                let position = active.getBoundingClientRect()
-                if(position.top + position.height - document.documentElement.clientHeight < 0) {
-                    this.nextItem()
-                }
-            } else {
-                this.nextItem()
-            }
-        }
-    },
-    resize(){
-        let itemList = document.querySelector('#item-list');
-        itemList.style.height = (document.documentElement.clientHeight - itemList.getBoundingClientRect().top) + "px"
-    },
-    nextItem(){
-        let active = this.el.querySelector('.item-container.active')
-        if (active) {
-            let next = active.nextElementSibling
-            if (next) {
-                next.dispatchEvent(new Event('select-item'))
-            }
-        } else {
-            this.el.querySelector('.item-container').dispatchEvent(new Event('select-item'))
-        }
-    },
-    previousItem(){
-        let active = this.el.querySelector('.item-container.active')
-        if (active) {
-            let previous = active.previousElementSibling
-            if (previous) { 
-                previous.dispatchEvent(new Event('select-item'))
-            }
-        } else {
-            this.el.querySelector('.item-container').dispatchEvent(new Event('select-item'))
-        }
     }
-}
-
-Hooks.Item = {
-    mounted(){
-        this.el.addEventListener('select-item', () => {
-            if(!this.el.classList.contains('active')) {
-                this.pushEventTo(this.el, 'set-read', {read: true})
-            }
-        })
-    },
 }
 
 // Define Alpine components
 document.addEventListener('alpine:init', () => {
+    Alpine.data('menu-bar', () => ({
+        nextItem() {
+            this.$dispatch('next-item')
+        },
+        previousItem() {
+            this.$dispatch('previous-item')
+        },
+    }))
+
     Alpine.data('feed-list', () => ({
+        events: {
+            ['@resize.window']() {
+                this.$root.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+            }
+        },
         dragdrop: {
             ['@dragstart'](e) {
                 e.dataTransfer.setData("text/plain", this.$el.id)
@@ -158,7 +89,7 @@ document.addEventListener('alpine:init', () => {
                 this.$root.classList.remove('dragging')
             },
             ['@drop'](e) {
-                this.$dispatch('move-item', {item: e.dataTransfer.getData("text/plain"), destination: this.$el.id})
+                window.FeedListHook.pushEventTo(this.$el, 'move-item', {item: e.dataTransfer.getData("text/plain"), destination: this.$el.id})
                 this.$el.classList.remove('drag-hovered')
             },
             ['@dragenter.prevent']() {
@@ -169,9 +100,70 @@ document.addEventListener('alpine:init', () => {
             }
         }
     }))
+
     Alpine.data('item-list', () => ({
-        selected: false
+        selected: false,
+
+        nextItem() {
+            let active = this.$root.querySelector('.item-container.active')
+            if (active) {
+                let next = active.nextElementSibling
+                if (next) {
+                    next.dispatchEvent(new Event('select-item'))
+                }
+            } else {
+                this.$root.querySelector('.item-container').dispatchEvent(new Event('select-item'))
+            }
+        },
+        previousItem() {
+            let active = this.$root.querySelector('.item-container.active')
+            if (active) {
+                let previous = active.previousElementSibling
+                if (previous) {
+                    previous.dispatchEvent(new Event('select-item'))
+                }
+            } else {
+                this.$root.querySelector('.item-container').dispatchEvent(new Event('select-item'))
+            }
+        },
+        events: {
+            ['@resize.window']() {
+                this.$root.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+            },
+
+            ['@next-item.window']() {
+                this.nextItem()
+            },
+            ['@previous-item.window']() {
+                this.previousItem()
+            },
+
+            ['@keydown.j.window']() {
+                this.nextItem()
+            },
+            ['@keydown.k.window']() {
+                this.previousItem()
+            },
+            ['@keydown.n.window']() {
+                let elem = document.querySelector("#items .item-container.active .item-content-title")
+                if(elem && elem.href) {
+                    window.open(elem.href, '_blank')
+                }
+            },
+            ['@keydown.space.window']() {
+                let active = this.$root.querySelector('.item-container.active')
+                if(active) {
+                    let position = active.getBoundingClientRect()
+                    if(position.top + position.height - document.documentElement.clientHeight < 0) {
+                        this.nextItem()
+                    }
+                } else {
+                    this.nextItem()
+                }
+            },
+        },
     }))
+
     Alpine.data('item', () => ({
         active() {
             return this.selected == this.$el.id ? "active" : null
@@ -182,6 +174,7 @@ document.addEventListener('alpine:init', () => {
                 window.requestAnimationFrame(() => {
                     this.$el.scrollIntoView()
                 })
+                window.ItemListHook.pushEventTo(this.$el, 'set-read', {read: true})
             }
         },
     }))

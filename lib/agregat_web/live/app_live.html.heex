@@ -1,5 +1,5 @@
 <div class="side-bar">
-  <div id="mainmenu">
+  <div id="mainmenu" x-data="menu-bar">
     <div class="float-left">
       <a href={Routes.feed_path(@socket, :new)} class="button button-small hidden-small-phone" title="Add feed">
         <i class="fas fa-plus"></i>
@@ -22,17 +22,17 @@
       <button id="btn-back" phx-click="select-none" class="button button-small mobile-item-button" title="Back to feed list">
         <i class="fas fa-step-backward"></i>
       </button>
-      <button id="btn-previous-item" class="button button-small mobile-item-button" title="previous">
+      <button @click="previousItem" class="button button-small mobile-item-button" title="previous">
         <i class="fas fa-arrow-circle-up"></i>
       </button>
-      <button id="btn-next-item" class="button button-small mobile-item-button" title="next">
+      <button @click="nextItem" class="button button-small mobile-item-button" title="next">
         <i class="fas fa-arrow-circle-down"></i>
       </button>
     </div>
   </div>
   <div class="dragbar hidden-phone"></div>
   <div class={if @selected != "none", do: "hidden-phone", else: ""}>
-    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList" x-data="feed-list">
+    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList" x-data="feed-list" x-bind="events">
       <ul id="feed-list">
         <li>
           <div phx-click="select-all" class={"folder-title #{if @selected == "all", do: "active"}"}>
