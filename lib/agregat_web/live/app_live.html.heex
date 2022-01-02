@@ -32,7 +32,7 @@
   </div>
   <div class="dragbar hidden-phone"></div>
   <div class={if @selected != "none", do: "hidden-phone", else: ""}>
-    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList" x-data="feed-list" x-bind="events">
+    <div id={"feed-list-#{@selected}"} class="feed-list" phx-window-keydown="keydown" phx-hook="FeedList" x-data="feed-list" x-bind="events" :style="style">
       <ul id="feed-list">
         <li>
           <div phx-click="select-all" class={"folder-title #{if @selected == "all", do: "active"}"}>

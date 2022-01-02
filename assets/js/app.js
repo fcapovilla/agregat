@@ -11,39 +11,11 @@ import topbar from "../vendor/topbar"
 // Define Phoenix hooks
 let Hooks = {}
 
-Hooks.InfiniteScroll = {
-    mounted(){
-        this.pending = this.page()
-        this.boundScroll = this.scroll.bind(this)
-        this.el.addEventListener("scroll", this.boundScroll, false)
-    },
-    updated(){
-        this.pending = this.page()
-    },
-    destroyed() {
-        this.el.removeEventListener('scroll', this.boundScroll, false)
-    },
-    page() {
-        return this.el.dataset.page
-    },
-    scrollAt() {
-        return this.el.scrollTop / (this.el.scrollHeight - this.el.clientHeight) * 100
-    },
-    scroll(){
-        if(this.pending == this.page() && this.scrollAt() > 90){
-            this.pending = this.page() + 1
-            this.pushEvent("load-more")
-        }
-    }
-}
-
 Hooks.FeedList = {
     mounted(){
         window.FeedListHook = this
-        window.dispatchEvent(new Event("resize"))
     },
     updated(){
-        window.dispatchEvent(new Event("resize"))
         let elem = this.el.querySelector(".feed-list .total-unread-count")
         if(elem) {
             document.title = "Agregat (" + elem.textContent + ")"
@@ -54,12 +26,9 @@ Hooks.FeedList = {
 Hooks.ItemList = {
     mounted() {
         window.ItemListHook = this
-        window.dispatchEvent(new Event("resize"))
-        document.querySelector('#item-list').focus()
     },
     updated() {
-        window.dispatchEvent(new Event("resize"))
-        document.querySelector('#item-list').focus()
+        document.querySelector('#item-list').dispatchEvent(new Event('updated'))
     }
 }
 
@@ -75,9 +44,18 @@ document.addEventListener('alpine:init', () => {
     }))
 
     Alpine.data('feed-list', () => ({
+        style: {},
+
+        init() {
+            this.resize()
+        },
+        resize() {
+            this.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+        },
+
         events: {
             ['@resize.window']() {
-                this.$root.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+                this.resize()
             }
         },
         dragdrop: {
@@ -89,7 +67,7 @@ document.addEventListener('alpine:init', () => {
                 this.$root.classList.remove('dragging')
             },
             ['@drop'](e) {
-                window.FeedListHook.pushEventTo(this.$el, 'move-item', {item: e.dataTransfer.getData("text/plain"), destination: this.$el.id})
+                window.FeedListHook.pushEvent('move-item', {item: e.dataTransfer.getData("text/plain"), destination: this.$el.id})
                 this.$el.classList.remove('drag-hovered')
             },
             ['@dragenter.prevent']() {
@@ -102,42 +80,65 @@ document.addEventListener('alpine:init', () => {
     }))
 
     Alpine.data('item-list', () => ({
+        style: {},
         selected: false,
+        pending: false,
 
+        init() {
+            this.resize()
+            this.$root.focus()
+        },
+        resize() {
+            this.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+        },
         nextItem() {
-            let active = this.$root.querySelector('.item-container.active')
-            if (active) {
-                let next = active.nextElementSibling
+            if (this.selected) {
+                let next = this.selected.nextElementSibling
                 if (next) {
                     next.dispatchEvent(new Event('select-item'))
                 }
             } else {
-                this.$root.querySelector('.item-container').dispatchEvent(new Event('select-item'))
+                let first = this.$root.querySelector('.item-container')
+                if (first) {
+                    first.dispatchEvent(new Event('select-item'))
+                }
             }
         },
         previousItem() {
-            let active = this.$root.querySelector('.item-container.active')
-            if (active) {
-                let previous = active.previousElementSibling
+            if (this.selected) {
+                let previous = this.selected.previousElementSibling
                 if (previous) {
                     previous.dispatchEvent(new Event('select-item'))
                 }
             } else {
-                this.$root.querySelector('.item-container').dispatchEvent(new Event('select-item'))
+                let first = this.$root.querySelector('.item-container')
+                if (first) {
+                    first.dispatchEvent(new Event('select-item'))
+                }
             }
         },
+
         events: {
             ['@resize.window']() {
-                this.$root.style.height = (document.documentElement.clientHeight - this.$root.getBoundingClientRect().top) + "px"
+                this.resize()
             },
-
+            ['@scroll']() {
+                let scrollAt = this.$root.scrollTop / (this.$root.scrollHeight - this.$root.clientHeight) * 100
+                if(!this.pending && scrollAt > 90){
+                    this.pending = true
+                    window.ItemListHook.pushEvent("load-more")
+                }
+            },
+            ['@updated']() {
+                this.$root.focus()
+                this.pending = false
+            },
             ['@next-item.window']() {
                 this.nextItem()
             },
             ['@previous-item.window']() {
                 this.previousItem()
             },
-
             ['@keydown.j.window']() {
                 this.nextItem()
             },
@@ -151,9 +152,8 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             ['@keydown.space.window']() {
-                let active = this.$root.querySelector('.item-container.active')
-                if(active) {
-                    let position = active.getBoundingClientRect()
+                if(this.selected) {
+                    let position = this.selected.getBoundingClientRect()
                     if(position.top + position.height - document.documentElement.clientHeight < 0) {
                         this.nextItem()
                     }
@@ -166,10 +166,10 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('item', () => ({
         active() {
-            return this.selected == this.$el.id ? "active" : null
+            return this.selected.id == this.$el.id ? "active" : null
         },
         selectItem() {
-            this.selected = this.selected == this.$el.id ? false : this.$el.id
+            this.selected = this.selected.id == this.$el.id ? false : this.$el
             if (this.selected) {
                 window.requestAnimationFrame(() => {
                     this.$el.scrollIntoView()
