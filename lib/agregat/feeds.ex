@@ -308,7 +308,7 @@ defmodule Agregat.Feeds do
     from(f in Feed,
       left_join: folder in assoc(f, :folder),
       preload: [folder: folder],
-      order_by: [asc: f.position]
+      order_by: [asc: folder.position, asc: f.position]
     )
     |> filter_by(filters)
     |> Repo.all()

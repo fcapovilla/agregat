@@ -10,6 +10,8 @@ defmodule AgregatWeb.FolderController do
   end
 
   def create(conn, %{"folder" => folder_params}) do
+    folder_params = Map.put(folder_params, "user_id", conn.assigns.current_user.id)
+
     case Feeds.create_folder(folder_params) do
       {:ok, _} ->
         conn

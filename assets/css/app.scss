@@ -123,6 +123,53 @@ body {
     }
 }
 
+// Additional utility classes
+.button-small {
+    height: 2.8rem;
+    line-height: 2.8rem;
+    padding: 0 1rem;
+    margin: .1rem;
+}
+
+.button-icon {
+    height: 3rem;
+    width: 3em;
+    line-height: 3rem;
+    padding: 0 0.8rem;
+    margin: .1rem;
+}
+
+.tag {
+	background-color: #428BCA;
+	border: .1rem solid #428BCA;
+	border-radius: .4rem;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 1.1rem;
+    font-weight: bold;
+	height: 1.8rem;
+	letter-spacing: .1rem;
+	padding: 0 .4rem;
+	text-align: center;
+    &.tag-rounded {
+        border-radius: 1rem;
+        padding: 0 .6rem;
+    }
+}
+
+.well {
+    background-color: #F8F8F8;
+    cursor: auto;
+    padding: 2rem;
+    input {
+        background-color: white;
+    }
+}
+
+.login-box {
+    padding-top: 5rem;
+}
+
 // Desktop layout
 @media (min-width: 60.0rem) {
     .content {
@@ -158,6 +205,12 @@ body {
     .side-bar {
         width: 100% !important;
     }
+
+    .tag {
+        height: 2.0rem;
+        line-height: 2.0rem;
+        font-size: 1.3rem;
+    }
 }
 
 // hidden classes
@@ -165,7 +218,7 @@ body {
     display: none !important;
 }
 
-@media (max-width: 25.0rem) {
+@media (max-width: 20.0rem) {
     .hidden-small-phone {
         display: none !important;
     }
@@ -181,40 +234,4 @@ body {
     .hidden-desktop {
         display: none !important;
     }
-}
-
-// Additional utility classes
-.button-small {
-    height: 2.8rem;
-    line-height: 2.8rem;
-    padding: 0 1rem;
-    margin: .1rem;
-}
-
-span.tag {
-	background-color: #428BCA;
-	border: .1rem solid #428BCA;
-	border-radius: .4rem;
-	color: #FFFFFF;
-	display: inline-block;
-	font-size: 1.1rem;
-    font-weight: bold;
-	height: 1.8rem;
-	letter-spacing: .1rem;
-	line-height: 1.5rem;
-	padding: 0 .4rem;
-	text-align: center;
-}
-
-.well {
-    background-color: #F8F8F8;
-    cursor: auto;
-    padding: 2rem;
-    input {
-        background-color: white;
-    }
-}
-
-.login-box {
-    padding-top: 5rem;
 }

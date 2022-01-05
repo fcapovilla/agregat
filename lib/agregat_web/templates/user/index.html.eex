@@ -1,16 +1,26 @@
-<center>
-  <h1>Listing Users</h1>
-</center>
-
 <div class="container">
   <div class="row">
-    <div class="column column-offset-25 column-50">
+    <div class="column">
+      <div class="float-left">
+        <%= link "Users", to: Routes.user_path(@conn, :index), class: "button" %>
+        <%= link "Feeds", to: Routes.feed_path(@conn, :index), class: "button button-outline" %>
+      </div>
+      <div class="float-right">
+        <%= link "Back to app", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <%= link "New User", to: Routes.user_path(@conn, :new), class: "button" %>
+      <%= link "Refresh favicons", to: Routes.favicon_path(@conn, :refresh), class: "button" %>
+
       <table class="table table-bordered">
         <thead>
           <tr>
             <th>Email</th>
             <th>Admin</th>
-            <th></th>
+            <th style="width: 100px"></th>
           </tr>
         </thead>
         <tbody>
@@ -20,22 +30,13 @@
                 <td><%= user.admin %></td>
 
                 <td>
-                  <span><%= link "Edit", to: Routes.user_path(@conn, :edit, user), class: "button button-small" %></span>
-                  <span><%= link "Delete", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"], class: "button button-small" %></span>
+                  <%= link "", to: Routes.user_path(@conn, :edit, user), class: "button button-icon fas fa-edit", title: "Edit" %>
+                  <%= link "", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"], class: "button button-icon fas fa-trash", title: "Delete" %>
                 </td>
               </tr>
           <% end %>
         </tbody>
       </table>
-
-      <%= link "New User", to: Routes.user_path(@conn, :new), class: "button" %>
-      <%= link "Refresh favicons", to: Routes.favicon_path(@conn, :refresh), class: "button" %>
-
-      <hr/>
-
-      <div class="float-right">
-        <%= link "Back to feeds", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-clear" %>
-      </div>
     </div>
   </div>
 </div>

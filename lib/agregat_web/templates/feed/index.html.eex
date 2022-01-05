@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="row">
+    <div class="column">
+      <div class="float-left">
+        <%= link "Users", to: Routes.user_path(@conn, :index), class: "button button-outline" %>
+        <%= link "Feeds", to: Routes.feed_path(@conn, :index), class: "button" %>
+      </div>
+      <div class="float-right">
+        <%= link "Back to app", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <%= link "New Feed", to: Routes.feed_path(@conn, :new), class: "button" %>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Folder</th>
+            <th>Title</th>
+            <th>Update freq.</th>
+            <th>Last sync</th>
+            <th>Status</th>
+            <th>HTML?</th>
+            <th style="width: 100px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for feed <- @feeds do %>
+              <tr>
+                <td><%= feed.folder.title %></td>
+                <td><%= feed.title %></td>
+                <td><%= feed.update_frequency %></td>
+                <td><%= feed.last_sync %></td>
+                <td><%= feed.sync_status %></td>
+                <td><%= feed.is_html %></td>
+                <td>
+                  <%= link "", to: Routes.feed_path(@conn, :edit, feed), class: "button button-icon fas fa-edit", title: "Edit" %>
+                  <%= link "", to: Routes.feed_path(@conn, :delete, feed), method: :delete, data: [confirm: "Are you sure?"], class: "button button-icon fas fa-trash", title: "Delete" %>
+                </td>
+              </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

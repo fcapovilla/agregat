@@ -4,14 +4,18 @@ defmodule AgregatWeb.FeedController do
   alias Agregat.Feeds
   alias Agregat.Feeds.Feed
 
+  def index(conn, _params) do
+    feeds = Feeds.list_feeds(user_id: conn.assigns.current_user.id)
+    render(conn, "index.html", feeds: feeds)
+  end
+
   def new(conn, _params) do
     changeset = Feeds.change_feed(%Feed{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"feed" => feed_params}) do
-    user = conn.assigns.current_user
-    feed_params = Map.put(feed_params, "user_id", user.id)
+    feed_params = Map.put(feed_params, "user_id", conn.assigns.current_user.id)
 
     feed_params =
       if feed_params["folder_title"] == "" do

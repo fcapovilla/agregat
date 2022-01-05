@@ -1,31 +1,31 @@
 <div class="side-bar">
   <div id="mainmenu" x-data="menu-bar">
     <div class="float-left">
-      <a href={Routes.feed_path(@socket, :new)} class="button button-small hidden-small-phone" title="Add feed">
+      <a href={Routes.feed_path(@socket, :new)} class="button button-icon hidden-small-phone" title="Add feed">
         <i class="fas fa-plus"></i>
       </a>
-      <a phx-click="toggle-read-filter" class="button button-small" title="Toggle read visibility">
+      <a phx-click="toggle-read-filter" class="button button-icon" title="Toggle read visibility">
         <%= if @params["read"] != "false" do %>
           <i class="fas fa-eye"></i>
         <% else %>
           <i class="fas fa-eye-slash"></i>
         <% end %>
       </a>
-      <a href={Routes.user_path(@socket, :index)} class="button button-small hidden-small-phone" title="Settings">
+      <a href={Routes.user_path(@socket, :index)} class="button button-icon hidden-small-phone" title="Settings">
         <i class="fas fa-cog"></i>
       </a>
-      <a href={Routes.user_session_path(@socket, :delete)} class="button button-small" title="Log out">
+      <a href={Routes.user_session_path(@socket, :delete)} class="button button-icon" title="Log out">
         <i class="fas fa-sign-out-alt"></i>
       </a>
     </div>
     <div class={"float-right hidden-desktop #{if @selected == "none", do: "hidden", else: ""}"}>
-      <button id="btn-back" phx-click="select-none" class="button button-small mobile-item-button" title="Back to feed list">
+      <button id="btn-back" phx-click="select-none" class="button button-icon mobile-item-button" title="Back to feed list">
         <i class="fas fa-step-backward"></i>
       </button>
-      <button @click="previousItem" class="button button-small mobile-item-button" title="previous">
+      <button @click="previousItem" class="button button-icon mobile-item-button" title="previous">
         <i class="fas fa-arrow-circle-up"></i>
       </button>
-      <button @click="nextItem" class="button button-small mobile-item-button" title="next">
+      <button @click="nextItem" class="button button-icon mobile-item-button" title="next">
         <i class="fas fa-arrow-circle-down"></i>
       </button>
     </div>
@@ -37,7 +37,7 @@
         <li>
           <div phx-click="select-all" class={"folder-title #{if @selected == "all", do: "active"}"}>
             <div  class="folder-tag">
-              <span class="tag total-unread-count"><%= Enum.reduce(@folders, 0, &(&1.unread_count + &2)) %></span>
+              <span class="tag tag-rounded total-unread-count"><%= Enum.reduce(@folders, 0, &(&1.unread_count + &2)) %></span>
             </div>
 
             <div  class="folder-text">
@@ -58,7 +58,7 @@
           <div id={"folder-#{folder.id}"} phx-click={"select-folder-#{folder.id}"} class={"folder-title #{if @selected == "folder-#{folder.id}", do: "active"}"} draggable="true" x-bind="dragdrop">
             <%= if folder.unread_count > 0 do %>
               <div class="folder-tag">
-                <span class="tag"><%= folder.unread_count %></span>
+                <span class="tag tag-rounded"><%= folder.unread_count %></span>
               </div>
             <% end %>
             <div class="folder-text">
@@ -77,10 +77,10 @@
           </div>
           <%= if @menu_open == "folder-#{folder.id}" do %>
             <div class="folderMenu">
-              <a phx-click={"mark-folder-read-#{folder.id}"} class="button button-small" title="Mark as read"><i class="fas fa-eye"></i></a>
-              <a phx-click={"mark-folder-unread-#{folder.id}"} class="button button-small" title="Mark as unread"><i class="fas fa-eye-slash"></i></a>
-              <a href={Routes.folder_path(@socket, :edit, folder)} class="button button-small" title="Edit"><i class="fas fa-edit"></i></a>
-              <a phx-click={"delete-folder-#{folder.id}"} class="button button-small" title="Delete"><i class="fas fa-trash"></i></a>
+              <a phx-click={"mark-folder-read-#{folder.id}"} class="button button-icon" title="Mark as read"><i class="fas fa-eye"></i></a>
+              <a phx-click={"mark-folder-unread-#{folder.id}"} class="button button-icon" title="Mark as unread"><i class="fas fa-eye-slash"></i></a>
+              <a href={Routes.folder_path(@socket, :edit, folder)} class="button button-icon" title="Edit"><i class="fas fa-edit"></i></a>
+              <a phx-click={"delete-folder-#{folder.id}"} class="button button-icon" title="Delete"><i class="fas fa-trash"></i></a>
             </div>
           <% end %>
 
@@ -89,7 +89,7 @@
               <div id={"feed-#{feed.id}"} phx-click={"select-feed-#{feed.id}"} class={"feed-title #{if @selected == "feed-#{feed.id}", do: "active"}"} draggable="true" x-bind="dragdrop">
                 <%= if feed.unread_count > 0 do %>
                   <div class="feed-tag">
-                    <span class="tag"><%= feed.unread_count %></span>
+                    <span class="tag tag-rounded"><%= feed.unread_count %></span>
                   </div>
                 <% end %>
                 <div class="feed-text">
@@ -109,10 +109,10 @@
               </div>
               <%= if @menu_open == "feed-#{feed.id}" do %>
                 <div class="feedMenu">
-                  <a phx-click={"mark-feed-read-#{feed.id}"} class="button button-small" title="Mark as read"><i class="fas fa-eye"></i></a>
-                  <a phx-click={"mark-feed-unread-#{feed.id}"} class="button button-small" title="Mark as unread"><i class="fas fa-eye-slash"></i></a>
-                  <a href={Routes.feed_path(@socket, :edit, feed)} class="button button-small" title="Edit"><i class="fas fa-edit"></i></a>
-                  <a phx-click={"delete-feed-#{feed.id}"} class="button button-small" title="Delete"><i class="fas fa-trash"></i></a>
+                  <a phx-click={"mark-feed-read-#{feed.id}"} class="button button-icon" title="Mark as read"><i class="fas fa-eye"></i></a>
+                  <a phx-click={"mark-feed-unread-#{feed.id}"} class="button button-icon" title="Mark as unread"><i class="fas fa-eye-slash"></i></a>
+                  <a href={Routes.feed_path(@socket, :edit, feed)} class="button button-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a phx-click={"delete-feed-#{feed.id}"} class="button button-icon" title="Delete"><i class="fas fa-trash"></i></a>
                 </div>
               <% end %>
             <% end %>

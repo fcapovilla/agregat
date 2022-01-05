@@ -54,10 +54,7 @@
     .folder-tag {
         float: right;
         margin: 0 .3rem;
-        max-height: 1.6rem;
-        .tag {
-            height: 1.6rem;
-        }
+        height: 1.9rem;
     }
 
     .feed-text,
@@ -114,11 +111,6 @@
 
         #feed-list {
             padding-left: .6rem;
-        }
-
-        .feed-tag,
-        .folder-tag {
-            margin-top: .4rem;
         }
     }
 }
