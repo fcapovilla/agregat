@@ -224,6 +224,12 @@ body {
     }
 }
 
+@media (max-width: 30.0rem) {
+    .hidden-medium-phone {
+        display: none !important;
+    }
+}
+
 @media (max-width: 60.0rem) {
     .hidden-phone {
         display: none !important;
