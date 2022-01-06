@@ -502,9 +502,7 @@ defmodule Agregat.Feeds do
     Item.changeset(item, %{})
   end
 
-  @doc """
-  Updates the unread_count of a feed of the feed related to the item in parameter.
-  """
+  @doc false
   def update_unread_count({:ok, data}), do: update_unread_count(data)
 
   def update_unread_count(%Item{} = item) do
@@ -527,9 +525,7 @@ defmodule Agregat.Feeds do
 
   def update_unread_count(any), do: any
 
-  @doc """
-  Broadcast item updates on the Agregat.PubSub channel.
-  """
+  @doc false
   def broadcast_item(any, opts \\ %{})
   def broadcast_item(any, %{broadcast: false}), do: any
   def broadcast_item({:ok, %Item{} = item}, _), do: {:ok, broadcast_item(item)}
@@ -538,7 +534,7 @@ defmodule Agregat.Feeds do
 
   def broadcast_items([%Item{} | _] = items) do
     items
-    |> Repo.preload(items, [:feed, :medias])
+    |> Repo.preload([:feed, :medias])
     |> Enum.group_by(& &1.user_id)
     |> Enum.each(fn {user_id, items} ->
       Phoenix.PubSub.broadcast(Agregat.PubSub, "items", %{items: items, user_id: user_id})
