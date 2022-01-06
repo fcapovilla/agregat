@@ -11,7 +11,8 @@ defmodule AgregatWeb.FeedController do
 
   def new(conn, _params) do
     changeset = Feeds.change_feed(%Feed{})
-    render(conn, "new.html", changeset: changeset)
+    folders = Feeds.list_folders(user_id: conn.assigns.current_user.id)
+    render(conn, "new.html", changeset: changeset, folders: folders)
   end
 
   def create(conn, %{"feed" => feed_params}) do
@@ -40,7 +41,8 @@ defmodule AgregatWeb.FeedController do
   def edit(conn, %{"id" => id}) do
     feed = Feeds.get_feed!(id)
     changeset = Feeds.change_feed(feed)
-    render(conn, "edit.html", feed: feed, changeset: changeset)
+    folders = Feeds.list_folders(user_id: conn.assigns.current_user.id)
+    render(conn, "edit.html", feed: feed, changeset: changeset, folders: folders)
   end
 
   def update(conn, %{"id" => id, "feed" => feed_params}) do
@@ -55,7 +57,8 @@ defmodule AgregatWeb.FeedController do
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", feed: feed, changeset: changeset)
+        folders = Feeds.list_folders(user_id: conn.assigns.current_user.id)
+        render(conn, "edit.html", feed: feed, changeset: changeset, folders: folders)
     end
   end
 

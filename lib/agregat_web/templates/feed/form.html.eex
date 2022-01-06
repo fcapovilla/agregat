@@ -13,8 +13,13 @@
         <%= error_tag f, :url %>
 
         <%= label f, :folder_title, gettext("Folder title")  %>
-        <%= text_input f, :folder_title %>
+        <%= text_input f, :folder_title, list: "folders" %>
         <%= error_tag f, :folder_title %>
+        <datalist id="folders">
+          <%= for folder <- @folders do %>
+            <option value="<%= folder.title %>"/>
+          <% end %>
+        </datalist>
 
         <%= label f, :update_frequency, gettext("Update frequency (seconds)")  %>
         <%= number_input f, :update_frequency %>
