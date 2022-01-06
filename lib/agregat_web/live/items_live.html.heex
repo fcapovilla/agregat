@@ -1,7 +1,36 @@
 <div id="item-list" phx-window-keydown="keydown" tabindex="-1" x-data="item-list" x-bind="events" :style="style" phx-hook="ItemList">
   <ul id="items" class="item-list" phx-update="append">
-    <%= for id <- @item_ids do %>
-      <%= live_component @socket, AgregatWeb.ItemComponent, id: id, current_user: @current_user %>
+    <%= for item <- @items do %>
+      <li id={"item-#{item.id}"} class={"item-container #{if item.read, do: "read"}"} class="item-container" x-data="item" :class="active" @select-item="selectItem">
+        <div class="item-tags">
+          <%= if item.feed != nil and item.feed.title do %>
+            <span class="item-feed-title tag hidden-medium-phone">
+            <%= item.feed.title %>
+            </span>
+          <% end %>
+          <span class="item-date tag hidden-phone">
+            <%= item.date %>
+          </span>
+        </div>
+        <div class="item-title" phx-click={JS.dispatch("select-item", to: "#item-#{item.id}")}>
+          <i phx-click={"toggle-favorite-#{item.id}"} class={"favoriteIcon fa-star #{if !item.favorite, do: "far", else: "fas"}"}></i>
+          <i phx-click={"toggle-read-#{item.id}"} class={"readUnreadIcon fa-circle #{if item.read, do: "far", else: "fas"}"}></i>
+          <%= item.title %>
+        </div>
+        <div class="item-content">
+          <a class="item-content-title" href={item.url} target="_blank"><%= item.title %></a>
+          <br>
+          <%= raw item.content %>
+          <%= if item.medias do %>
+            <br>
+            <%= for media <- item.medias do %>
+              <a class="button button-small" href={media.url}>
+                <i class="fas fa-download"></i> <%= media.type %>
+              </a>
+            <% end %>
+          <% end %>
+        </div>
+      </li>
     <% end %>
   </ul>
 </div>

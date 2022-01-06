@@ -454,10 +454,13 @@ defmodule Agregat.Feeds do
   """
   def update_item(%Item{} = item, attrs, opts \\ %{}) do
     changeset = Item.changeset(item, attrs)
-    Map.put(opts, :broadcast, changeset.changes != %{})
     result = Repo.update(changeset)
-    Task.start(__MODULE__, :update_unread_count, [result])
-    Task.start(__MODULE__, :broadcast_item, [result, opts])
+
+    if changeset.changes != %{} do
+      Task.start(__MODULE__, :update_unread_count, [result])
+      Task.start(__MODULE__, :broadcast_item, [result, opts])
+    end
+
     result
   end
 

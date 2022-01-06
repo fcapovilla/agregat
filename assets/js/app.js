@@ -174,7 +174,10 @@ document.addEventListener('alpine:init', () => {
                 window.requestAnimationFrame(() => {
                     this.$el.scrollIntoView()
                 })
-                window.ItemListHook.pushEventTo(this.$el, 'set-read', {read: true})
+                if (!this.$el.classList.contains("read")) {
+                    let item_id = this.$el.id.match(/\d+/)[0]
+                    window.ItemListHook.pushEvent('set-read-' + item_id, {read: true})
+                }
             }
         },
     }))
