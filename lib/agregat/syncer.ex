@@ -7,6 +7,10 @@ defmodule Agregat.Syncer do
 
   import Ecto.Query, only: [from: 2]
 
+  @doc """
+  Synchronize all feeds if their update_frequency was reached.
+  All feeds are synchronized in parallel.
+  """
   def sync_all do
     Repo.all(
       from f in Feed,
@@ -16,7 +20,9 @@ defmodule Agregat.Syncer do
     |> Enum.to_list()
   end
 
-  # Update items for the feed in parameter.
+  @doc """
+  Synchronize items for the feed in parameter.
+  """
   def sync_feed(feed) do
     with {:ok, data} <- Agregat.HttpClient.get(feed.url),
          {:ok, parsed_feed, _} <- parse_feed(feed, data.body) do
@@ -41,6 +47,10 @@ defmodule Agregat.Syncer do
     end
   end
 
+  @doc """
+  Parse a feed.
+  XML is parsed with FeederEx. HTML is parsed with Floki.
+  """
   def parse_feed(%Feed{is_html: false}, data), do: FeederEx.parse(data)
 
   def parse_feed(feed, data) do
@@ -76,8 +86,10 @@ defmodule Agregat.Syncer do
      }, nil}
   end
 
-  # Recalculate the sync frequency of all feeds using automatic frequency calculation
-  # The frequency goes from one every 30 minutes (30) to once every week (10080)
+  @doc """
+  Recalculate the sync frequency of all feeds using automatic frequency calculation
+  The frequency goes from one every 30 minutes (30) to once every week (10080)
+  """
   def recalculate_sync_frequencies do
     Repo.all(from f in Feed, where: f.auto_frequency == true)
     |> Enum.each(fn feed ->

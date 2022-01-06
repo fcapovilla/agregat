@@ -3,6 +3,11 @@ defmodule Agregat.FaviconFetcher do
 
   alias Agregat.Feeds
 
+  @doc """
+  Fetch the favicon for the URL in parameter.
+  We keep only one favicon per host. If it already exists, we don't download it again.
+  The `force` parameter will force a redownload of existing favicons.
+  """
   def fetch(url, force \\ false) do
     uri = URI.parse(url)
     host = uri.scheme <> "://" <> uri.authority

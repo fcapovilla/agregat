@@ -532,6 +532,7 @@ defmodule Agregat.Feeds do
   def broadcast_item(%Item{} = item, _), do: broadcast_items([item]) |> hd()
   def broadcast_item(any, _), do: any
 
+  @doc false
   def broadcast_items([%Item{} | _] = items) do
     items
     |> Repo.preload([:feed, :medias])
