@@ -59,40 +59,9 @@ defmodule AgregatWeb.ItemsLive do
   end
 
   defp fetch_items(%{assigns: %{params: params, page: page}} = socket) do
-    item_ids =
-      from(i in Feeds.Item, select: i.id)
-      |> filter(params)
-      |> sort(params)
-      |> Feeds.filter_by(user_id: socket.assigns.current_user.id)
-      |> Feeds.paginate(page)
-      |> Agregat.Repo.all()
-
-    assign(socket, item_ids: item_ids)
-  end
-
-  defp filter(query, params) do
-    Enum.reduce(params, query, fn {key, value}, query ->
-      case key do
-        "favorite" ->
-          from i in query, where: i.favorite == ^if(value == "true", do: true, else: false)
-
-        "read" ->
-          from i in query, where: i.read == ^if(value == "true", do: true, else: false)
-
-        "folder_id" ->
-          from i in query, left_join: f in assoc(i, :feed), where: f.folder_id == ^value
-
-        "feed_id" ->
-          from i in query, where: i.feed_id == ^value
-
-        _ ->
-          query
-      end
-    end)
-  end
-
-  defp sort(query, _params) do
-    from i in query, order_by: [desc: :date]
+    filter = params |> Map.put(:user_id, socket.assigns.current_user.id) |> Map.drop(["all"])
+    items = Feeds.list_items(filter, %{page: page})
+    assign(socket, item_ids: Enum.map(items, & &1.id))
   end
 
   def handle_info(%{items: items, user_id: user_id}, socket) do

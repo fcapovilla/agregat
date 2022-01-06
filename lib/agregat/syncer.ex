@@ -123,39 +123,12 @@ defmodule Agregat.Syncer do
         }
       end)
 
-    # Update feed items
-    Repo.transaction(fn ->
-      existing_items =
-        Repo.all(
-          from i in Item,
-            where:
-              i.guid in ^Enum.map(items, & &1.guid) and
-                i.user_id == ^feed.user_id and
-                i.feed_id == ^feed.id,
-            preload: [:medias]
-        )
+    Agregat.Feeds.sync_feed_items(feed, items)
 
-      items =
-        Enum.map(items, fn item ->
-          existing = Enum.find(existing_items, &(&1.guid == item.guid))
-
-          {:ok, item} =
-            if existing do
-              Agregat.Feeds.update_item(existing, item, %{broadcast: false})
-            else
-              Agregat.Feeds.create_item(item, %{broadcast: false})
-            end
-
-          item
-        end)
-
-      Agregat.Feeds.broadcast_items(items)
-
-      Agregat.Feeds.update_feed(feed, %{
-        title: if(parsed_feed.title == "", do: feed.title, else: parsed_feed.title),
-        last_sync: DateTime.utc_now(),
-        sync_status: ""
-      })
-    end)
+    Agregat.Feeds.update_feed(feed, %{
+      title: if(parsed_feed.title == "", do: feed.title, else: parsed_feed.title),
+      last_sync: DateTime.utc_now(),
+      sync_status: ""
+    })
   end
 end

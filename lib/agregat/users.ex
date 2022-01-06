@@ -348,22 +348,34 @@ defmodule Agregat.Users do
     end
   end
 
+  @doc """
+  List all users. (For admin users only)
+  """
   def list_users do
     Repo.all(User)
   end
 
+  @doc """
+  Create a user. (For admin users only)
+  """
   def admin_create_user(attrs \\ %{}) do
     %User{}
     |> User.admin_changeset(attrs)
     |> Repo.insert()
   end
 
+  @doc """
+  Update an existing user. (For admin users only)
+  """
   def admin_update_user(%User{} = user, attrs) do
     user
     |> User.admin_changeset(attrs)
     |> Repo.update()
   end
 
+  @doc """
+  Delete a user. (For admin users only)
+  """
   def delete_user(%User{} = user) do
     Repo.delete(user)
   end
