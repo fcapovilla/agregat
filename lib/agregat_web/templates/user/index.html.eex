@@ -2,23 +2,23 @@
   <div class="row">
     <div class="column">
       <div class="float-left">
-        <%= link "Users", to: Routes.user_path(@conn, :index), class: "button" %>
-        <%= link "Feeds", to: Routes.feed_path(@conn, :index), class: "button button-outline" %>
+        <%= link gettext("Users"), to: Routes.user_path(@conn, :index), class: "button" %>
+        <%= link gettext("Feeds"), to: Routes.feed_path(@conn, :index), class: "button button-outline" %>
       </div>
       <div class="float-right">
-        <%= link "Back to app", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
+        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="column">
-      <%= link "New User", to: Routes.user_path(@conn, :new), class: "button" %>
+      <%= link gettext("New User"), to: Routes.user_path(@conn, :new), class: "button" %>
 
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Admin</th>
+            <th><%= gettext("Email") %></th>
+            <th><%= gettext("Admin") %></th>
             <th style="width: 100px"></th>
           </tr>
         </thead>
@@ -29,8 +29,8 @@
                 <td><%= user.admin %></td>
 
                 <td>
-                  <%= link "", to: Routes.user_path(@conn, :edit, user), class: "button button-icon fas fa-edit", title: "Edit" %>
-                  <%= link "", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"], class: "button button-icon fas fa-trash", title: "Delete" %>
+                  <%= link "", to: Routes.user_path(@conn, :edit, user), class: "button button-icon fas fa-edit", title: gettext("Edit") %>
+                  <%= link "", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: gettext("Are you sure?")], class: "button button-icon fas fa-trash", title: gettext("Delete") %>
                 </td>
               </tr>
           <% end %>

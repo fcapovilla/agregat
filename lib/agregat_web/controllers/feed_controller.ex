@@ -29,7 +29,7 @@ defmodule AgregatWeb.FeedController do
         Agregat.Syncer.sync_feed(feed)
 
         conn
-        |> put_flash(:info, "Feed created successfully.")
+        |> put_flash(:info, gettext("Feed created successfully."))
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -51,7 +51,7 @@ defmodule AgregatWeb.FeedController do
         Agregat.Syncer.sync_feed(feed)
 
         conn
-        |> put_flash(:info, "Feed updated successfully.")
+        |> put_flash(:info, gettext("Feed updated successfully."))
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -64,7 +64,7 @@ defmodule AgregatWeb.FeedController do
     {:ok, _feed} = Feeds.delete_feed(feed)
 
     conn
-    |> put_flash(:info, "Feed deleted successfully.")
+    |> put_flash(:info, gettext("Feed deleted successfully."))
     |> redirect(to: Routes.feed_path(conn, :index))
   end
 end

@@ -1,5 +1,5 @@
 <center>
-  <h1>New Feed</h1>
+  <h1><%= gettext("New Feed") %></h1>
 </center>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.feed_path(@conn, :create)) %>

@@ -15,7 +15,7 @@ defmodule AgregatWeb.FolderController do
     case Feeds.create_folder(folder_params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "Folder created successfully.")
+        |> put_flash(:info, gettext("Folder created successfully."))
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -35,7 +35,7 @@ defmodule AgregatWeb.FolderController do
     case Feeds.update_folder(folder, folder_params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "Folder updated successfully.")
+        |> put_flash(:info, gettext("Folder updated successfully."))
         |> redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
 
       {:error, %Ecto.Changeset{} = changeset} ->

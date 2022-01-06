@@ -21,7 +21,7 @@ defmodule AgregatWeb.FaviconController do
     |> Enum.to_list()
 
     conn
-    |> put_flash(:info, "Favicons updated")
+    |> put_flash(:info, gettext("Favicons updated"))
     |> redirect(to: Routes.user_path(conn, :index))
   end
 end

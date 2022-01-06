@@ -4,6 +4,10 @@ defmodule AgregatWeb.LiveHelpers do
   alias AgregatWeb.Router.Helpers, as: Routes
 
   def assign_defaults(session, socket) do
+    if session["locale"] do
+      Gettext.put_locale(AgregatWeb.Gettext, session["locale"])
+    end
+
     socket =
       assign_new(socket, :current_user, fn ->
         find_current_user(session)

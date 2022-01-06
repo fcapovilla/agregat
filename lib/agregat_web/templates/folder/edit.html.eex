@@ -1,5 +1,5 @@
 <center>
-  <h1>Edit Folder</h1>
+  <h1><%= gettext("Edit Folder") %></h1>
 </center>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.folder_path(@conn, :update, @folder)) %>

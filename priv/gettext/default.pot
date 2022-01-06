@@ -1,0 +1,350 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here as no
+## effect: edit them in PO (.po) files instead.
+msgid ""
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/index.html.eex:21
+msgid "Admin"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:9
+#: lib/agregat_web/templates/user/index.html.eex:9
+msgid "Back to app"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:52
+#: lib/agregat_web/templates/folder/form.html.eex:22 lib/agregat_web/templates/user/form.html.eex:34
+msgid "Cancel"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:83
+#: lib/agregat_web/live/app_live.html.heex:115 lib/agregat_web/templates/feed/index.html.eex:41
+#: lib/agregat_web/templates/user/index.html.eex:33
+msgid "Delete"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:82
+#: lib/agregat_web/live/app_live.html.heex:114 lib/agregat_web/templates/feed/index.html.eex:40
+#: lib/agregat_web/templates/user/index.html.eex:32
+msgid "Edit"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/edit.html.eex:2
+msgid "Edit User"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:11
+#: lib/agregat_web/templates/user/index.html.eex:20
+msgid "Email"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:6
+#: lib/agregat_web/templates/user/index.html.eex:6
+msgid "Feeds"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/index.html.eex:15
+#: lib/agregat_web/templates/user/new.html.eex:2
+msgid "New User"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:7
+#: lib/agregat_web/templates/folder/form.html.eex:7 lib/agregat_web/templates/user/form.html.eex:7
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:53
+#: lib/agregat_web/templates/folder/form.html.eex:23 lib/agregat_web/templates/user/form.html.eex:35
+msgid "Save"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:5
+#: lib/agregat_web/templates/user/index.html.eex:5
+msgid "Users"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:4
+msgid "Add feed"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:28
+msgid "Admin?"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:45
+msgid "All items"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:41
+#: lib/agregat_web/templates/user/index.html.eex:33
+msgid "Are you sure?"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:24
+msgid "Auto frequency?"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:22
+msgid "Back to feed list"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:42
+msgid "Content"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:45
+msgid "Date"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/edit.html.eex:2
+msgid "Edit Feed"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/folder/edit.html.eex:2
+msgid "Edit Folder"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/favicon_controller.ex:24
+msgid "Favicons updated"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:53
+msgid "Favorites"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/feed_controller.ex:32
+msgid "Feed created successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/feed_controller.ex:67
+msgid "Feed deleted successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/feed_controller.ex:54
+msgid "Feed updated successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:21
+msgid "Folder"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/folder_controller.ex:18
+msgid "Folder created successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:15
+msgid "Folder title"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/folder_controller.ex:38
+msgid "Folder updated successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:32
+msgid "HTML container"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:26
+msgid "HTML?"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_session_controller.ex:18
+msgid "Invalid email or password"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:29
+msgid "Is HTML?"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user_session/new.html.heex:19
+msgid "Keep me logged in for 60 days"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:24
+msgid "Last sync"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user_session/new.html.heex:22
+msgid "Log in"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:17
+msgid "Log out"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_session_controller.ex:24
+msgid "Logged out successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user_session/new.html.heex:4
+msgid "Login"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:80
+#: lib/agregat_web/live/app_live.html.heex:112
+msgid "Mark as read"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:81
+#: lib/agregat_web/live/app_live.html.heex:113
+msgid "Mark as unread"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:15
+#: lib/agregat_web/templates/feed/new.html.eex:2
+msgid "New Feed"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:28
+msgid "Next item"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:15
+#: lib/agregat_web/templates/user_session/new.html.heex:16
+msgid "Password"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:19
+msgid "Password confirmation"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:25
+msgid "Previous item"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:16
+msgid "Refresh favicons"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:14
+msgid "Settings"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:25
+msgid "Status"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:36
+#: lib/agregat_web/templates/feed/index.html.eex:22
+msgid "Title"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/live/app_live.html.heex:7
+msgid "Toggle read visibility"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:11
+#: lib/agregat_web/templates/feed/form.html.eex:39
+msgid "URL"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/index.html.eex:23
+msgid "Update freq."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/feed/form.html.eex:19
+msgid "Update frequency (seconds)"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_controller.ex:21
+msgid "User created successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_controller.ex:54
+msgid "User deleted successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_controller.ex:41
+msgid "User updated successfully."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user_session/new.html.heex:14
+msgid "Username"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/controllers/user_auth.ex:136
+msgid "You must log in to access this page."
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:24
+msgid "English"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:24
+msgid "French"
+msgstr ""
+
+#, elixir-format
+#: lib/agregat_web/templates/user/form.html.eex:23
+msgid "Language"
+msgstr ""

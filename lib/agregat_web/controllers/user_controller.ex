@@ -18,7 +18,7 @@ defmodule AgregatWeb.UserController do
     case Users.register_user(user_params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "User created successfully.")
+        |> put_flash(:info, gettext("User created successfully."))
         |> redirect(to: Routes.user_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -38,7 +38,7 @@ defmodule AgregatWeb.UserController do
     case Users.admin_update_user(user, user_params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "User updated successfully.")
+        |> put_flash(:info, gettext("User updated successfully."))
         |> redirect(to: Routes.user_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -51,7 +51,7 @@ defmodule AgregatWeb.UserController do
     {:ok, _user} = Users.delete_user(user)
 
     conn
-    |> put_flash(:info, "User deleted successfully.")
+    |> put_flash(:info, gettext("User deleted successfully."))
     |> redirect(to: Routes.user_path(conn, :index))
   end
 end

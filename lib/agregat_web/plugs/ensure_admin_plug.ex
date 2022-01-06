@@ -4,10 +4,8 @@ defmodule AgregatWeb.EnsureAdminPlug do
 
   ## Example
 
-      plug MyAppWeb.EnsureAdminPlug
+      plug AgregatWeb.EnsureAdminPlug
   """
-  import Plug.Conn, only: [halt: 1]
-
   alias AgregatWeb.Router.Helpers, as: Routes
   alias Phoenix.Controller
   alias Plug.Conn
@@ -33,6 +31,6 @@ defmodule AgregatWeb.EnsureAdminPlug do
     conn
     |> Controller.put_flash(:error, "Unauthorized access")
     |> Controller.redirect(to: Routes.live_path(conn, AgregatWeb.AppLive))
-    |> halt()
+    |> Conn.halt()
   end
 end

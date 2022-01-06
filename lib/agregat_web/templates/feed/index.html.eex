@@ -2,28 +2,28 @@
   <div class="row">
     <div class="column">
       <div class="float-left">
-        <%= link "Users", to: Routes.user_path(@conn, :index), class: "button button-outline" %>
-        <%= link "Feeds", to: Routes.feed_path(@conn, :index), class: "button" %>
+        <%= link gettext("Users"), to: Routes.user_path(@conn, :index), class: "button button-outline" %>
+        <%= link gettext("Feeds"), to: Routes.feed_path(@conn, :index), class: "button" %>
       </div>
       <div class="float-right">
-        <%= link "Back to app", to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
+        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="column">
-      <%= link "New Feed", to: Routes.feed_path(@conn, :new), class: "button" %>
-      <%= link "Refresh favicons", to: Routes.favicon_path(@conn, :refresh), class: "button" %>
+      <%= link gettext("New Feed"), to: Routes.feed_path(@conn, :new), class: "button" %>
+      <%= link gettext("Refresh favicons"), to: Routes.favicon_path(@conn, :refresh), class: "button" %>
 
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>Folder</th>
-            <th>Title</th>
-            <th>Update freq.</th>
-            <th>Last sync</th>
-            <th>Status</th>
-            <th>HTML?</th>
+            <th><%= gettext("Folder") %></th>
+            <th><%= gettext("Title") %></th>
+            <th><%= gettext("Update freq.") %></th>
+            <th><%= gettext("Last sync") %></th>
+            <th><%= gettext("Status") %></th>
+            <th><%= gettext("HTML?") %></th>
             <th style="width: 100px"></th>
           </tr>
         </thead>
@@ -37,8 +37,8 @@
                 <td><%= feed.sync_status %></td>
                 <td><%= feed.is_html %></td>
                 <td>
-                  <%= link "", to: Routes.feed_path(@conn, :edit, feed), class: "button button-icon fas fa-edit", title: "Edit" %>
-                  <%= link "", to: Routes.feed_path(@conn, :delete, feed), method: :delete, data: [confirm: "Are you sure?"], class: "button button-icon fas fa-trash", title: "Delete" %>
+                  <%= link "", to: Routes.feed_path(@conn, :edit, feed), class: "button button-icon fas fa-edit", title: gettext("Edit") %>
+                  <%= link "", to: Routes.feed_path(@conn, :delete, feed), method: :delete, data: [confirm: gettext("Are you sure?")], class: "button button-icon fas fa-trash", title: gettext("Delete") %>
                 </td>
               </tr>
           <% end %>

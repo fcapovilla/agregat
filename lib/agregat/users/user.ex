@@ -8,6 +8,7 @@ defmodule Agregat.Users.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :locale, :string
 
     timestamps()
   end
@@ -31,14 +32,14 @@ defmodule Agregat.Users.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :locale])
     |> validate_email()
     |> validate_password(opts)
   end
 
   def admin_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :admin])
+    |> cast(attrs, [:email, :password, :admin, :locale])
     |> validate_email()
     |> case do
       %{changes: %{password: _}} = changeset ->
