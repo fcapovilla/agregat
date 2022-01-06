@@ -1,4 +1,4 @@
-<div id="item-list" phx-window-keydown="keydown" tabindex="-1" x-data="item-list" x-bind="events" :style="style" phx-hook="ItemList">
+<div id="item-list" tabindex="-1" x-data="item-list" x-bind="events" :style="style" phx-hook="ItemList">
   <ul id="items" class="item-list" phx-update="append">
     <%= for item <- @items do %>
       <li id={"item-#{item.id}"} class={"item-container #{if item.read, do: "read"}"} class="item-container" x-data="item" :class="active" @select-item="selectItem">

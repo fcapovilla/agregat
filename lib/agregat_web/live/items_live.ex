@@ -1,8 +1,15 @@
 defmodule AgregatWeb.ItemsLive do
+  @moduledoc """
+  This LiveView displays a list of feed items, sorted by date and filtered by the received params.
+  """
+
   use AgregatWeb, :live_view
 
   alias Agregat.Feeds
 
+  @doc """
+  Mounts the LiveView.
+  """
   def mount(_params, %{"params" => params} = session, socket) do
     socket = assign_defaults(session, socket)
 
@@ -24,6 +31,9 @@ defmodule AgregatWeb.ItemsLive do
      |> fetch_items(), temporary_assigns: [items: []]}
   end
 
+  @doc """
+  Toggles the `favorite` value of an item.
+  """
   def handle_event("toggle-favorite-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -36,6 +46,9 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
+  @doc """
+  Toggles the `read` value of an item.
+  """
   def handle_event("toggle-read-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -48,6 +61,9 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
+  @doc """
+  Sets the `read` value of an item.
+  """
   def handle_event("set-read-" <> item_id, %{"read" => read}, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -60,20 +76,16 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
+  @doc """
+  Fetches another page of items.
+  """
   def handle_event("load-more", _, %{assigns: %{page: page}} = socket) do
     {:noreply, assign(socket, page: page + 1) |> fetch_items()}
   end
 
-  def handle_event("keydown", _, socket) do
-    {:noreply, socket}
-  end
-
-  defp fetch_items(%{assigns: %{params: params, page: page}} = socket) do
-    filter = params |> Map.put(:user_id, socket.assigns.current_user.id) |> Map.drop(["all"])
-    items = Feeds.list_items(filter, %{page: page})
-    assign(socket, items: items)
-  end
-
+  @doc """
+  Receives item updates from the PubSub Channel.
+  """
   def handle_info(%{items: items, user_id: user_id}, socket) do
     if user_id == socket.assigns.current_user.id do
       items =
@@ -87,5 +99,11 @@ defmodule AgregatWeb.ItemsLive do
     else
       {:noreply, socket}
     end
+  end
+
+  defp fetch_items(%{assigns: %{params: params, page: page}} = socket) do
+    filter = params |> Map.put(:user_id, socket.assigns.current_user.id) |> Map.drop(["all"])
+    items = Feeds.list_items(filter, %{page: page})
+    assign(socket, items: items)
   end
 end
