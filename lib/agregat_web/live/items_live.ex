@@ -31,9 +31,7 @@ defmodule AgregatWeb.ItemsLive do
      |> fetch_items(), temporary_assigns: [items: []]}
   end
 
-  @doc """
-  Toggles the `favorite` value of an item.
-  """
+  # Toggles the `favorite` value of an item.
   def handle_event("toggle-favorite-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -46,9 +44,7 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  @doc """
-  Toggles the `read` value of an item.
-  """
+  # Toggles the `read` value of an item.
   def handle_event("toggle-read-" <> item_id, _, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -61,9 +57,7 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  @doc """
-  Sets the `read` value of an item.
-  """
+  # Sets the `read` value of an item.
   def handle_event("set-read-" <> item_id, %{"read" => read}, socket) do
     item = Feeds.get_item!(String.to_integer(item_id), user_id: socket.assigns.current_user.id)
 
@@ -76,16 +70,12 @@ defmodule AgregatWeb.ItemsLive do
     end
   end
 
-  @doc """
-  Fetches another page of items.
-  """
+  # Fetches another page of items.
   def handle_event("load-more", _, %{assigns: %{page: page}} = socket) do
     {:noreply, assign(socket, page: page + 1) |> fetch_items()}
   end
 
-  @doc """
-  Receives item updates from the PubSub Channel.
-  """
+  # Receives item updates from the PubSub Channel.
   def handle_info(%{items: items, user_id: user_id}, socket) do
     if user_id == socket.assigns.current_user.id do
       items =
