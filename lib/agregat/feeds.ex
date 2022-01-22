@@ -399,7 +399,7 @@ defmodule Agregat.Feeds do
 
     from(i in Item,
       left_join: m in assoc(i, :medias),
-      left_join: f in assoc(i, :feed),
+      left_join: f in assoc(i, :feed), as: :feed,
       order_by: [desc: :date],
       preload: [feed: f, medias: m]
     )
@@ -570,7 +570,7 @@ defmodule Agregat.Feeds do
   defp filter_items_by_folder_id(query, nil), do: query
 
   defp filter_items_by_folder_id(query, folder_id) do
-    from i in query, left_join: f in assoc(i, :feed), where: f.folder_id == ^folder_id
+    from [i, feed: f] in query, where: f.folder_id == ^folder_id
   end
 
   ### MEDIAS ###
