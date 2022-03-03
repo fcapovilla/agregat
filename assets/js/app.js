@@ -165,7 +165,7 @@ document.addEventListener('alpine:init', () => {
     }))
 
     Alpine.data('item', () => ({
-        active() {
+        get active() {
             return this.selected.id == this.$el.id ? "active" : null
         },
         selectItem() {

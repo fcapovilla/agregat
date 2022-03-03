@@ -17,19 +17,21 @@
           <i phx-click={"toggle-read-#{item.id}"} class={"readUnreadIcon fa-circle #{if item.read, do: "far", else: "fas"}"}></i>
           <%= item.title %>
         </div>
-        <div class="item-content">
-          <a class="item-content-title" href={item.url} target="_blank"><%= item.title %></a>
-          <br>
-          <%= raw item.content %>
-          <%= if item.medias do %>
+        <template x-if="active">
+          <div class="item-content">
+            <a class="item-content-title" href={item.url} target="_blank"><%= item.title %></a>
             <br>
-            <%= for media <- item.medias do %>
-              <a class="button button-small" href={media.url}>
-                <i class="fas fa-download"></i> <%= media.type %>
-              </a>
+            <%= raw item.content %>
+            <%= if item.medias do %>
+              <br>
+              <%= for media <- item.medias do %>
+                <a class="button button-small" href={media.url}>
+                  <i class="fas fa-download"></i> <%= media.type %>
+                </a>
+              <% end %>
             <% end %>
-          <% end %>
-        </div>
+          </div>
+        </template>
       </li>
     <% end %>
   </ul>

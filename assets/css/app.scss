@@ -111,16 +111,10 @@ body {
     &:hover {
         background-color: rgb(230, 230, 230);
     }
-    .item-content {
-        display: none;
-    }
     &.active {
         color: #ffffff;
         text-shadow: 0 -.1rem 0 rgba(0, 0, 0, 0.2);
         background-color: rgb(91, 165, 202);
-        .item-content {
-            display: block;
-        }
     }
 }
 
