@@ -1,40 +1,40 @@
-<div class="container">
-  <div class="row">
-    <div class="column column-offset-25 column-50">
-      <%= form_for @changeset, @action, fn f -> %>
-        <%= if @changeset.action do %>
-          <div class="alert alert-danger">
-            <p><%= gettext("Oops, something went wrong! Please check the errors below.") %></p>
-          </div>
-        <% end %>
-
-        <%= label f, :email, gettext("Email") %>
-        <%= text_input f, :email %>
-        <%= error_tag f, :email %>
-
-        <%= label f, :password, gettext("Password") %>
-        <%= password_input f, :password %>
-        <%= error_tag f, :password %>
-
-        <%= label f, :password_confirmation, gettext("Password confirmation") %>
-        <%= password_input f, :password_confirmation %>
-        <%= error_tag f, :password_confirmation %>
-
-        <%= label f, :locale, gettext("Language") %>
-        <%= select f, :locale, [[key: gettext("English"), value: "en"], [key: gettext("French"), value: "fr"]] %>
-        <%= error_tag f, :locale %>
-
-        <%= checkbox f, :admin %>
-        <%= label f, :admin, gettext("Admin?"), class: "label-inline" %>
-        <%= error_tag f, :admin %>
-
-        <hr/>
-
-        <div class="float-right">
-          <%= link gettext("Cancel"), to: Routes.user_path(@conn, :index), class: "button button-clear" %>
-          <%= submit gettext("Save"), class: "button" %>
-        </div>
-      <% end %>
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p><%= gettext("Oops, something went wrong! Please check the errors below.") %></p>
     </div>
+  <% end %>
+
+  <%= label f, :email, gettext("Email") %>
+  <%= text_input f, :email %>
+  <%= error_tag f, :email %>
+
+  <%= label f, :password, gettext("Password") %>
+  <%= password_input f, :password %>
+  <%= error_tag f, :password %>
+
+  <%= label f, :password_confirmation, gettext("Password confirmation") %>
+  <%= password_input f, :password_confirmation %>
+  <%= error_tag f, :password_confirmation %>
+
+  <%= label f, :locale, gettext("Language") %>
+  <%= select f, :locale, [[key: gettext("English"), value: "en"], [key: gettext("French"), value: "fr"]] %>
+  <%= error_tag f, :locale %>
+  <br/>
+
+  <%= checkbox f, :admin %>
+  <%= label f, :admin, gettext("Admin?") %>
+  <%= error_tag f, :admin %>
+  <br/>
+
+  <hr/>
+
+  <div class="float-right">
+    <%= link to: Routes.user_path(@conn, :index) do %>
+      <button type="button">
+        <%= gettext("Cancel")  %>
+      </button>
+    <% end %>
+    <%= submit gettext("Save"), class: "button" %>
   </div>
-</div>
+<% end %>

@@ -1,42 +1,38 @@
-<div class="container">
-  <div class="row">
-    <div class="column">
-      <div class="float-left">
-        <%= link gettext("Users"), to: Routes.user_path(@conn, :index), class: "button" %>
-        <%= link gettext("Feeds"), to: Routes.feed_path(@conn, :index), class: "button button-outline" %>
-      </div>
-      <div class="float-right">
-        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="column">
-      <%= link gettext("New User"), to: Routes.user_path(@conn, :new), class: "button" %>
+<header>
+  <nav>
+    <ul>
+      <li><%= gettext("Users") %></li>
+      <li><%= link gettext("Feeds"), to: Routes.feed_path(@conn, :index) %></li>
+      <li class="float-right">
+        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive) %>
+      </li>
+    </ul>
+  </nav>
+</header>
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th><%= gettext("Email") %></th>
-            <th><%= gettext("Admin") %></th>
-            <th style="width: 100px"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= for user <- @users do %>
-              <tr>
-                <td><%= user.email %></td>
-                <td><%= user.admin %></td>
+<%= link to: Routes.user_path(@conn, :new) do %>
+  <button><%= gettext("New User") %></button>
+<% end %>
 
-                <td>
-                  <%= link "", to: Routes.user_path(@conn, :edit, user), class: "button button-icon fas fa-edit", title: gettext("Edit") %>
-                  <%= link "", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: gettext("Are you sure?")], class: "button button-icon fas fa-trash", title: gettext("Delete") %>
-                </td>
-              </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<table>
+  <thead>
+    <tr>
+      <th><%= gettext("Email") %></th>
+      <th><%= gettext("Admin") %></th>
+      <th style="width: 100px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for user <- @users do %>
+        <tr>
+          <td><%= user.email %></td>
+          <td><%= user.admin %></td>
 
+          <td>
+            <%= link to: Routes.user_path(@conn, :edit, user), title: gettext("Edit") do %><button class="icon"><i class="fas fa-edit"></i></button><% end %>
+            <%= link to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: gettext("Are you sure?")], title: gettext("Delete") do %><button class="icon"><i class="fas fa-trash"></i></button><% end %>
+          </td>
+        </tr>
+    <% end %>
+  </tbody>
+</table>

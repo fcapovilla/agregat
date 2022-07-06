@@ -1,63 +1,59 @@
-<div class="container">
-  <div class="row">
-    <div class="column column-offset-25 column-50">
-      <%= form_for @changeset, @action, fn f -> %>
-        <%= if @changeset.action do %>
-          <div class="alert alert-danger">
-            <p><%= gettext("Oops, something went wrong! Please check the errors below.") %></p>
-          </div>
-        <% end %>
-
-        <%= label f, :url, gettext("URL")  %>
-        <%= text_input f, :url %>
-        <%= error_tag f, :url %>
-
-        <%= label f, :folder_title, gettext("Folder title")  %>
-        <%= text_input f, :folder_title, list: "folders" %>
-        <%= error_tag f, :folder_title %>
-        <datalist id="folders">
-          <%= for folder <- @folders do %>
-            <option value="<%= folder.title %>"/>
-          <% end %>
-        </datalist>
-
-        <%= label f, :update_frequency, gettext("Update frequency (seconds)")  %>
-        <%= number_input f, :update_frequency %>
-        <%= error_tag f, :update_frequency %>
-
-        <%= checkbox f, :auto_frequency %>
-        <%= label f, :auto_frequency, gettext("Auto frequency?"), class: "label-inline" %>
-        <%= error_tag f, :auto_frequency %>
-
-        <div class="well">
-          <%= checkbox f, :is_html %>
-          <%= label f, :is_html, gettext("Is HTML?"), class: "label-inline" %>
-          <%= error_tag f, :is_html %>
-
-          <%= label f, :parsing_settings_container, gettext("HTML container") %>
-          <%= text_input f, :parsing_settings_container, name: "feed[parsing_settings][container]", value: @changeset.data.parsing_settings["container"] %>
-          <%= error_tag f, :parsing_settings %>
-
-          <%= label f, :parsing_settings_title, gettext("Title") %>
-          <%= text_input f, :parsing_settings_title, name: "feed[parsing_settings][title]", value: @changeset.data.parsing_settings["title"] %>
-
-          <%= label f, :parsing_settings_url, gettext("URL") %>
-          <%= text_input f, :parsing_settings_url, name: "feed[parsing_settings][url]", value: @changeset.data.parsing_settings["url"] %>
-
-          <%= label f, :parsing_settings_content, gettext("Content") %>
-          <%= text_input f, :parsing_settings_content, name: "feed[parsing_settings][content]", value: @changeset.data.parsing_settings["content"] %>
-
-          <%= label f, :parsing_settings_date, gettext("Date") %>
-          <%= text_input f, :parsing_settings_date, name: "feed[parsing_settings][date]", value: @changeset.data.parsing_settings["date"] %>
-        </div>
-
-        <hr/>
-
-        <div class="float-right">
-          <%= link gettext("Cancel"), to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-clear" %>
-          <%= submit gettext("Save"), class: "button" %>
-        </div>
-      <% end %>
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p><%= gettext("Oops, something went wrong! Please check the errors below.") %></p>
     </div>
+  <% end %>
+
+  <%= label f, :url, gettext("URL")  %>
+  <%= text_input f, :url %>
+  <%= error_tag f, :url %>
+
+  <%= label f, :folder_title, gettext("Folder title")  %>
+  <%= text_input f, :folder_title, list: "folders" %>
+  <%= error_tag f, :folder_title %>
+  <datalist id="folders">
+    <%= for folder <- @folders do %>
+      <option value="<%= folder.title %>"/>
+    <% end %>
+  </datalist>
+
+  <%= label f, :update_frequency, gettext("Update frequency (seconds)")  %>
+  <%= number_input f, :update_frequency %>
+  <%= error_tag f, :update_frequency %>
+
+  <%= checkbox f, :auto_frequency %>
+  <%= label f, :auto_frequency, gettext("Auto frequency?") %>
+  <%= error_tag f, :auto_frequency %>
+  <br/>
+
+  <div class="well">
+    <%= checkbox f, :is_html %>
+    <%= label f, :is_html, gettext("Is HTML?") %>
+    <%= error_tag f, :is_html %>
+    <br/>
+
+    <%= label f, :parsing_settings_container, gettext("HTML container") %>
+    <%= text_input f, :parsing_settings_container, name: "feed[parsing_settings][container]", value: @changeset.data.parsing_settings["container"] %>
+    <%= error_tag f, :parsing_settings %>
+
+    <%= label f, :parsing_settings_title, gettext("Title") %>
+    <%= text_input f, :parsing_settings_title, name: "feed[parsing_settings][title]", value: @changeset.data.parsing_settings["title"] %>
+
+    <%= label f, :parsing_settings_url, gettext("URL") %>
+    <%= text_input f, :parsing_settings_url, name: "feed[parsing_settings][url]", value: @changeset.data.parsing_settings["url"] %>
+
+    <%= label f, :parsing_settings_content, gettext("Content") %>
+    <%= text_input f, :parsing_settings_content, name: "feed[parsing_settings][content]", value: @changeset.data.parsing_settings["content"] %>
+
+    <%= label f, :parsing_settings_date, gettext("Date") %>
+    <%= text_input f, :parsing_settings_date, name: "feed[parsing_settings][date]", value: @changeset.data.parsing_settings["date"] %>
   </div>
-</div>
+
+  <hr/>
+
+  <div class="float-right">
+    <%= link to: Routes.live_path(@conn, AgregatWeb.AppLive) do %><button type="button"><%= gettext("Cancel") %></button><% end %>
+    <%= submit gettext("Save"), class: "button" %>
+  </div>
+<% end %>

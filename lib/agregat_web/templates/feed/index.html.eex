@@ -1,50 +1,44 @@
-<div class="container">
-  <div class="row">
-    <div class="column">
-      <div class="float-left">
-        <%= link gettext("Users"), to: Routes.user_path(@conn, :index), class: "button button-outline" %>
-        <%= link gettext("Feeds"), to: Routes.feed_path(@conn, :index), class: "button" %>
-      </div>
-      <div class="float-right">
-        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive), class: "button button-outline float-right" %>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="column">
-      <%= link gettext("New Feed"), to: Routes.feed_path(@conn, :new), class: "button" %>
-      <%= link gettext("Refresh favicons"), to: Routes.favicon_path(@conn, :refresh), class: "button" %>
+<header>
+  <nav>
+    <ul>
+      <li><%= link gettext("Users"), to: Routes.user_path(@conn, :index) %></li>
+      <li><%= gettext("Feeds") %></li>
+      <li class="float-right">
+        <%= link gettext("Back to app"), to: Routes.live_path(@conn, AgregatWeb.AppLive) %>
+      </li>
+    </ul>
+  </nav>
+</header>
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th><%= gettext("Folder") %></th>
-            <th><%= gettext("Title") %></th>
-            <th><%= gettext("Update freq.") %></th>
-            <th><%= gettext("Last sync") %></th>
-            <th><%= gettext("Status") %></th>
-            <th><%= gettext("HTML?") %></th>
-            <th style="width: 100px"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= for feed <- @feeds do %>
-              <tr>
-                <td><%= feed.folder.title %></td>
-                <td><%= feed.title %></td>
-                <td><%= feed.update_frequency %></td>
-                <td><%= feed.last_sync %></td>
-                <td><%= feed.sync_status %></td>
-                <td><%= feed.is_html %></td>
-                <td>
-                  <%= link "", to: Routes.feed_path(@conn, :edit, feed), class: "button button-icon fas fa-edit", title: gettext("Edit") %>
-                  <%= link "", to: Routes.feed_path(@conn, :delete, feed), method: :delete, data: [confirm: gettext("Are you sure?")], class: "button button-icon fas fa-trash", title: gettext("Delete") %>
-                </td>
-              </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<%= link to: Routes.feed_path(@conn, :new) do %><button><%= gettext("New Feed") %></button><% end %>
+<%= link to: Routes.favicon_path(@conn, :refresh) do %><button><%= gettext("Refresh favicons") %></button><% end %>
 
+<table>
+  <thead>
+    <tr>
+      <th><%= gettext("Folder") %></th>
+      <th><%= gettext("Title") %></th>
+      <th><%= gettext("Update freq.") %></th>
+      <th><%= gettext("Last sync") %></th>
+      <th><%= gettext("Status") %></th>
+      <th><%= gettext("HTML?") %></th>
+      <th style="width: 100px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for feed <- @feeds do %>
+        <tr>
+          <td><%= feed.folder.title %></td>
+          <td><%= feed.title %></td>
+          <td><%= feed.update_frequency %></td>
+          <td><%= feed.last_sync %></td>
+          <td><%= feed.sync_status %></td>
+          <td><%= feed.is_html %></td>
+          <td>
+            <%= link to: Routes.feed_path(@conn, :edit, feed), title: gettext("Edit") do %><button class="icon"><i class="fas fa-edit"></i></button><% end %>
+            <%= link to: Routes.feed_path(@conn, :delete, feed), method: :delete, data: [confirm: gettext("Are you sure?")], title: gettext("Delete") do %><button class="icon"><i class="fas fa-trash"></i></button><% end %>
+          </td>
+        </tr>
+    <% end %>
+  </tbody>
+</table>

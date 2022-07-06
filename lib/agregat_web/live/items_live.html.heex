@@ -25,9 +25,7 @@
             <%= if item.medias do %>
               <br>
               <%= for media <- item.medias do %>
-                <a class="button button-small" href={media.url}>
-                  <i class="fas fa-download"></i> <%= media.type %>
-                </a>
+                <a href={media.url}><button><i class="fas fa-download"></i> <%= media.type %></button></a>
               <% end %>
             <% end %>
           </div>

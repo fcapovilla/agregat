@@ -29,7 +29,8 @@ defmodule AgregatWeb.AppLive do
          selected: nil,
          total_unread: 0,
          menu_open: nil,
-         mode: :items
+         mode: :items,
+         body_class: "app"
        )}
     else
       {:error, "Unauthorized"}

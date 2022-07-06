@@ -56,6 +56,6 @@ To build and push a new docker image:
 * Phoenix Framework: https://www.phoenixframework.org/
 * Phoenix LiveView: https://hexdocs.pm/phoenix_live_view/
 * Alpine.js: https://alpinejs.dev/
-* Milligram: https://milligram.io/
+* Classless.css: https://classless.de/
 * FontAwesome: https://fontawesome.com/
 * CapRover: https://caprover.com/
