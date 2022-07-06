@@ -10,4 +10,4 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-Agregat.Users.register_user(%{email: "admin@example.com", password: "password", admin: true})
+Agregat.Users.admin_create_user(%{email: "admin@example.com", password: "password", admin: true})

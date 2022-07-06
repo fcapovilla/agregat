@@ -388,6 +388,7 @@ defmodule Agregat.Feeds do
 
   defp set_feed_virtuals([%Feed{} | _] = feeds), do: Enum.map(feeds, &set_feed_virtuals/1)
   defp set_feed_virtuals(%Feed{} = feed), do: %{feed | folder_title: feed.folder.title}
+  defp set_feed_virtuals(feed), do: feed
 
   ### ITEMS ###
 

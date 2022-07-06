@@ -17,6 +17,7 @@ if config_env() == :prod do
   config :agregat, Agregat.Repo,
     # ssl: true,
     # socket_options: [:inet6],
+    timeout: 120_000,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
